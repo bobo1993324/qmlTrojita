@@ -32,6 +32,8 @@
 #include "Imap/ConnectionState.h"
 #include "Imap/Model/Cache.h"
 
+#include "Streams/SocketFactory.h"
+
 class QAuthenticator;
 class QCloseEvent;
 class QItemSelection;

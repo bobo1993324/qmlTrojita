@@ -99,6 +99,7 @@ QByteArray FakeSocket::readLine(qint64 maxSize)
 
 qint64 FakeSocket::write(const QByteArray &byteArray)
 {
+    qDebug()<<"FakeSocket::write";
     return writeChannel->write(byteArray);
 }
 

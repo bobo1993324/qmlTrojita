@@ -43,7 +43,7 @@
 #define STREAMS_RFC1951_H
 
 #include <QIODevice>
-
+#include <QDebug>
 #include <zlib.h>
 
 namespace Streams {

@@ -53,7 +53,6 @@ MailboxModel::MailboxModel(QObject *parent, Model *model): QAbstractProxyModel(p
             this, SLOT(handleRowsInserted(const QModelIndex &, int, int)));
     connect(model, SIGNAL(messageCountPossiblyChanged(const QModelIndex &)),
             this, SLOT(handleMessageCountPossiblyChanged(const QModelIndex &)));
-
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     // There's no virtual in Qt4.
     setRoleNames(trojitaProxyRoleNames());
@@ -121,6 +120,9 @@ void MailboxModel::handleDataChanged(const QModelIndex &topLeft, const QModelInd
 
     if (! first.isValid() || ! second.isValid()) {
         // It's something completely alien...
+//        qDebug() << "It's something completely alien...";
+        //TODO sometime mailbox is changed without emitting dataChanged, when top level is changed
+//        emit dataChanged(first, second);
         return;
     }
 
@@ -342,7 +344,11 @@ void MailboxModel::handleRowsInserted(const QModelIndex &parent, int first, int 
         return;
     endInsertRows();
 }
-
+void MailboxModel::emitDataChanged(){
+    QModelIndex m1;
+    QModelIndex m2;
+    emit dataChanged(m1, m2);
+}
 
 }
 }

@@ -233,7 +233,7 @@ void TrojitaMessageDetails::partFactoryCreate(const QModelIndex &partIndex, int 
 void TrojitaMessageDetails::simplePartFetched(){
     qDebug() << "TrojitaMessageDetails::simplePartFetched " ;
     if(m_partIndex.data(Imap::Mailbox::RoleIsFetched).toBool()){
-        disconnect(model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(simplePartFetched(QModelIndex,QModelIndex)));
+        disconnect(model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(simplePartFetched()));
         qDebug() << "part fetched";
         if (m_partIndex.data(Imap::Mailbox::RolePartMimeType).toString() == QLatin1String("text/plain")
                 && m_partIndex.data(Imap::Mailbox::RolePartOctets).toUInt() < 100 * 1024) {

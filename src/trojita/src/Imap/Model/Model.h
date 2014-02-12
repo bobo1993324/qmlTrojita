@@ -324,6 +324,7 @@ private slots:
     /** @short A maintaining task is about to die */
     void slotTaskDying(QObject *obj);
 
+
 signals:
     /** @short This signal is emitted then the server sent us an ALERT response code */
     void alertReceived(const QString &message);
@@ -406,6 +407,7 @@ signals:
 
     void logged(uint parserId, const Common::LogMessage &message);
 
+    void mailBoxModelChanged(QModelIndex, QModelIndex);
 private:
     Model &operator=(const Model &);  // don't implement
     Model(const Model &);  // don't implement

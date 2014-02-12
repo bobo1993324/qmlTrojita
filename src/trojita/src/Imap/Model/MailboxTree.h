@@ -30,6 +30,7 @@
 #include "../Parser/Response.h"
 #include "../Parser/Message.h"
 #include "MailboxMetadata.h"
+#include "ItemRoles.h"
 
 namespace Imap
 {

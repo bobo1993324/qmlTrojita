@@ -74,6 +74,7 @@ Rfc1951Compressor::~Rfc1951Compressor()
 
 bool Rfc1951Compressor::write(QIODevice *out, QByteArray *in)
 {
+    qDebug()<<"Rfc1951Compressor::write";
     _zStream.next_in = reinterpret_cast<Bytef*>(in->data());
     _zStream.avail_in = in->size();
     

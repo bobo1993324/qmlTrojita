@@ -222,6 +222,7 @@ Parser *TestingTaskFactory::newParser(Model *model)
 OpenConnectionTask *TestingTaskFactory::createOpenConnectionTask(Model *model)
 {
     if (fakeOpenConnectionTask) {
+        qDebug()<< "fakeOpenConnectionTask";
         return new Fake_OpenConnectionTask(model, newParser(model));
     } else {
         return TaskFactory::createOpenConnectionTask(model);

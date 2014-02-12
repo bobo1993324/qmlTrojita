@@ -69,7 +69,7 @@ public:
 protected slots:
     void handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
     void handleMessageCountPossiblyChanged(const QModelIndex &mailbox);
-
+    void emitDataChanged();
 private slots:
     void handleModelAboutToBeReset();
     void handleModelReset();

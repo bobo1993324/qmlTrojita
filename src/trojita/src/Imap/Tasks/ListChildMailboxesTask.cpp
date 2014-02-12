@@ -37,6 +37,7 @@ namespace Mailbox
 ListChildMailboxesTask::ListChildMailboxesTask(Model *model, const QModelIndex &mailbox):
     ImapTask(model), mailboxIndex(mailbox)
 {
+    qDebug()<< "ListChildMailboxesTask::init";
     Q_ASSERT(dynamic_cast<TreeItemMailbox *>(static_cast<TreeItem *>(mailbox.internalPointer())));
     conn = model->m_taskFactory->createGetAnyConnectionTask(model);
     conn->addDependentTask(this);
@@ -49,6 +50,7 @@ ListChildMailboxesTask::~ListChildMailboxesTask()
 
 void ListChildMailboxesTask::perform()
 {
+    qDebug()<< "ListChildMailboxesTask::perform";
     parser = conn->parser;
     markAsActiveTask();
 

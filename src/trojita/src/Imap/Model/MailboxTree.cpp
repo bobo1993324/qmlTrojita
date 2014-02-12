@@ -172,8 +172,10 @@ void TreeItemMailbox::fetchWithCacheControl(Model *const model, bool forceReload
         setFetchStatus(LOADING);
         QModelIndex mailboxIndex = toIndex(model);
         if (mailboxIndex.isValid()) {
-            CALL_LATER(model, askForChildrenOfMailbox, Q_ARG(QModelIndex, mailboxIndex),
-                       Q_ARG(Imap::Mailbox::CacheLoadingMode, forceReload ? LOAD_FORCE_RELOAD : LOAD_CACHED_IS_OK));
+            //TODO if use call_later, will occasionally trigger segfault. don't know why. Need to find out.
+            model->askForChildrenOfMailbox(mailboxIndex, forceReload ? LOAD_FORCE_RELOAD : LOAD_CACHED_IS_OK);
+//            CALL_LATER(model, askForChildrenOfMailbox, Q_ARG(QModelIndex, mailboxIndex),
+//                       Q_ARG(Imap::Mailbox::CacheLoadingMode, forceReload ? LOAD_FORCE_RELOAD : LOAD_CACHED_IS_OK));
         } else {
             CALL_LATER(model, askForTopLevelChildren, Q_ARG(Imap::Mailbox::CacheLoadingMode, forceReload ? LOAD_FORCE_RELOAD : LOAD_CACHED_IS_OK));
         }

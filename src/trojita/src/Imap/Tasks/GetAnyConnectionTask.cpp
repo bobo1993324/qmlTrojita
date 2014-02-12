@@ -35,6 +35,7 @@ namespace Mailbox
 GetAnyConnectionTask::GetAnyConnectionTask(Model *model) :
     ImapTask(model), newConn(0)
 {
+    qDebug() << "GetAnyConnectionTask::init";
     QMap<Parser *,ParserState>::iterator it = model->m_parsers.begin();
     while (it != model->m_parsers.end()) {
         if (it->connState == CONN_STATE_LOGOUT) {
@@ -47,9 +48,12 @@ GetAnyConnectionTask::GetAnyConnectionTask(Model *model) :
     }
 
     if (it == model->m_parsers.end()) {
+
         // We're creating a completely new connection
+        qDebug() << " We're creating a completely new connection";
         if (model->networkPolicy() == NETWORK_OFFLINE) {
             // ...but we're offline -> too bad, got to fail
+            qDebug() << "...but we're offline -> too bad, got to fail";
             newConn = new OfflineConnectionTask(model);
             newConn->addDependentTask(this);
         } else {

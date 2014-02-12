@@ -3,7 +3,6 @@ import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Extras.Browser 0.1
 
-import "components"
 /*!
     \brief MainView with Tabs element.
            First Tab has a single Label and
@@ -19,7 +18,7 @@ MainView {
         id: pageStack
         Component.onCompleted: {
             push(mainWindow)
-//            push(loginPage)
+            push(loginPage)
             push(writePage)
         }
         Page {

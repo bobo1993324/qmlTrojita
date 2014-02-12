@@ -19,9 +19,9 @@ int TrojitaSendMail::sendMail(QString to, QString content){
                                           m_settings->value(SettingsNames::smtpPassKey).toString());
         m_submission = new Composer::Submission(this, m_model, msaFactory);
         connect(m_submission, SIGNAL(succeeded()), this, SLOT(sent()));
-        if (!buildMessageData())
-            return;
-        m_submission->send("", content);
+        if (!buildMessageData(to, QString(""), content))
+            return 0;
+        m_submission->send();
 
     } else if (method == SettingsNames::methodSENDMAIL) {
         //        QStringList args = m_settings->value(SettingsNames::sendmailKey, SettingsNames::sendmailDefaultCmd).toString().split(QLatin1Char(' '));
@@ -47,23 +47,26 @@ void TrojitaSendMail::sent(){
     qDebug() << "message sent";
 }
 
-bool TrojitaSendMail::buildMessageData(QString subject = "", QString content = "")
+bool TrojitaSendMail::buildMessageData(QString to, QString subject, QString content)
 {
     QList<QPair<Composer::RecipientKind,Imap::Message::MailAddress> > recipients;
-    QString errorMessage;
-    if (!parseRecipients(recipients, errorMessage)) {
-        gotError(tr("Cannot parse recipients:\n%1").arg(errorMessage));
-        return false;
-    }
-    if (recipients.isEmpty()) {
-        gotError(tr("You haven't entered any recipients"));
-        return false;
-    }
+//    QString errorMessage;
+    Imap::Message::MailAddress addr;
+    bool ok = Imap::Message::MailAddress::fromPrettyString(addr, to);
+    recipients<<qMakePair(Composer::ADDRESS_TO, addr);
+//    if (!parseRecipients(recipients, errorMessage)) {
+//        gotError(tr("Cannot parse recipients:\n%1").arg(errorMessage));
+//        return false;
+//    }
+//    if (recipients.isEmpty()) {
+//        gotError(tr("You haven't entered any recipients"));
+//        return false;
+//    }
     m_submission->composer()->setRecipients(recipients);
 
     Imap::Message::MailAddress fromAddress;
-    if (!Imap::Message::MailAddress::fromPrettyString(fromAddress, m_settings->data(Common::SettingsNames::smtpUserKey))) {
-        gotError(tr("The From: address does not look like a valid one"));
+    if (!Imap::Message::MailAddress::fromPrettyString(fromAddress, m_settings->value(Common::SettingsNames::smtpUserKey).toString())) {
+//        gotError(tr("The From: address does not look like a valid one"));
         return false;
     }
 //    if (ui->subject->text().isEmpty()) {
@@ -99,4 +102,8 @@ bool TrojitaSendMail::buildMessageData(QString subject = "", QString content = "
 //    }
 
     return m_submission->composer()->isReadyForSerialization();
+}
+
+void TrojitaSendMail::setModel(Imap::Mailbox::Model *model){
+    m_model=model;
 }

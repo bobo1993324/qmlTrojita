@@ -7,6 +7,7 @@
 #include <QFileInfo>
 #include "Imap/Model/Model.h"
 #include "Imap/Model/MailboxTree.h"
+#include "Imap/Model/ItemRoles.h"
 #include "Imap/Encoders.h"
 #include "Common/Paths.h"
 #include "Composer/PlainTextFormatter.h"

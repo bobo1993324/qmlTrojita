@@ -31,7 +31,7 @@ void EmailApplication::registerQml(){
     trojitaMessagesModel = new TrojitaMessagesModel(msgListModel);
     trojitaAttachmentsModel = new TrojitaAttachmentsModel();
     trojitaMessageDetails = new TrojitaMessageDetails("", trojitaAttachmentsModel);
-    trojitaSendMail = new TrojitaSendMail(m_settings);
+    trojitaSendMail = new TrojitaSendMail(m_settings, model);
     m_view->rootContext()->setContextProperty("TROJITA_MAILBOX", trojitaMailBoxModel);
     m_view->rootContext()->setContextProperty("TROJITA_SETTING", trojitaSetting);
     m_view->rootContext()->setContextProperty("TROJITA_MESSAGES", trojitaMessagesModel);
@@ -50,7 +50,7 @@ void EmailApplication::defaultSetting(){
     m_settings->setValue(SettingsNames::smtpPortKey, "587");
     m_settings->setValue(SettingsNames::smtpStartTlsKey, "true");
     m_settings->setValue(SettingsNames::smtpAuthKey, "true");
-    m_settings->setValue(SettingsNames::smtpUserKey, "bobo1993324@gmai.com");
+    m_settings->setValue(SettingsNames::smtpUserKey, "bobo1993324@gmail.com");
     m_settings->setValue(SettingsNames::smtpPassKey, "z936563s");
 }
 
@@ -64,6 +64,7 @@ void EmailApplication::settingUpdated(){
 void EmailApplication::reconnectContextModels(){
     trojitaMailBoxModel->setMailBoxModel(mboxModel);
     trojitaMessagesModel->setMsgListModel(msgListModel);
+    trojitaSendMail->setModel(model);
 }
 
 void EmailApplication::nukeModels()

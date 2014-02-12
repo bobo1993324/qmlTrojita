@@ -25,6 +25,9 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QtAlgorithms>
+
+#include <exception>
+
 #include "Model.h"
 #include "MailboxTree.h"
 #include "QAIM_reset.h"
@@ -467,7 +470,6 @@ void Model::replaceChildMailboxes(TreeItemMailbox *mailboxPtr, const TreeItemChi
     */
 
     QModelIndex parent = mailboxPtr == m_mailboxes ? QModelIndex() : mailboxPtr->toIndex(this);
-
     if (mailboxPtr->m_children.size() != 1) {
         // There's something besides the TreeItemMsgList and we're going to
         // overwrite them, so we have to delete them right now
@@ -488,6 +490,8 @@ void Model::replaceChildMailboxes(TreeItemMailbox *mailboxPtr, const TreeItemChi
         auto dummy = mailboxPtr->setChildren(mailboxes);
         Q_ASSERT(dummy.isEmpty());
     }
+    emit mailBoxModelChanged(parent, parent);
+    //this doesn't trigger datachanged in MailBoxModel
     emit dataChanged(parent, parent);
 }
 
@@ -767,8 +771,11 @@ void Model::askForMessagesInMailbox(const QModelIndex &index)
 
 void Model::askForChildrenOfMailbox(TreeItemMailbox *item, bool forceReload)
 {
+    qDebug("askForChildrenOfMailbox");
     if (!forceReload && cache()->childMailboxesFresh(item->mailbox())) {
         // The permanent cache contains relevant data
+        qDebug() << "The permanent cache contains relevant data";
+//        qDebug() << item->rowCount(this);
         QList<MailboxMetadata> metadata = cache()->childMailboxes(item->mailbox());
         TreeItemChildrenList mailboxes;
         for (QList<MailboxMetadata>::const_iterator it = metadata.constBegin(); it != metadata.constEnd(); ++it) {
@@ -777,8 +784,10 @@ void Model::askForChildrenOfMailbox(TreeItemMailbox *item, bool forceReload)
         TreeItemMailbox *mailboxPtr = dynamic_cast<TreeItemMailbox *>(item);
         Q_ASSERT(mailboxPtr);
         replaceChildMailboxes(mailboxPtr, mailboxes);
+//        qDebug() << item->rowCount(this);
     } else if (networkPolicy() == NETWORK_OFFLINE) {
         // No cached data, no network -> fail
+        qDebug()<<"No cached data, no network -> fail";
         item->setFetchStatus(TreeItem::UNAVAILABLE);
         QModelIndex idx = item->toIndex(this);
         emit dataChanged(idx, idx);
@@ -1020,6 +1029,7 @@ void Model::askForMsgPart(TreeItemPart *item, bool onlyFromCache)
                 fetchingMode = TreeItemPart::FETCH_PART_BINARY;
             }
         }
+        qDebug() << "requestPartDownload";
         keepTask->requestPartDownload(item->message()->m_uid, itemForFetchOperation->partIdForFetch(fetchingMode), item->octets());
     }
 }
@@ -1409,6 +1419,7 @@ TreeItem *Model::realTreeItem(QModelIndex index, const Model **whichModel, QMode
 
 void Model::changeConnectionState(Parser *parser, ConnectionState state)
 {
+    qDebug()<<"Model::changeConnectionState";
     accessParser(parser).connState = state;
     logTrace(parser->parserId(), Common::LOG_TASKS, QLatin1String("conn"), connectionStateToString(state));
     emit connectionStateChanged(parser, state);
@@ -1416,6 +1427,7 @@ void Model::changeConnectionState(Parser *parser, ConnectionState state)
 
 void Model::handleSocketStateChanged(Parser *parser, Imap::ConnectionState state)
 {
+    qDebug() << "Model::handleSocketStateChanged";
     Q_ASSERT(parser);
     if (accessParser(parser).connState < state) {
         changeConnectionState(parser, state);
