@@ -1,0 +1,4 @@
+ubuntu-emailclient-app usr/bin/
+ubuntu-emailclient-app.desktop usr/share/applications/
+*.qml usr/share/ubuntu-emailclient-app/
+*.png usr/share/ubuntu-emailclient-app/

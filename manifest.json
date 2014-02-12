@@ -1,0 +1,15 @@
+{
+    "architecture": "all",
+    "description": "description of ubuntu-emailclienet-app",
+    "framework": "ubuntu-sdk-13.10",
+    "hooks": {
+        "ubuntu-emailclienet-app": {
+            "apparmor": "ubuntu-emailclienet-app.json",
+            "desktop": "ubuntu-emailclienet-app.desktop"
+        }
+    },
+    "maintainer": "luke <luke@server1.example.com>",
+    "name": "com.ubuntu.developer.bobo-324.ubuntu-emailclienet-app",
+    "title": "ubuntu-emailclienet-app",
+    "version": "0.1"
+}

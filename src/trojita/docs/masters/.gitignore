@@ -1,0 +1,12 @@
+*.aux
+*.log
+*.pdf
+*.toc
+*.dvi
+*.out
+*.pyg
+*.bbl
+*.blg
+# the next one is somposed from the individual .bib sources
+trojita.bib
+trojita.tdo

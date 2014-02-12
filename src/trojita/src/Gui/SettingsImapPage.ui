@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ImapPage</class>
+ <widget class="QScrollArea" name="ImapPage">
+  <property name="frameShadow">
+   <enum>QFrame::Plain</enum>
+  </property>
+  <property name="widgetResizable">
+   <bool>true</bool>
+  </property>
+  <widget class="QWidget" name="scrollAreaWidgetContents">
+   <layout class="QFormLayout" name="formLayout">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="methodLabel">
+      <property name="text">
+       <string>M&amp;ethod</string>
+      </property>
+      <property name="buddy">
+       <cstring>method</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="method">
+      <property name="toolTip">
+       <string>How to connect to the IMAP server</string>
+      </property>
+      <property name="whatsThis">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose &lt;span style=&quot; font-style:italic;&quot;&gt;TCP&lt;/span&gt; if you want to connect via standard, non-encrypted connection and negotiate encryption transparently before login.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose &lt;span style=&quot; font-style:italic;&quot;&gt;SSL&lt;/span&gt; to connect over an encrypted socket from the very beginning of the connection.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally, pick the &lt;span style=&quot; font-style:italic;&quot;&gt;Local process&lt;/span&gt; if you want to execute a process which then either connects to the IMAP server, or acts as one. This option enables accessing your IMAP server via SSH.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Encryption</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="encryption"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="imapHostLabel">
+      <property name="text">
+       <string>Ser&amp;ver</string>
+      </property>
+      <property name="buddy">
+       <cstring>imapHost</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="LineEdit" name="imapHost">
+      <property name="toolTip">
+       <string>Hostname of the IMAP server</string>
+      </property>
+      <property name="whatsThis">
+       <string>This is the name of the IMAP server that Trojitá should connect to.</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="imapPortLabel">
+      <property name="text">
+       <string>&amp;Port</string>
+      </property>
+      <property name="buddy">
+       <cstring>imapPort</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="LineEdit" name="imapPort">
+      <property name="toolTip">
+       <string>Port number of the IMAP server</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2">
+     <widget class="QLabel" name="portWarning">
+      <property name="text">
+       <string>This port number looks suspicious. The usual numbers for IMAP are 143 (with the TCP connection method or with STARTTLS) and 993 (when using SSL).</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="imapUserLabel">
+      <property name="text">
+       <string>&amp;Username</string>
+      </property>
+      <property name="buddy">
+       <cstring>imapUser</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="LineEdit" name="imapUser">
+      <property name="toolTip">
+       <string>Username</string>
+      </property>
+      <property name="whatsThis">
+       <string>User name to log in to the IMAP server</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="imapPassLabel">
+      <property name="text">
+       <string>Pass&amp;word</string>
+      </property>
+      <property name="buddy">
+       <cstring>imapPass</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="LineEdit" name="imapPass">
+      <property name="toolTip">
+       <string>Password</string>
+      </property>
+      <property name="whatsThis">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Password to use when connecting to the IMAP server.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This password will be saved in &lt;span style=&quot; font-weight:600;&quot;&gt;clear text&lt;/span&gt; on this device, without any encryption. Unless you use a very safe form of a full disk encryption, it is a &lt;span style=&quot; font-weight:600;&quot;&gt;bad idea&lt;/span&gt; to save your password here.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;If you don't save the password, Trojitá will prompt for one when it needs it, but only once per session.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="echoMode">
+       <enum>QLineEdit::Password</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0" colspan="2">
+     <widget class="QLabel" name="passwordWarning">
+      <property name="text">
+       <string>The password will be stored in plaintext. Leave it blank for Trojitá to prompt when needed.</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="processPathLabel">
+      <property name="text">
+       <string>Path to Server &amp;Binary</string>
+      </property>
+      <property name="buddy">
+       <cstring>processPath</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="LineEdit" name="processPath">
+      <property name="whatsThis">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;If you choose the &lt;span style=&quot; font-style:italic;&quot;&gt;Local process&lt;/span&gt; option to connect to the IMAP server, this field specifies the program to start. For example, to connect to a remote mail server via SSH and launch a Dovecot instance in there, you could use the following:&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier New,courier';&quot;&gt;ssh mail.example.org dovecot --exec-mail imap&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note that this command has to be absolutely non-interactive, and therefore you have to have your SSH set up to login without password, perhaps via the SSH keys.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="startOfflineLabel">
+      <property name="text">
+       <string>Start in O&amp;ffline Mode</string>
+      </property>
+      <property name="buddy">
+       <cstring>startOffline</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QCheckBox" name="startOffline">
+      <property name="toolTip">
+       <string>Don't connect to the IMAP server upon startup</string>
+      </property>
+      <property name="whatsThis">
+       <string>If you choose this option, Trojitá won't automatically connect to the IMAP server upon startup, and you will have to explicitly go online.</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="imapEnableIdLabel">
+      <property name="text">
+       <string>Reveal I'm using Trojitá</string>
+      </property>
+      <property name="buddy">
+       <cstring>imapEnableId</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="1">
+     <widget class="QCheckBox" name="imapEnableId">
+      <property name="toolTip">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;If checked, Trojitá will send the &lt;span style=&quot; font-family:'Courier New,courier';&quot;&gt;ID&lt;/span&gt; IMAP command to the remote server. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The command contains information about the name of the program speaking the IMAP protocol along with some basic information for statistics, like the program version.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QLabel" name="imapCapabilitiesBlacklistLabel">
+      <property name="text">
+       <string>Extension &amp;Blacklist</string>
+      </property>
+      <property name="buddy">
+       <cstring>imapCapabilitiesBlacklist</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="1">
+     <widget class="LineEdit" name="imapCapabilitiesBlacklist"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>LineEdit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
