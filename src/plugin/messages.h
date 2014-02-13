@@ -37,9 +37,11 @@ signals:
     void mailBoxNameChanged();
 public slots:
     void msgModelDataChanged(QModelIndex,QModelIndex);
+    void msgModelMailBoxChanged(QModelIndex);
 
 private:
     void addChildren(QModelIndex parent);
+    void reloadMessages();
     QList<TrojitaMessage> m_msg_list;
     Imap::Mailbox::MsgListModel * m_msgListModel;
     QString m_mailBoxName="mailBox";

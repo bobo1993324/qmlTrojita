@@ -11,7 +11,8 @@ bool TrojitaMailBox::hasChildren() const{
     return m_hasChildren;
 }
 
-void TrojitaMailBoxModel::mailBoxDataChanged(const QModelIndex &a, const QModelIndex &b){
+void TrojitaMailBoxModel::mailBoxDataChanged(){
+//    qDebug() << "TrojitaMailBoxModel::mailBoxDataChanged";
     beginRemoveRows(QModelIndex(), 0, rowCount()-1);
     m_mbox_list.clear();
     endRemoveRows();
@@ -74,5 +75,5 @@ void TrojitaMailBoxModel::addChildren(QModelIndex parent){
 void TrojitaMailBoxModel::setMailBoxModel(Imap::Mailbox::MailboxModel *mbox){
     m_mbox=mbox;
     connect(mbox, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
-            this, SLOT(mailBoxDataChanged(const QModelIndex &, const QModelIndex &)));
+            this, SLOT(mailBoxDataChanged()));
 }

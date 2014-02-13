@@ -34,8 +34,7 @@ public:
 
     void addTrojitaMailBox(TrojitaMailBox tmb);
 public slots:
-    void mailBoxDataChanged(const QModelIndex &, const QModelIndex &);
-
+    void mailBoxDataChanged();
 private:
     void addChildren(QModelIndex parent);
     QList<TrojitaMailBox> m_mbox_list;

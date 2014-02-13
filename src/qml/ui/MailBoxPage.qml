@@ -7,6 +7,7 @@ Page{
     width: mainView.width
     height: mainView.height
     signal messageClicked(int UUID)
+    property bool loaded : false;
     ListView{
         anchors.fill: parent;
         model: TROJITA_MESSAGES
@@ -18,9 +19,16 @@ Page{
     tools: ToolbarItems{
         ToolbarButton{
             action: Action{
-                text: "settings"
+                text: "Settings"
                 iconSource: Qt.resolvedUrl("../img/settings.svg")
                 onTriggered: mainView.goToSettingsPage();
+            }
+        }
+        ToolbarButton{
+            action: Action{
+                text: "Folders"
+                iconSource: Qt.resolvedUrl("../img/browser-tabs.svg")
+                onTriggered: mainView.goToFoldersPage();
             }
         }
     }

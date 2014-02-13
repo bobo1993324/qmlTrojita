@@ -52,7 +52,7 @@ Page{
         }
         //TODO create a new object, retrieve configuration from mozilla
         function getFullConfiguration(account, password){
-            if(account.indexOf("gmail.com")!=-1){
+            if(account.indexOf("gmail.com")!=-1 || account.indexOf("umich.edu")!=-1 ){
                 return {
                     "imap.auth.user" : account,
                     "imap.auth.pass" : password,
@@ -76,6 +76,8 @@ Page{
             for (var i in contents.accounts[contents.currentAccountIndex]){
                 TROJITA_SETTING.updateSetting(i, contents.accounts[contents.currentAccountIndex][i]);
             }
+            //flag to automatically load first mailbox
+            mailBoxPage.loaded=false;
             settingsPage.settingChanged();
         }
     }

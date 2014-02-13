@@ -26,6 +26,12 @@ MainView {
         SettingsPage{
             id: settingsPage
         }
+        FoldersPage{
+            id: foldersPage
+        }
+    }
+    function goToFoldersPage(){
+        pageStack.push(foldersPage)
     }
 
     function goToSettingsPage(){

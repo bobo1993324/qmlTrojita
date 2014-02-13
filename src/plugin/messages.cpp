@@ -13,6 +13,7 @@ TrojitaMessagesModel::TrojitaMessagesModel(Imap::Mailbox::MsgListModel *msgList)
 void TrojitaMessagesModel::setMsgListModel(Imap::Mailbox::MsgListModel *msgListModel){
     m_msgListModel = msgListModel;
     connect(m_msgListModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(msgModelDataChanged(QModelIndex,QModelIndex)));
+    connect(m_msgListModel, SIGNAL(mailboxChanged(QModelIndex)), this, SLOT(msgModelMailBoxChanged(QModelIndex)));
 }
 QHash<int, QByteArray> TrojitaMessagesModel::roleNames() const{
     QHash<int, QByteArray> roles;
@@ -42,7 +43,15 @@ void TrojitaMessagesModel::addTrojitaMessage(TrojitaMessage tm){
 }
 
 void TrojitaMessagesModel::msgModelDataChanged(QModelIndex a,QModelIndex b){
-//    qDebug() << "msgModelDataChanged" ;
+//    qDebug() << "TrojitaMessagesModel::msgModelDataChanged" ;
+    reloadMessages();
+}
+
+void TrojitaMessagesModel::msgModelMailBoxChanged(QModelIndex q){
+    reloadMessages();
+}
+
+void TrojitaMessagesModel::reloadMessages(){
     beginRemoveRows(QModelIndex(), 0, rowCount()-1);
     m_msg_list.clear();
     endRemoveRows();
