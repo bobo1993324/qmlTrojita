@@ -56,3 +56,12 @@ void TrojitaMessagesModel::msgModelDataChanged(QModelIndex a,QModelIndex b){
     }
     emit dataChanged(this->index(0), this->index(m_msg_list.count()-1));
 }
+
+QString TrojitaMessagesModel::getMailBoxName(){
+    return m_mailBoxName;
+}
+
+void TrojitaMessagesModel::setMailBoxName(QString mbn){
+    m_mailBoxName = mbn;
+    mailBoxNameChanged();
+}

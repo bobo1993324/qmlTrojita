@@ -3,6 +3,7 @@ import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Extras.Browser 0.1
 
+import "ui"
 /*!
     \brief MainView with Tabs element.
            First Tab has a single Label and
@@ -10,61 +11,73 @@ import Ubuntu.Components.Extras.Browser 0.1
 */
 
 MainView {
-
+    id: mainView
     width: units.gu(50)
     height: units.gu(75)
 
     PageStack{
         id: pageStack
         Component.onCompleted: {
-            push(mainWindow)
-            push(loginPage)
-            push(writePage)
+            push(mainTabs)
         }
-        Page {
-            id: loginPage
-            objectName: "settingPage"
-            title: "Login"
-            visible: false
+        //        MailBoxPage{
+        //            id: mailBoxPage
+        //        }
+        //        SettingsPage{
+        //            id: settingsPage
+        //        }
+        //    }
 
-            signal settingChanged;
-            Column {
-                anchors.fill: parent
+        function goToSettingsPage(){
+            pageStack.push(settingsPage);
+        }
 
-                ListItem.Standard {
-                    text: "Account"
-                    control: TextField {
-                        id: userNameTf
-                        onTextChanged: {
-                            TROJITA_SETTING.userName=userNameTf.text
+        Tabs{
+            id: mainTabs
+            selectedTabIndex: 3
+            Tab{
+                title: "Login"
+                page:Page {
+                    id: loginPage
+                    objectName: "settingPage"
+
+                    signal settingChanged;
+                    Column {
+                        anchors.fill: parent
+
+                        ListItem.Standard {
+                            text: "Account"
+                            control: TextField {
+                                id: userNameTf
+                                onTextChanged: {
+                                    TROJITA_SETTING.userName=userNameTf.text
+                                }
+                            }
                         }
-                    }
-                }
-                ListItem.Standard {
-                    text: "Password"
-                    control: TextField {
-                        id: passwordTf
-                        onTextChanged: {
-                            TROJITA_SETTING.setPassword(passwordTf.text)
+                        ListItem.Standard {
+                            text: "Password"
+                            control: TextField {
+                                id: passwordTf
+                                onTextChanged: {
+                                    TROJITA_SETTING.setPassword(passwordTf.text)
+                                }
+                            }
                         }
-                    }
-                }
-                ListItem.Standard {
-                    control: Button {
-                        text: "Login"
-                        onClicked: {
-                            print("Clicked")
-                            console.log("user name  is "+TROJITA_SETTING.userName);
-                            loginPage.settingChanged();
-                            pageStack.pop();
+                        ListItem.Standard {
+                            control: Button {
+                                text: "Login"
+                                onClicked: {
+                                    print("Clicked")
+                                    console.log("user name  is "+TROJITA_SETTING.userName);
+                                    loginPage.settingChanged();
+                                    //                                    pageStack.pop();
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
-        Tabs{
-            id: mainWindow
-            selectedTabIndex: 3
+
             Tab{
                 title:"Mail Boxes"
                 page: Page{
@@ -133,33 +146,35 @@ MainView {
                     }
                 }
             }
-        }
-        Page {
-            id: writePage
-            title: "Write"
-            visible: false
-            Column{
-                anchors.fill: parent
-                Row{
-                    Label{
-                        text: "To"
-                    }
-                    TextField{
-                        id: sendToTextField
-                    }
-                }
+            Tab{
+                title: "Write"
+                page:Page {
+                    id: writePage
+//                    visible: false
+                    Column{
+                        anchors.fill: parent
+                        Row{
+                            Label{
+                                text: "To"
+                            }
+                            TextField{
+                                id: sendToTextField
+                            }
+                        }
 
-                TextArea{
-                    id: contentTextArea
-                    width: parent.width
-                }
-            }
-            tools: ToolbarItems {
-                ToolbarButton {
-                    action: Action {
-                        text: "button"
-                        iconName: "compose"
-                        onTriggered: TROJITA_SEND_MAIL.sendMail(sendToTextField.text, contentTextArea.text);
+                        TextArea{
+                            id: contentTextArea
+                            width: parent.width
+                        }
+                    }
+                    tools: ToolbarItems {
+                        ToolbarButton {
+                            action: Action {
+                                text: "button"
+                                iconName: "compose"
+                                onTriggered: TROJITA_SEND_MAIL.sendMail(sendToTextField.text, contentTextArea.text);
+                            }
+                        }
                     }
                 }
             }

@@ -16,6 +16,7 @@ private:
 
 class TrojitaMessagesModel : public QAbstractListModel{
     Q_OBJECT
+    Q_PROPERTY(QString mailBoxName READ getMailBoxName WRITE setMailBoxName NOTIFY mailBoxNameChanged)
 public:
     enum TrojitaMessagesModelRoles {
         TitleRole = Qt::UserRole + 1,
@@ -30,6 +31,10 @@ public:
     void addTrojitaMessage(TrojitaMessage tm);
     void setMsgListModel(Imap::Mailbox::MsgListModel * m_msgListModel);
 
+    QString getMailBoxName();
+    void setMailBoxName(QString);
+signals:
+    void mailBoxNameChanged();
 public slots:
     void msgModelDataChanged(QModelIndex,QModelIndex);
 
@@ -37,6 +42,6 @@ private:
     void addChildren(QModelIndex parent);
     QList<TrojitaMessage> m_msg_list;
     Imap::Mailbox::MsgListModel * m_msgListModel;
-
+    QString m_mailBoxName="mailBox";
 };
 

@@ -213,6 +213,8 @@ void EmailApplication::mailBoxClicked(QString name){
     qDebug() << name << " clicked";
     //find the index of name in mboxModel
     msgListModel->setMailbox(name);
+
+    trojitaMessagesModel->setMailBoxName(name);
 }
 
 void EmailApplication::messageClicked(int uid){
