@@ -4,9 +4,11 @@ import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 Page{
     id: settingsPage
+    objectName: "settingPage"
     title: "Settings"
     visible: false
 
+    signal settingChanged;
     U1db.Database{
         id: accountsDatabase
         path: "accounts.u1db"
@@ -14,20 +16,20 @@ Page{
 
     U1db.Document{
         id: accountsDocument
+        objectName: "accountsDocument"
         database: accountsDatabase
         docId: "accounts"
         create: true
         defaults: {
-            "currentAccountIndex": 0,
-            "accounts":[
-                {"email": "bobo1993324@gmail.com"},
-                {"email": "zhangbr@umich.edu"}
-            ]
+            "currentAccountIndex": -1,
+            "accounts":[]
         }
+
         function setCurrentIndex(idx){
             var tmp = contents
             tmp.currentAccountIndex = idx
             contents = tmp
+            updateSettings()
         }
         function removeAccount(idx){
             var tmp = contents
@@ -39,22 +41,42 @@ Page{
         }
         function addAccount(account){
             var tmp = contents
-            if(contents.currentAccountIndex<0){
+            tmp.accounts.push(account);
+            if(contents.accounts.length ===0){
                 tmp.currentAccountIndex=0
             }
-            tmp.accounts.push(account);
             contents=tmp;
+            if(contents.accounts.length === 1){
+                updateSettings()
+            }
         }
         //TODO create a new object, retrieve configuration from mozilla
         function getFullConfiguration(account, password){
             if(account.indexOf("gmail.com")!=-1){
-                console.log("account is gmail")
                 return {
-                    email: account,
-                    password: password
+                    "imap.auth.user" : account,
+                    "imap.auth.pass" : password,
+                    "imap.method": "SSL",
+                    "imap.host": "imap.gmail.com",
+                    "msa.method": "SMTP",
+                    "msa.smtp.host": "smtp.gmail.com",
+                    "msa.smtp.port": "587",
+                    "msa.smtp.starttls": "true",
+                    "msa.smtp.auth": "true",
+                    "msa.smtp.auth.user": account,
+                    "msa.smtp.auth.pass": password
                 }
             }
             return false;
+        }
+
+        function updateSettings(){
+            if(contents.currentAccountIndex <0)
+                return;
+            for (var i in contents.accounts[contents.currentAccountIndex]){
+                TROJITA_SETTING.updateSetting(i, contents.accounts[contents.currentAccountIndex][i]);
+            }
+            settingsPage.settingChanged();
         }
     }
 
@@ -108,7 +130,7 @@ Page{
         ListItem.Standard{
             id: currentAccount
             visible: accountsDocument.contents.currentAccountIndex != -1
-            text: visible ? accountsDocument.contents.accounts[accountsDocument.contents.currentAccountIndex].email : ""
+            text: visible ? accountsDocument.contents.accounts[accountsDocument.contents.currentAccountIndex]["imap.auth.user"] : ""
             control:Image{
                 height: currentAccount.height/2
                 width: height
@@ -127,7 +149,7 @@ Page{
             model:accountsDocument.contents.accounts
             delegate: ListItem.Standard{
                 visible: index !== accountsDocument.contents.currentAccountIndex
-                text: modelData.email
+                text: modelData["imap.auth.user"]
                 control:Row{
                     height: currentAccount.height
                     spacing: units.gu(2)

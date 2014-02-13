@@ -7,6 +7,7 @@ EmailApplication::EmailApplication(int& argc, char** argv, QSettings * settings)
     defaultSetting();
     setupModels();
     registerQml();
+    model->reloadMailboxList();
 }
 int EmailApplication::exec(){
     createView();
@@ -16,6 +17,7 @@ void EmailApplication::createView(){
     m_view->setSource(QUrl::fromLocalFile("qml/ubuntu-emailclient-app.qml"));
     connect(m_view->rootObject()->findChild<QQuickItem *>("settingPage"),
                      SIGNAL(settingChanged()), this, SLOT(settingUpdated()));
+    //invoke updateSettings in qml object accountsDocument
     connect(m_view->rootObject()->findChild<QQuickItem *>("mailBoxPage"),
                      SIGNAL(mailBoxClicked(QString)), this, SLOT(mailBoxClicked(QString)));
     connect(m_view->rootObject()->findChild<QQuickItem *>("messagesPage"),
@@ -41,17 +43,17 @@ void EmailApplication::registerQml(){
 }
 void EmailApplication::defaultSetting(){
     using Common::SettingsNames;
-    m_settings->setValue(SettingsNames::imapMethodKey, SettingsNames::methodSSL);
-    m_settings->setValue(SettingsNames::imapHostKey, "imap.gmail.com");
-    m_settings->setValue(SettingsNames::imapPassKey, "z936563s");
+//    m_settings->setValue(SettingsNames::imapMethodKey, SettingsNames::methodSSL);
+//    m_settings->setValue(SettingsNames::imapHostKey, "imap.gmail.com");
+//    m_settings->setValue(SettingsNames::imapPassKey, "z936563s");
     m_settings->setValue(SettingsNames::cacheOfflineKey, SettingsNames::cacheOfflineNone);
-    m_settings->setValue(SettingsNames::msaMethodKey, SettingsNames::methodSMTP);
-    m_settings->setValue(SettingsNames::smtpHostKey, "smtp.gmail.com");
-    m_settings->setValue(SettingsNames::smtpPortKey, "587");
-    m_settings->setValue(SettingsNames::smtpStartTlsKey, "true");
-    m_settings->setValue(SettingsNames::smtpAuthKey, "true");
-    m_settings->setValue(SettingsNames::smtpUserKey, "bobo1993324@gmail.com");
-    m_settings->setValue(SettingsNames::smtpPassKey, "z936563s");
+//    m_settings->setValue(SettingsNames::msaMethodKey, SettingsNames::methodSMTP);
+//    m_settings->setValue(SettingsNames::smtpHostKey, "smtp.gmail.com");
+//    m_settings->setValue(SettingsNames::smtpPortKey, "587");
+//    m_settings->setValue(SettingsNames::smtpStartTlsKey, "true");
+//    m_settings->setValue(SettingsNames::smtpAuthKey, "true");
+//    m_settings->setValue(SettingsNames::smtpUserKey, "bobo1993324@gmail.com");
+//    m_settings->setValue(SettingsNames::smtpPassKey, "z936563s");
 }
 
 void EmailApplication::settingUpdated(){

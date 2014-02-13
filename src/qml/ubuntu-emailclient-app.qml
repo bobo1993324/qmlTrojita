@@ -18,166 +18,166 @@ MainView {
     PageStack{
         id: pageStack
         Component.onCompleted: {
-            push(mainTabs)
+            push(mailBoxPage)
         }
-        //        MailBoxPage{
-        //            id: mailBoxPage
-        //        }
-        //        SettingsPage{
-        //            id: settingsPage
-        //        }
-        //    }
-
-        function goToSettingsPage(){
-            pageStack.push(settingsPage);
+        MailBoxPage{
+            id: mailBoxPage
         }
-
-        Tabs{
-            id: mainTabs
-            selectedTabIndex: 3
-            Tab{
-                title: "Login"
-                page:Page {
-                    id: loginPage
-                    objectName: "settingPage"
-
-                    signal settingChanged;
-                    Column {
-                        anchors.fill: parent
-
-                        ListItem.Standard {
-                            text: "Account"
-                            control: TextField {
-                                id: userNameTf
-                                onTextChanged: {
-                                    TROJITA_SETTING.userName=userNameTf.text
-                                }
-                            }
-                        }
-                        ListItem.Standard {
-                            text: "Password"
-                            control: TextField {
-                                id: passwordTf
-                                onTextChanged: {
-                                    TROJITA_SETTING.setPassword(passwordTf.text)
-                                }
-                            }
-                        }
-                        ListItem.Standard {
-                            control: Button {
-                                text: "Login"
-                                onClicked: {
-                                    print("Clicked")
-                                    console.log("user name  is "+TROJITA_SETTING.userName);
-                                    loginPage.settingChanged();
-                                    //                                    pageStack.pop();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            Tab{
-                title:"Mail Boxes"
-                page: Page{
-                    id: mailBoxPage
-                    objectName: "mailBoxPage"
-                    signal mailBoxClicked(string name)
-                    ListView{
-                        anchors.fill: parent;
-                        model: TROJITA_MAILBOX
-                        delegate: ListItem.Standard{
-                            text: name + " " + hasChildren
-                            onClicked: mailBoxPage.mailBoxClicked(name)
-                        }
-                    }
-                }
-            }
-            Tab{
-                title: "Mail Box"
-                page: Page{
-                    id: messagesPage
-                    objectName: "messagesPage"
-                    signal messageClicked(int UUID)
-                    ListView{
-                        anchors.fill: parent;
-                        model: TROJITA_MESSAGES
-                        delegate: ListItem.Standard{
-                            text: title
-                            onClicked: messagesPage.messageClicked(uid)
-                        }
-                    }
-                }
-            }
-            Tab{
-                title: "Message"
-                page: Page{
-                    UbuntuWebView{
-                        width: parent.width
-                        height: parent.height
-                        id: messageWebview
-                        anchors.centerIn: parent.center
-                        Connections{
-                            target: TROJITA_MESSAGE_DETAILS
-                            onContentChanged: {
-                                messageWebview.loadHtml(TROJITA_MESSAGE_DETAILS.content)
-                            }
-                        }
-                    }
-                }
-            }
-            Tab{
-                title: "Attachments"
-                page: Page{
-                    id: attachmentPage
-                    objectName: "attachmentPage"
-                    signal attachmentClicked(string fileName)
-                    ListView{
-                        anchors.fill: parent;
-                        model: TROJITA_ATTACHMENTS
-                        delegate: ListItem.Standard{
-                            text: fileName
-                            onClicked: {
-                                console.log(index + " clicked")
-                                attachmentPage.attachmentClicked(index)
-                            }
-                        }
-                    }
-                }
-            }
-            Tab{
-                title: "Write"
-                page:Page {
-                    id: writePage
-//                    visible: false
-                    Column{
-                        anchors.fill: parent
-                        Row{
-                            Label{
-                                text: "To"
-                            }
-                            TextField{
-                                id: sendToTextField
-                            }
-                        }
-
-                        TextArea{
-                            id: contentTextArea
-                            width: parent.width
-                        }
-                    }
-                    tools: ToolbarItems {
-                        ToolbarButton {
-                            action: Action {
-                                text: "button"
-                                iconName: "compose"
-                                onTriggered: TROJITA_SEND_MAIL.sendMail(sendToTextField.text, contentTextArea.text);
-                            }
-                        }
-                    }
-                }
-            }
+        SettingsPage{
+            id: settingsPage
         }
     }
+
+    function goToSettingsPage(){
+        pageStack.push(settingsPage);
+    }
+
+    //        Tabs{
+    //            id: mainTabs
+    //            selectedTabIndex: 3
+    //            Tab{
+    //                title: "Login"
+    //                page:Page {
+    //                    id: loginPage
+    //                    objectName: "settingPage"
+
+    //                    signal settingChanged;
+    //                    Column {
+    //                        anchors.fill: parent
+
+    //                        ListItem.Standard {
+    //                            text: "Account"
+    //                            control: TextField {
+    //                                id: userNameTf
+    //                                onTextChanged: {
+    //                                    TROJITA_SETTING.userName=userNameTf.text
+    //                                }
+    //                            }
+    //                        }
+    //                        ListItem.Standard {
+    //                            text: "Password"
+    //                            control: TextField {
+    //                                id: passwordTf
+    //                                onTextChanged: {
+    //                                    TROJITA_SETTING.setPassword(passwordTf.text)
+    //                                }
+    //                            }
+    //                        }
+    //                        ListItem.Standard {
+    //                            control: Button {
+    //                                text: "Login"
+    //                                onClicked: {
+    //                                    print("Clicked")
+    //                                    console.log("user name  is "+TROJITA_SETTING.userName);
+    //                                    loginPage.settingChanged();
+    //                                    //                                    pageStack.pop();
+    //                                }
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //            }
+
+    //            Tab{
+    //                title:"Mail Boxes"
+    //                page: Page{
+    //                    id: mailBoxPage
+    //                    objectName: "mailBoxPage"
+    //                    signal mailBoxClicked(string name)
+    //                    ListView{
+    //                        anchors.fill: parent;
+    //                        model: TROJITA_MAILBOX
+    //                        delegate: ListItem.Standard{
+    //                            text: name + " " + hasChildren
+    //                            onClicked: mailBoxPage.mailBoxClicked(name)
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //            Tab{
+    //                title: "Mail Box"
+    //                page: Page{
+    //                    id: messagesPage
+    //                    objectName: "messagesPage"
+    //                    signal messageClicked(int UUID)
+    //                    ListView{
+    //                        anchors.fill: parent;
+    //                        model: TROJITA_MESSAGES
+    //                        delegate: ListItem.Standard{
+    //                            text: title
+    //                            onClicked: messagesPage.messageClicked(uid)
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //            Tab{
+    //                title: "Message"
+    //                page: Page{
+    //                    UbuntuWebView{
+    //                        width: parent.width
+    //                        height: parent.height
+    //                        id: messageWebview
+    //                        anchors.centerIn: parent.center
+    //                        Connections{
+    //                            target: TROJITA_MESSAGE_DETAILS
+    //                            onContentChanged: {
+    //                                messageWebview.loadHtml(TROJITA_MESSAGE_DETAILS.content)
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //            Tab{
+    //                title: "Attachments"
+    //                page: Page{
+    //                    id: attachmentPage
+    //                    objectName: "attachmentPage"
+    //                    signal attachmentClicked(string fileName)
+    //                    ListView{
+    //                        anchors.fill: parent;
+    //                        model: TROJITA_ATTACHMENTS
+    //                        delegate: ListItem.Standard{
+    //                            text: fileName
+    //                            onClicked: {
+    //                                console.log(index + " clicked")
+    //                                attachmentPage.attachmentClicked(index)
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //            Tab{
+    //                title: "Write"
+    //                page:Page {
+    //                    id: writePage
+    ////                    visible: false
+    //                    Column{
+    //                        anchors.fill: parent
+    //                        Row{
+    //                            Label{
+    //                                text: "To"
+    //                            }
+    //                            TextField{
+    //                                id: sendToTextField
+    //                            }
+    //                        }
+
+    //                        TextArea{
+    //                            id: contentTextArea
+    //                            width: parent.width
+    //                        }
+    //                    }
+    //                    tools: ToolbarItems {
+    //                        ToolbarButton {
+    //                            action: Action {
+    //                                text: "button"
+    //                                iconName: "compose"
+    //                                onTriggered: TROJITA_SEND_MAIL.sendMail(sendToTextField.text, contentTextArea.text);
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
 }
