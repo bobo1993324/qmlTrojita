@@ -11,20 +11,16 @@ bool TrojitaMailBox::hasChildren() const{
     return m_hasChildren;
 }
 
+int TrojitaMailBox::unreadCount() const{
+    return m_unreadCount;
+}
+
 void TrojitaMailBoxModel::mailBoxDataChanged(){
 //    qDebug() << "TrojitaMailBoxModel::mailBoxDataChanged";
     beginRemoveRows(QModelIndex(), 0, rowCount()-1);
     m_mbox_list.clear();
     endRemoveRows();
-    for(int i=0;i<m_mbox->rowCount();i++){
-        QString name = m_mbox->data(m_mbox->index(i,0), Imap::Mailbox::RoleMailboxName).toString();
-        bool hasChildren = m_mbox->data(m_mbox->index(i,0), Imap::Mailbox::RoleMailboxHasChildMailboxes).toBool();
-
-        TrojitaMailBox tmb(name, hasChildren);
-        addTrojitaMailBox(tmb);
-        if(hasChildren)
-            addChildren(m_mbox->index(i,0));
-    }
+    addChildren(QModelIndex());
     emit dataChanged(this->index(0), this->index(m_mbox_list.size()-1));
 }
 QHash<int, QByteArray> TrojitaMailBoxModel::roleNames() const{
@@ -32,6 +28,7 @@ QHash<int, QByteArray> TrojitaMailBoxModel::roleNames() const{
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
     roles[HasChildrenRole] = "hasChildren";
+    roles[UnreadCountRole] = "unreadCount";
     roles[LevelRole] = "level";
     return roles;
 }
@@ -48,6 +45,8 @@ QVariant TrojitaMailBoxModel::data(const QModelIndex & index, int role) const {
         return tmb.name();
     if (role == HasChildrenRole)
         return tmb.hasChildren();
+    if (role == UnreadCountRole)
+        return tmb.unreadCount();
     return QVariant();
 }
 
@@ -62,8 +61,8 @@ void TrojitaMailBoxModel::addChildren(QModelIndex parent){
     for(int i=0;i<m_mbox->rowCount(parent);i++){
         QString name = m_mbox->data(m_mbox->index(i,0, parent), Imap::Mailbox::RoleMailboxName).toString();
         bool hasChildren = m_mbox->data(m_mbox->index(i,0, parent), Imap::Mailbox::RoleMailboxHasChildMailboxes).toBool();
-
-        TrojitaMailBox tmb(name, hasChildren);
+        int unreadCount = m_mbox->data(m_mbox->index(i, 0), Imap::Mailbox::RoleUnreadMessageCount).toInt();
+        TrojitaMailBox tmb(name, hasChildren, unreadCount);
         addTrojitaMailBox(tmb);
 //        qDebug() << "hasChildren" << hasChildren;
         if(hasChildren){

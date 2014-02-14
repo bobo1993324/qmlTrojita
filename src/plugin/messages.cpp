@@ -1,10 +1,27 @@
 #include "messages.h"
-QString TrojitaMessage::title() const{
-    return m_title;
+QString TrojitaMessage::subject() const{
+    return m_subject;
 }
 uint TrojitaMessage::uid() const{
     return m_uid;
 }
+QString TrojitaMessage::sender() const{
+    return m_sender;
+}
+bool TrojitaMessage::unread() const{
+    return m_unread;
+}
+QString TrojitaMessage::time() const{
+    if(QDate::currentDate() == m_qdt.date()){
+        return m_qdt.time().toString();
+    }else{
+        return m_qdt.date().toString(Qt::ISODate);
+    }
+}
+bool TrojitaMessage::isStared() const{
+    return m_isStared;
+}
+
 TrojitaMessagesModel::TrojitaMessagesModel(Imap::Mailbox::MsgListModel *msgList)
 {
     setMsgListModel(msgList);
@@ -17,8 +34,12 @@ void TrojitaMessagesModel::setMsgListModel(Imap::Mailbox::MsgListModel *msgListM
 }
 QHash<int, QByteArray> TrojitaMessagesModel::roleNames() const{
     QHash<int, QByteArray> roles;
-    roles[TitleRole] = "title";
+    roles[SubjectRole] = "subject";
     roles[UidRole] = "uid";
+    roles[SenderRole] = "sender";
+    roles[UnreadRole] = "unread";
+    roles[TimeRole] = "time";
+    roles[StarRole] = "star";
     return roles;
 }
 int TrojitaMessagesModel::rowCount(const QModelIndex & parent) const{
@@ -30,10 +51,18 @@ QVariant TrojitaMessagesModel::data(const QModelIndex &index, int role) const {
 
     const TrojitaMessage &tmb = m_msg_list[index.row()];
 //    qDebug() << " data " << index.row() << (role==NameRole) << tmb.name();
-    if (role == TitleRole)
-        return tmb.title();
+    if (role == SubjectRole)
+        return tmb.subject();
     if (role == UidRole)
         return tmb.uid();
+    if (role == SenderRole)
+        return tmb.sender();
+    if (role == UnreadRole)
+        return tmb.unread();
+    if (role == TimeRole)
+        return tmb.time();
+    if (role == StarRole)
+        return tmb.isStared();
     return QVariant();
 }
 void TrojitaMessagesModel::addTrojitaMessage(TrojitaMessage tm){
@@ -59,8 +88,24 @@ void TrojitaMessagesModel::reloadMessages(){
     for(int i=0;i<m_msgListModel->rowCount();i++){
         QString subject = m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageSubject).toString();
         uint uid = m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageUid).toUInt();
-//        qDebug() << "subject is " << title;
-        TrojitaMessage tmb(subject, uid);
+        QVariantList senderInfoList = m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageSender).toList();
+        QString sender = "";
+        if(!senderInfoList.empty()){
+            QVariantList oneSender = senderInfoList[0].toList();
+            if(oneSender[0].toString()!="")
+                sender=oneSender[0].toString();
+            else
+                sender = oneSender[2].toString() + "@" + oneSender[3].toString();
+        }
+        bool unread = m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageWasUnread).toBool();
+        QDateTime qdt = m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageDate).toDateTime();
+        bool isStared=false;
+        QStringList flags=  m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageFlags).toStringList();
+        for(int i=0;i<flags.size();i++){
+            if(flags[i]=="\\Flagged") // gmail
+                isStared=true;
+        }
+        TrojitaMessage tmb(subject, uid, sender, unread, qdt, isStared);
         addTrojitaMessage(tmb);
     }
     emit dataChanged(this->index(0), this->index(m_msg_list.count()-1));

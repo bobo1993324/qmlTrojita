@@ -1,17 +1,29 @@
 #include <QObject>
 #include <QAbstractListModel>
 #include <QDebug>
+#include <QDate>
 
 #include "Imap/Model/MsgListModel.h"
 class TrojitaMessage
 {
 public:
-    TrojitaMessage(QString title, uint uid) : m_title(title), m_uid(uid){}
-    QString title() const;
+    TrojitaMessage(QString subject, uint uid, QString sender, bool unread, QDateTime qdt,
+                    bool isStared)
+        : m_subject(subject), m_uid(uid), m_sender(sender), m_unread(unread), m_qdt(qdt),
+            m_isStared(isStared){}
+    QString subject() const;
     uint uid() const;
+    QString sender() const;
+    bool unread() const;
+    QString time() const;
+    bool isStared() const;
 private:
-    QString m_title;
+    QString m_subject;
     uint m_uid;
+    QString m_sender;
+    bool m_unread;
+    QDateTime m_qdt;
+    bool m_isStared;
 };
 
 class TrojitaMessagesModel : public QAbstractListModel{
@@ -19,8 +31,12 @@ class TrojitaMessagesModel : public QAbstractListModel{
     Q_PROPERTY(QString mailBoxName READ getMailBoxName WRITE setMailBoxName NOTIFY mailBoxNameChanged)
 public:
     enum TrojitaMessagesModelRoles {
-        TitleRole = Qt::UserRole + 1,
-        UidRole
+        SubjectRole = Qt::UserRole + 1,
+        UidRole,
+        SenderRole,
+        UnreadRole,
+        TimeRole,
+        StarRole
     };
 
     TrojitaMessagesModel(Imap::Mailbox::MsgListModel * m_msgList);

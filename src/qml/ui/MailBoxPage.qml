@@ -11,9 +11,54 @@ Page{
     ListView{
         anchors.fill: parent;
         model: TROJITA_MESSAGES
-        delegate: ListItem.Standard{
-            text: title
-            onClicked: messagesPage.messageClicked(uid)
+        delegate: ListItem.Base{
+            Item {
+                id: listItemItem
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.fill: parent
+                Column {
+                    id: mailColumn
+                    anchors.verticalCenter: parent.verticalCenter
+                    width : listItemItem.width
+                    Rectangle{
+                        width: parent.width
+                        height: fromLabel.height
+                        color: "transparent"
+                        Label {
+                            text: subject
+                            font.bold : unread
+                            anchors.left: parent.left
+                            width: parent.width- favouriteImage.width-units.gu(2)
+                            clip: true
+                        }
+                        Image{
+                            id: favouriteImage
+                            source: star? Qt.resolvedUrl("../img/favorite-selected.svg")
+                                            : Qt.resolvedUrl("../img/favorite-unselected.svg")
+                            height: parent.height
+                            width: height
+                            anchors.right: parent.right
+                        }
+                    }
+
+
+                    Rectangle{
+                        width: parent.width
+                        height: fromLabel.height
+                        color: "transparent"
+                        Label {
+                            id: fromLabel
+                            anchors.left: parent.left
+                            text: 'From: ' + sender
+                        }
+                        Label {
+                            anchors.right: parent.right
+                            text: time
+                        }
+                    }
+                }
+                //            onClicked: messagesPage.messageClicked(uid)
+            }
         }
     }
     tools: ToolbarItems{
