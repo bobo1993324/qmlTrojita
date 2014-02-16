@@ -3,19 +3,29 @@ import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 Page{
     id: messagesPage
+    objectName: "messagesPage"
     title: TROJITA_MESSAGES.mailBoxName
-    width: mainView.width
-    height: mainView.height
+    visible: false
     signal messageClicked(int UUID)
     property bool loaded : false;
     ListView{
         anchors.fill: parent;
         model: TROJITA_MESSAGES
         delegate: ListItem.Base{
-            Item {
+            Rectangle {
                 id: listItemItem
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.fill: parent
+                color: "transparent"
+
+
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        mainView.goToMessagePage();
+                        messagesPage.messageClicked(uid);
+                    }
+                }
                 Column {
                     id: mailColumn
                     anchors.verticalCenter: parent.verticalCenter
@@ -34,7 +44,7 @@ Page{
                         Image{
                             id: favouriteImage
                             source: star? Qt.resolvedUrl("../img/favorite-selected.svg")
-                                            : Qt.resolvedUrl("../img/favorite-unselected.svg")
+                                        : Qt.resolvedUrl("../img/favorite-unselected.svg")
                             height: parent.height
                             width: height
                             anchors.right: parent.right
@@ -57,8 +67,8 @@ Page{
                         }
                     }
                 }
-                //            onClicked: messagesPage.messageClicked(uid)
             }
+
         }
     }
     tools: ToolbarItems{

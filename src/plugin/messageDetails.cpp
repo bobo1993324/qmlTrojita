@@ -7,13 +7,51 @@ TrojitaMessageDetails::TrojitaMessageDetails(QString content, TrojitaAttachments
 QString TrojitaMessageDetails::content(){
     return m_content;
 }
-
 void TrojitaMessageDetails::setContent(QString content){
     m_content=content;
-    contentChanged();
+    emit contentChanged();
+}
+QString TrojitaMessageDetails::subject(){
+    return m_subject;
+}
+
+void TrojitaMessageDetails::setSubject(QString subject){
+    qDebug() << "set subject to " << subject ;
+    m_subject = subject;
+    emit subjectChanged();
+}
+QString TrojitaMessageDetails::from(){
+    return m_from;
+}
+void TrojitaMessageDetails::setFrom(QString from){
+    m_from=from;
+    emit fromChanged();
+}
+QString TrojitaMessageDetails::date(){
+    return m_date;
+}
+void TrojitaMessageDetails::setDate(QString date){
+    m_date=date;
+    emit dateChanged();
 }
 
 void TrojitaMessageDetails::setMessage(const QModelIndex &index){
+    //get metas
+    qDebug() << "TrojitaMessageDetails::setMessage";
+    setSubject(index.data(Imap::Mailbox::RoleMessageSubject).toString());
+    QVariantList senderInfoList = index.data(Imap::Mailbox::RoleMessageSender).toList();
+    qDebug() << senderInfoList ;
+    QString sender = "";
+    if(!senderInfoList.empty()){
+        QVariantList oneSender = senderInfoList[0].toList();
+        if(oneSender[0].toString()!="")
+            sender=oneSender[0].toString()+" <"+oneSender[2].toString() + "@" + oneSender[3].toString()+">";
+        else
+            sender = oneSender[2].toString() + "@" + oneSender[3].toString();
+    }
+    qDebug() << "sender is " << sender;
+    setFrom(sender);
+    setDate(index.data(Imap::Mailbox::RoleMessageDate).toDateTime().toString());
     //clear attachments
     m_tam->clear();
     // first, let's get a real model

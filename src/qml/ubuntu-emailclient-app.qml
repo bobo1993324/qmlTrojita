@@ -18,7 +18,8 @@ MainView {
     PageStack{
         id: pageStack
         Component.onCompleted: {
-            push(mailBoxPage)
+            push(mailBoxPage);
+//            push(messagePage)
         }
         MailBoxPage{
             id: mailBoxPage
@@ -29,6 +30,9 @@ MainView {
         FoldersPage{
             id: foldersPage
         }
+        MessagePage{
+            id: messagePage
+        }
     }
     function goToFoldersPage(){
         pageStack.push(foldersPage)
@@ -36,6 +40,10 @@ MainView {
 
     function goToSettingsPage(){
         pageStack.push(settingsPage);
+    }
+
+    function goToMessagePage(){
+        pageStack.push(messagePage);
     }
 
     //        Tabs{

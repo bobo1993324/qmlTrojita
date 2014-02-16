@@ -4,8 +4,6 @@ import Ubuntu.Components.ListItems 0.1 as ListItem
 Page{
     id: foldersPage
     objectName: "mailBoxPage"
-    width: mainView.width
-    height: mainView.height
     title:"Folders"
     visible: false
     signal mailBoxClicked(string name)
