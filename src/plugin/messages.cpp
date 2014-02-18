@@ -72,7 +72,7 @@ void TrojitaMessagesModel::addTrojitaMessage(TrojitaMessage tm){
 }
 
 void TrojitaMessagesModel::msgModelDataChanged(QModelIndex a,QModelIndex b){
-//    qDebug() << "TrojitaMessagesModel::msgModelDataChanged" ;
+    qDebug() << "TrojitaMessagesModel::msgModelDataChanged" ;
     reloadMessages();
 }
 
@@ -86,6 +86,9 @@ void TrojitaMessagesModel::reloadMessages(){
     endRemoveRows();
 //    qDebug() << "rowCount is " << m_msgListModel->rowCount();
     for(int i=0;i<m_msgListModel->rowCount();i++){
+        bool isDeleted=m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageIsMarkedDeleted).toBool();
+        if(isDeleted)
+            continue;
         QString subject = m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageSubject).toString();
         uint uid = m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageUid).toUInt();
         QVariantList senderInfoList = m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageSender).toList();

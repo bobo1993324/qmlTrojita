@@ -86,5 +86,11 @@ Page{
                 onTriggered: mainView.goToFoldersPage();
             }
         }
+        ToolbarButton{
+            action: Action{
+                text: "Compose"
+                iconSource: Qt.resolvedUrl("../img/compose.svg")
+            }
+        }
     }
 }

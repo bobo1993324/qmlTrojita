@@ -8,6 +8,7 @@
 #include "Imap/Model/Model.h"
 #include "Imap/Model/MailboxTree.h"
 #include "Imap/Model/ItemRoles.h"
+#include "Imap/Model/Utils.h"
 #include "Imap/Encoders.h"
 #include "Common/Paths.h"
 #include "Composer/PlainTextFormatter.h"
@@ -23,6 +24,8 @@ class TrojitaMessageDetails : public QObject{
     Q_PROPERTY(QString date READ date WRITE setDate NOTIFY dateChanged)
 public:
     TrojitaMessageDetails(QString content = "", TrojitaAttachmentsModel * tam = 0);
+
+    Q_INVOKABLE void deleteMessage();
 
     QString content();
     void setContent(QString content);

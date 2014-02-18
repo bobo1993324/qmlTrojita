@@ -407,3 +407,10 @@ void TrojitaMessageDetails::fetchSimpleContent(QModelIndex anotherPart, const Im
         part->fetch(model);
     }
 }
+void TrojitaMessageDetails::deleteMessage(){
+    qDebug() << "mark as delete";
+    QModelIndexList translatedIndexes;
+    translatedIndexes << Imap::deproxifiedIndex(m_partIndex.parent().parent());
+
+    model->markMessagesDeleted(translatedIndexes, Imap::Mailbox::FLAG_ADD);
+}
