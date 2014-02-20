@@ -11,7 +11,6 @@ Page{
     DeletePopover{
         id: deletePopover
     }
-
     Column{
         anchors.fill: parent
         ListItem.Standard{
@@ -78,18 +77,11 @@ Page{
                     PopupUtils.open(deletePopover, deleteButton)
                 }
             }
-
         }
         ToolbarButton{
             action: Action{
                 text: "Reply"
                 iconSource: Qt.resolvedUrl("../img/compose.svg")
-            }
-        }
-        ToolbarButton{
-            action: Action{
-                text: "Move"
-                iconSource: Qt.resolvedUrl("../img/external-link.svg")
             }
         }
     }

@@ -16,7 +16,6 @@ int TrojitaMailBox::unreadCount() const{
 }
 
 void TrojitaMailBoxModel::mailBoxDataChanged(){
-//    qDebug() << "TrojitaMailBoxModel::mailBoxDataChanged";
     beginRemoveRows(QModelIndex(), 0, rowCount()-1);
     m_mbox_list.clear();
     endRemoveRows();
@@ -24,7 +23,6 @@ void TrojitaMailBoxModel::mailBoxDataChanged(){
     emit dataChanged(this->index(0), this->index(m_mbox_list.size()-1));
 }
 QHash<int, QByteArray> TrojitaMailBoxModel::roleNames() const{
-    qDebug() << "roleNames()" ;
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
     roles[HasChildrenRole] = "hasChildren";
@@ -64,7 +62,6 @@ void TrojitaMailBoxModel::addChildren(QModelIndex parent){
         int unreadCount = m_mbox->data(m_mbox->index(i, 0), Imap::Mailbox::RoleUnreadMessageCount).toInt();
         TrojitaMailBox tmb(name, hasChildren, unreadCount);
         addTrojitaMailBox(tmb);
-//        qDebug() << "hasChildren" << hasChildren;
         if(hasChildren){
             addChildren(m_mbox->index(i,0, parent));
         }
