@@ -33,9 +33,16 @@ MainView {
         MessagePage{
             id: messagePage
         }
+        ComposePage{
+            id: composePage
+        }
     }
+    function goToComposePage(){
+        pageStack.push(composePage);
+    }
+
     function goToFoldersPage(){
-        pageStack.push(foldersPage)
+        pageStack.push(foldersPage);
     }
 
     function goToSettingsPage(){

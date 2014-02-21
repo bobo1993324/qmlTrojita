@@ -76,7 +76,7 @@ function parseXML(xmlDocument){
                             //find <incomingServer type="imap">
                             for (var m = 0; m < c.childNodes.length; m++){
                                 if (c.childNodes[m].nodeName == "hostname"){
-                                    returnVal.smtp.hostname = c.childNodes[m].childNodes[0].nodeValue;
+                                    returnVal.smtp.host = c.childNodes[m].childNodes[0].nodeValue;
                                 } else if (c.childNodes[m].nodeName == "port"){
                                     returnVal.smtp.port = c.childNodes[m].childNodes[0].nodeValue;
                                 } else if (c.childNodes[m].nodeName == "socketType"){
@@ -93,14 +93,13 @@ function parseXML(xmlDocument){
 }
 
 function adaptConfiguration(settings, account, password){
-
     return {
         "imap.auth.user" : account,
         "imap.auth.pass" : password,
         "imap.host": settings.imap.host,
         "imap.port" : settings.imap.port,
         "imap.method": settings.imap.socketType,
-        "msa.method": "SMTP",   // use SMTP by default
+        "msa.method": settings.smtp.socketType == "SSL" ? "SSMTP" : "SMTP",   // use SMTP by default
         "msa.smtp.host": settings.smtp.host,
         "msa.smtp.port": settings.smtp.port,
         "msa.smtp.starttls": "true", // default to be true, might relate to setting.smtp.socketType

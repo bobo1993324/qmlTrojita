@@ -198,15 +198,15 @@ Page{
                                     emailTextField.text,
                                     passwordTextField.text,
                                     function(account){
+                                        //                                        console.log(JSON.stringify(account));
+                                        //                                        return;
                                         settingFetchingIndicator.running = false;
-                                        if (account != false){
-                                            accountsDocument.addAccount(account);
-                                            settingsPage.state="NORMAL"
-                                        } else {
-                                            //TODO show error and provide manual configuration options
-                                        }
+                                        accountsDocument.addAccount(account);
+                                        settingsPage.state="NORMAL"
+
 
                                     },
+                                    //TODO show error and provide manual configuration options
                                     function(){console.log("fetch failed")}
                                     );
                     }

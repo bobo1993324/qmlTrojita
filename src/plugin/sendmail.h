@@ -11,7 +11,7 @@
 class TrojitaSendMail: public QObject{
     Q_OBJECT
 public:
-    Q_INVOKABLE int sendMail(QString to, QString content);
+    Q_INVOKABLE int sendMail(QString to, QString subject, QString content);
     TrojitaSendMail(QSettings * settings, Imap::Mailbox::Model * model);
     void setModel(Imap::Mailbox::Model * model);
 public slots:
