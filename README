@@ -1,7 +1,11 @@
 To compile
 	mkdir build && cd build && cmake .. && make
-The executable is build/src/ubuntu-emailclient-app
+The executable is build/src/ubuntu-emailclient-app, need to run in directory build/src/
 
 Compile Dependancy:
 	libqt5webkit5-dev
+
+Run Dependancy:
+	qtdeclarative5-u1db1.0
+	qtdeclarative5-ubuntu-ui-extras-browser-plugin
 
