@@ -79,6 +79,8 @@ Page{
             }
         }
         ToolbarButton{
+            //TODO implement reply
+            visible: false
             action: Action{
                 text: "Reply"
                 iconSource: Qt.resolvedUrl("../img/compose.svg")

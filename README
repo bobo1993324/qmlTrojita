@@ -1,3 +1,7 @@
 To compile
 	mkdir build && cd build && cmake .. && make
 The executable is build/src/ubuntu-emailclient-app
+
+Compile Dependancy:
+	libqt5webkit5-dev
+
