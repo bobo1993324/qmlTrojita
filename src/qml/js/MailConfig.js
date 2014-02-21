@@ -43,37 +43,6 @@ function fetchConfigurationFromUrl(account, password, url, successCallback, fail
     doc.send();
 }
 
-function fetchConfigurationFromAutoconfig(account, password, successCallback, failedCallback){
-    //Given the email address "fred@example.com", Thunderbird first checks
-    //TODO : <http://autoconfig.example.com/mail/config-v1.1.xml?emailaddress=fred@example.com> and then
-    //<http://example.com/.well-known/autoconfig/mail/config-v1.1.xml>. Then
-    //ISP database
-    var domain = account.substring(account.indexOf("@")+1, account.length)
-    var doc = new XMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.HEADERS_RECEIVED) {
-            //TODO check header to report error if there is any
-            console.log("Headers -->");
-            console.log(doc.getAllResponseHeaders ());
-            console.log("Last modified -->");
-            console.log(doc.getResponseHeader ("Last-Modified"));
-        } else if (doc.readyState == XMLHttpRequest.DONE) {
-            if (doc.getResponseHeader("content-type") != "text/xml"){
-                //get failed, try database
-                failedCallback();
-            }
-
-            var a = doc.responseXML.documentElement;
-            var returnVal = parseXML(a);
-
-            successCallback(adaptConfiguration(returnVal, account, password));
-        }
-    }
-    doc.open("GET", "http://" + domain + "/.well-known/autoconfig/mail/config-v1.1.xml");
-//    doc.open("GET", "https://autoconfig.thunderbird.net/v1.1/"+domain);
-    doc.send();
-}
-
 function parseXML(xmlDocument){
     var returnVal = {
         imap : {},
