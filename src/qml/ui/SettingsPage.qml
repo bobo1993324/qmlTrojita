@@ -2,6 +2,7 @@ import QtQuick 2.0
 import U1db 1.0 as U1db
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
+import "../js/MailConfig.js" as MailConfig
 Page{
     id: settingsPage
     objectName: "settingPage"
@@ -22,7 +23,7 @@ Page{
         create: true
         defaults: {
             "currentAccountIndex": -1,
-            "accounts":[]
+                    "accounts":[]
         }
 
         function setCurrentIndex(idx){
@@ -49,25 +50,6 @@ Page{
             if(contents.accounts.length === 1){
                 updateSettings()
             }
-        }
-        //TODO create a new object, retrieve configuration from mozilla
-        function getFullConfiguration(account, password){
-            if(account.indexOf("gmail.com")!=-1 || account.indexOf("umich.edu")!=-1 ){
-                return {
-                    "imap.auth.user" : account,
-                    "imap.auth.pass" : password,
-                    "imap.method": "SSL",
-                    "imap.host": "imap.gmail.com",
-                    "msa.method": "SMTP",
-                    "msa.smtp.host": "smtp.gmail.com",
-                    "msa.smtp.port": "587",
-                    "msa.smtp.starttls": "true",
-                    "msa.smtp.auth": "true",
-                    "msa.smtp.auth.user": account,
-                    "msa.smtp.auth.pass": password
-                }
-            }
-            return false;
         }
 
         function updateSettings(){
@@ -188,6 +170,7 @@ Page{
             }
         }
         ListItem.Standard{
+            //TODO check email address is valid
             id: emailAddressLI
             text: "Email address"
             control: TextField{
@@ -210,15 +193,33 @@ Page{
                 Button{
                     text: "Add"
                     onClicked:{
-                        var account = accountsDocument.getFullConfiguration(emailTextField.text, passwordTextField.text);
-                        if(account !== false)
-                            accountsDocument.addAccount(account);
-                        settingsPage.state="NORMAL"
+                        settingFetchingIndicator.running = true;
+                        MailConfig.fetchConfiguration(
+                                    emailTextField.text,
+                                    passwordTextField.text,
+                                    function(account){
+                                        settingFetchingIndicator.running = false;
+                                        if (account != false){
+                                            accountsDocument.addAccount(account);
+                                            settingsPage.state="NORMAL"
+                                        } else {
+                                            //TODO show error and provide manual configuration options
+                                        }
+
+                                    },
+                                    function(){console.log("fetch failed")}
+                                    );
                     }
                 }
                 Button{
                     text: "Cancel"
                     onClicked: settingsPage.state="NORMAL"
+                }
+                ActivityIndicator{
+                    id: settingFetchingIndicator
+                    running: false
+                    visible: running
+                    anchors.verticalCenter: parent.verticalCenter
                 }
             }
         }
