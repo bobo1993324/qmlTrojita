@@ -36,8 +36,11 @@ void TrojitaMessageDetails::setDate(QString date){
 }
 
 void TrojitaMessageDetails::setMessage(const QModelIndex &index){
+
+    m_messageIndex = index;
     //get metas
     qDebug() << "TrojitaMessageDetails::setMessage";
+
     setSubject(index.data(Imap::Mailbox::RoleMessageSubject).toString());
     QVariantList senderInfoList = index.data(Imap::Mailbox::RoleMessageSender).toList();
     qDebug() << senderInfoList ;
@@ -172,7 +175,7 @@ void TrojitaMessageDetails::partFactoryCreate(const QModelIndex &partIndex, int 
         qDebug() << "it's a compound part";
         // First loop iteration is used to find out what MIME type to show
         if (mimeType == QLatin1String("multipart/alternative")) {
-            //user plain text
+            //use plain text
             for (int i = 0; i < partIndex.model()->rowCount(partIndex); ++i) {
                 QModelIndex anotherPart = partIndex.child(i, 0);
                 Q_ASSERT(anotherPart.isValid());
@@ -397,7 +400,7 @@ QColor TrojitaMessageDetails::tintColor(const QColor &color, const QColor &tintC
     return finalColor;
 }
 void TrojitaMessageDetails::fetchSimpleContent(QModelIndex anotherPart, const Imap::Mailbox::Model * constModel){
-    m_partIndex=anotherPart;
+    m_partIndex = anotherPart;
     if(m_partIndex.data(Imap::Mailbox::RoleIsFetched).toBool()){
         simplePartFetched();
     }else{
@@ -407,10 +410,10 @@ void TrojitaMessageDetails::fetchSimpleContent(QModelIndex anotherPart, const Im
         part->fetch(model);
     }
 }
+
 void TrojitaMessageDetails::deleteMessage(){
     qDebug() << "mark as delete";
     QModelIndexList translatedIndexes;
-    translatedIndexes << Imap::deproxifiedIndex(m_partIndex.parent().parent());
-
+    translatedIndexes << Imap::deproxifiedIndex(m_messageIndex);
     model->markMessagesDeleted(translatedIndexes, Imap::Mailbox::FLAG_ADD);
 }
