@@ -27,7 +27,7 @@ QHash<int, QByteArray> TrojitaMailBoxModel::roleNames() const{
     roles[NameRole] = "name";
     roles[HasChildrenRole] = "hasChildren";
     roles[UnreadCountRole] = "unreadCount";
-    roles[LevelRole] = "level";
+//    roles[LevelRole] = "level";
     return roles;
 }
 int TrojitaMailBoxModel::rowCount(const QModelIndex &) const {

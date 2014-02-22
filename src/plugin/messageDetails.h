@@ -49,6 +49,7 @@ private:
     void fetchSimpleContent(QModelIndex anotherPart, const Imap::Mailbox::Model * constModel);
     QColor tintColor(const QColor &color, const QColor &tintColor);
     QModelIndex m_partIndex;
+    QModelIndex m_messageIndex;
     QString m_content;
     QString m_subject;
     QString m_from;
