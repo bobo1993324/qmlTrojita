@@ -23,6 +23,7 @@ void EmailApplication::createView(){
     connect(m_view->rootObject()->findChild<QQuickItem *>("messagesPage"),
                     SIGNAL(messageClicked(int)), this, SLOT(messageClicked(int)));
 //    connect(msgListWidget->tree, SIGNAL(clicked(const QModelIndex &)), this, SLOT(msgListClicked(const QModelIndex &)));
+    m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     m_view->show();
 }
 
