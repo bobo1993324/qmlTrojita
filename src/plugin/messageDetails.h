@@ -26,6 +26,7 @@ public:
     TrojitaMessageDetails(QString content = "", TrojitaAttachmentsModel * tam = 0);
 
     Q_INVOKABLE void deleteMessage();
+    Q_INVOKABLE void markUnreadMessage();
 
     QString content();
     void setContent(QString content);

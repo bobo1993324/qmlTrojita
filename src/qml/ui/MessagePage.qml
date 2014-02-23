@@ -11,6 +11,9 @@ Page{
     DeletePopover{
         id: deletePopover
     }
+    MarkPopover{
+        id: markPopover
+    }
     Column{
         anchors.fill: parent
         ListItem.Standard{
@@ -75,6 +78,16 @@ Page{
                 iconSource:Qt.resolvedUrl("../img/delete.svg")
                 onTriggered:{
                     PopupUtils.open(deletePopover, deleteButton)
+                }
+            }
+        }
+        ToolbarButton{
+            id: markButton
+            action: Action{
+                text: "Mark"
+                iconSource:Qt.resolvedUrl("../img/compose.svg")
+                onTriggered:{
+                    PopupUtils.open(markPopover, markButton)
                 }
             }
         }

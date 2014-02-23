@@ -220,6 +220,7 @@ void EmailApplication::mailBoxClicked(QString name){
     trojitaMessagesModel->setMailBoxName(name);
 }
 
+// Listen to the event: message is clicked from uid
 void EmailApplication::messageClicked(int uid){
     qDebug() << "message " << uid << " clicked";
     //search in msgListModel for the QModelIndex corresponds to uid
@@ -232,6 +233,8 @@ void EmailApplication::messageClicked(int uid){
         }
     }
 }
+
+// Listen to the event: message is clicked using QModeIndex: index
 void EmailApplication::msgListClicked(const QModelIndex &index)
 {
     Q_ASSERT(index.isValid());
@@ -245,10 +248,14 @@ void EmailApplication::msgListClicked(const QModelIndex &index)
     // Be sure to update the toolbar/actions with the state of the current message
 //    updateMessageFlags();
 
+    // Mark mail as read
+    QModelIndexList translatedIndexes;
+    translatedIndexes << Imap::deproxifiedIndex(index);
+    model->markMessagesRead(translatedIndexes, Imap::Mailbox::FLAG_ADD);
+
     // Because it's quite possible that we have switched into another mailbox, make sure that we're in the "current" one so that
     // user will be notified about new arrivals, etc.
     QModelIndex translated = Imap::deproxifiedIndex(index);
     model->switchToMailbox(translated.parent().parent());
     trojitaMessageDetails->setMessage(index);
 }
-

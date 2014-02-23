@@ -417,3 +417,10 @@ void TrojitaMessageDetails::deleteMessage(){
     translatedIndexes << Imap::deproxifiedIndex(m_messageIndex);
     model->markMessagesDeleted(translatedIndexes, Imap::Mailbox::FLAG_ADD);
 }
+
+void TrojitaMessageDetails::markUnreadMessage(){
+    qDebug() << "mark as unread";
+    QModelIndexList translatedIndexes;
+    translatedIndexes << Imap::deproxifiedIndex(m_messageIndex);
+    model->markMessagesRead(translatedIndexes, Imap::Mailbox::FLAG_REMOVE);
+}

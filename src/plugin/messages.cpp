@@ -100,7 +100,7 @@ void TrojitaMessagesModel::reloadMessages(){
             else
                 sender = oneSender[2].toString() + "@" + oneSender[3].toString();
         }
-        bool unread = m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageWasUnread).toBool();
+        bool unread = !m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageIsMarkedRead).toBool();
         QDateTime qdt = m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageDate).toDateTime();
         bool isStared=false;
         QStringList flags=  m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageFlags).toStringList();
