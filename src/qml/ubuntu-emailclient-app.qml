@@ -1,8 +1,6 @@
 import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
-import Ubuntu.Components.Extras.Browser 0.1
-
 import "ui"
 /*!
     \brief MainView with Tabs element.
@@ -14,43 +12,87 @@ MainView {
     id: mainView
     width: units.gu(50)
     height: units.gu(75)
-
-    PageStack{
-        id: pageStack
-        Component.onCompleted: {
-            push(mailBoxPage);
-//            push(messagePage)
-        }
+    //This empty page disable default toolbar
+    Page{
+        anchors.fill: parent
         MailBoxPage{
             id: mailBoxPage
-        }
-        SettingsPage{
-            id: settingsPage
+            width: parent.width
+            height: parent.height
         }
         FoldersPage{
             id: foldersPage
+            //hide at start
+            width: parent.width
+            height: parent.height
+            x: -parent.width
+            Behavior on x {
+                UbuntuNumberAnimation{}
+            }
         }
         MessagePage{
             id: messagePage
+            width: parent.width
+            height: parent.height
+            x: parent.width
+            Behavior on x {
+                UbuntuNumberAnimation{}
+            }
+        }
+        SettingsPage{
+            id: settingsPage
+            width: parent.width
+            height: parent.height
+            x: -parent.width
+            Behavior on x {
+                UbuntuNumberAnimation{}
+            }
         }
         ComposePage{
             id: composePage
+            width: parent.width
+            height: parent.height
+            x: parent.width
+            Behavior on x {
+                UbuntuNumberAnimation{}
+            }
         }
     }
+    function goToMailboxPage(){
+        closeAllToolbars();
+        foldersPage.x = -mainView.width
+        messagePage.x = mainView.width
+        settingsPage.x = -mainView.width
+        composePage.x = mainView.width
+        mailBoxPage.x = 0
+    }
+
     function goToComposePage(){
-        pageStack.push(composePage);
+        closeAllToolbars();
+        composePage.x = 0;
     }
 
     function goToFoldersPage(){
-        pageStack.push(foldersPage);
+        closeAllToolbars();
+        foldersPage.x = 0;
     }
 
     function goToSettingsPage(){
-        pageStack.push(settingsPage);
+        closeAllToolbars();
+        settingsPage.x = 0;
     }
 
     function goToMessagePage(){
-        pageStack.push(messagePage);
+        closeAllToolbars();
+        messagePage.x = 0;
+    }
+    //opened toolbars will grab mouse drag from listview
+    function closeAllToolbars(){
+        mailBoxPage.toolbar.close();
+        composePage.toolbar.close();
+        foldersPage.toolbar.close();
+        settingsPage.toolbar.close();
+        messagePage.toolbar.close();
     }
 
     //        Tabs{

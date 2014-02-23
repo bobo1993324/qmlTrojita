@@ -1,15 +1,34 @@
 import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
-Page{
+import QtGraphicalEffects 1.0
+Rectangle{
     id: foldersPage
     objectName: "mailBoxPage"
-    title:"Folders"
-    visible: false
+    //TODO show account name
+    color: "#ECEDED"
+
+    property alias toolbar: toolbar
     signal mailBoxClicked(string name)
     //TODO gridView
+
+    ListItem.Header{
+        id: title
+        text: "Folders"
+        anchors{
+            left: parent.left
+            right: parent.right
+            top: parent.top
+        }
+    }
     ListView{
-        anchors.fill: parent;
+        anchors{
+            left: parent.left
+            right: parent.right
+            top: title.bottom
+            bottom: parent.bottom
+        }
+        clip: true
         model: TROJITA_MAILBOX
         delegate: ListItem.Standard{
             Label{
@@ -21,7 +40,7 @@ Page{
             onClicked: {
                 console.log("clicked")
                 foldersPage.mailBoxClicked(name)
-                pageStack.pop();
+                mainView.goToMailboxPage();
             }
             ListView.onAdd: {
                 //load first mailbox at start
@@ -31,6 +50,27 @@ Page{
                 }
             }
         }
-
+    }
+    Panel{
+        id: toolbar
+        anchors.bottom: parent.bottom
+        width: parent.width
+        height: units.gu(8)
+        Rectangle{
+            id: toolbarRec
+            width: parent.width
+            height: parent.height
+            color: "white"
+            ToolbarItems{
+                id: toolbarItems
+                back:ToolbarButton{
+                    action: Action{
+                        text: "Back"
+                        iconSource: Qt.resolvedUrl("../img/back.svg")
+                        onTriggered: mainView.goToMailboxPage();
+                    }
+                }
+            }
+        }
     }
 }

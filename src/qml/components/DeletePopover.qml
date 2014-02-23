@@ -13,7 +13,7 @@ Component {
                     //TODO delete current message
                     TROJITA_MESSAGE_DETAILS.deleteMessage()
                     PopupUtils.close(popover)
-                    pageStack.pop()
+                    mainView.goToMailboxPage()
                 }
             }
         }

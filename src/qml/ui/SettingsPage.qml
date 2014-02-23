@@ -3,12 +3,11 @@ import U1db 1.0 as U1db
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import "../js/MailConfig.js" as MailConfig
-Page{
+Rectangle{
     id: settingsPage
     objectName: "settingPage"
-    title: "Settings"
-    visible: false
-
+    color: "#ECEDED"
+    property alias toolbar: toolbar
     signal settingChanged;
     U1db.Database{
         id: accountsDatabase
@@ -220,6 +219,28 @@ Page{
                     running: false
                     visible: running
                     anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+        }
+    }
+    Panel{
+        id: toolbar
+        anchors.bottom: parent.bottom
+        width: parent.width
+        height: units.gu(8)
+        Rectangle{
+            id: toolbarRec
+            width: parent.width
+            height: parent.height
+            color: "white"
+            ToolbarItems{
+                id: toolbarItems
+                back:ToolbarButton{
+                    action: Action{
+                        text: "Back"
+                        iconSource: Qt.resolvedUrl("../img/back.svg")
+                        onTriggered: mainView.goToMailboxPage();
+                    }
                 }
             }
         }

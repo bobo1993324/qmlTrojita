@@ -4,10 +4,11 @@ import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Extras.Browser 0.1
 import Ubuntu.Components.Popups 0.1
 import "../components"
-Page{
+Rectangle{
     id: messagePage
-    visible: false
     property bool detailExpanded:false
+    color: "#ECEDED"
+    property alias toolbar: toolbar
     DeletePopover{
         id: deletePopover
     }
@@ -70,33 +71,59 @@ Page{
             }
         }
     }
-    tools: ToolbarItems{
-        ToolbarButton{
-            id: deleteButton
-            action: Action{
-                text: "Delete"
-                iconSource:Qt.resolvedUrl("../img/delete.svg")
-                onTriggered:{
-                    PopupUtils.open(deletePopover, deleteButton)
+//    Button{
+//        text: "go back"
+//        onClicked: mainView.goToMailboxPage()
+//    }
+
+    Panel{
+        id: toolbar
+        anchors.bottom: parent.bottom
+        width: parent.width
+        height: units.gu(8)
+        Rectangle{
+            width: parent.width
+            height: parent.height
+            color: "white"
+            ToolbarItems{
+                back: ToolbarButton{
+                    action: Action{
+                        text: "Back"
+                        iconSource: Qt.resolvedUrl("../img/back.svg")
+                        onTriggered: {
+                            mainView.goToMailboxPage()
+                        }
+                    }
                 }
-            }
-        }
-        ToolbarButton{
-            id: markButton
-            action: Action{
-                text: "Mark"
-                iconSource:Qt.resolvedUrl("../img/compose.svg")
-                onTriggered:{
-                    PopupUtils.open(markPopover, markButton)
+
+                ToolbarButton{
+                    id: deleteButton
+                    action: Action{
+                        text: "Delete"
+                        iconSource:Qt.resolvedUrl("../img/delete.svg")
+                        onTriggered:{
+                            PopupUtils.open(deletePopover, deleteButton)
+                        }
+                    }
                 }
-            }
-        }
-        ToolbarButton{
-            //TODO implement reply
-            visible: false
-            action: Action{
-                text: "Reply"
-                iconSource: Qt.resolvedUrl("../img/compose.svg")
+                ToolbarButton{
+                    id: markButton
+                    action: Action{
+                        text: "Mark"
+                        iconSource:Qt.resolvedUrl("../img/compose.svg")
+                        onTriggered:{
+                            PopupUtils.open(markPopover, markButton)
+                        }
+                    }
+                }
+                ToolbarButton{
+                    //TODO implement reply
+                    visible: false
+                    action: Action{
+                        text: "Reply"
+                        iconSource: Qt.resolvedUrl("../img/compose.svg")
+                    }
+                }
             }
         }
     }

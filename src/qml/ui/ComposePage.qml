@@ -2,9 +2,10 @@ import QtQuick 2.0
 import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
-Page {
+Rectangle {
     id: composePage
-    visible: false
+    color: "#ECEDED"
+    property alias toolbar: toolbar
     ListModel{
         id: receiverModel
         ListElement{
@@ -16,6 +17,10 @@ Page {
     Column{
         id: recieversColumn
         width: parent.width
+        ListItem.Header{
+            text: "Compose"
+        }
+
         Repeater{
             model: receiverModel
             delegate: ListItem.Base{
@@ -78,35 +83,57 @@ Page {
         anchors.top: recieversColumn.bottom
         anchors.margins: units.gu(1)
     }
-    tools: ToolbarItems{
-        ToolbarButton{
-            action: Action{
-                id: sendButton
-                text: "Send"
-                iconSource: Qt.resolvedUrl("../img/email.svg")
-                onTriggered: {
-                    //TODO show send mail progress
-                    //TODO transfer receiverModel to backend one reciever at a time before send
-                    TROJITA_SEND_MAIL.sendMail(receiverModel.get(0).value, subjectTextField.text, contextTextArea.text);
-                    pageStack.pop();
+    Panel{
+        id: toolbar
+        anchors.bottom: parent.bottom
+        width: parent.width
+        height: units.gu(8)
+        Rectangle{
+            id: toolbarRec
+            width: parent.width
+            height: parent.height
+            color: "white"
+            ToolbarItems{
+                back:ToolbarButton{
+                    action: Action{
+                        text: "Back"
+                        iconSource: Qt.resolvedUrl("../img/back.svg")
+                        onTriggered: mainView.goToMailboxPage();
+                    }
                 }
-            }
-        }
-        ToolbarButton{
-            //TODO attachFiles
-            visible: false;
-            action: Action{
-                text: "Attach"
-                iconSource: Qt.resolvedUrl("../img/add.svg")
-            }
-        }
-        ToolbarButton{
-            //TODO sendmail to multiple recievers
-            visible: false;
-            action: Action{
-                text: "Add reciever"
-                iconSource: Qt.resolvedUrl("../img/add.svg")
+                ToolbarButton{
+                    action: Action{
+                        id: sendButton
+                        text: "Send"
+                        iconSource: Qt.resolvedUrl("../img/email.svg")
+                        onTriggered: {
+                            //TODO show send mail progress
+                            //TODO transfer receiverModel to backend one reciever at a time before send
+                            TROJITA_SEND_MAIL.sendMail(receiverModel.get(0).value, subjectTextField.text, contextTextArea.text);
+                             mainView.goToMailboxPage();
+                        }
+                    }
+                }
+
+                ToolbarButton{
+                    //TODO attachFiles
+                    visible: false;
+                    action: Action{
+                        text: "Attach"
+                        iconSource: Qt.resolvedUrl("../img/add.svg")
+                    }
+                }
+                ToolbarButton{
+                    //TODO sendmail to multiple recievers
+                    visible: false;
+                    action: Action{
+                        text: "Add reciever"
+                        iconSource: Qt.resolvedUrl("../img/add.svg")
+                    }
+                }
+
             }
         }
     }
 }
+
