@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
+import "../components"
 Rectangle{
     id: messagesPage
     objectName: "messagesPage"
@@ -19,7 +20,8 @@ Rectangle{
 
         ListView{
             width: parent.width
-            height: parent.height - title.height
+            //toolbar.height is locked and opened in desktop mode
+            height: parent.height - title.height - (isPhone ? 0 : toolbar.height)
             model: TROJITA_MESSAGES
             clip: true
             delegate: ListItem.Base{
@@ -122,6 +124,8 @@ Rectangle{
                     }
                 }
             }
+        }
+        ToolbarShadow{
         }
     }
 }

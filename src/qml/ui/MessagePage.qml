@@ -57,7 +57,8 @@ Rectangle{
 
         Rectangle{
             width: parent.width
-            height: parent.height-fromLIS.height*(messagePage.detailExpanded? 3:1);
+            height: parent.height - fromLIS.height * (messagePage.detailExpanded? 3:1)
+                            - (isPhone ? 0 : toolbar.height)
             UbuntuWebView{
                 width: parent.width
                 height: parent.height
@@ -71,10 +72,6 @@ Rectangle{
             }
         }
     }
-//    Button{
-//        text: "go back"
-//        onClicked: mainView.goToMailboxPage()
-//    }
 
     Panel{
         id: toolbar
@@ -87,6 +84,7 @@ Rectangle{
             color: "white"
             ToolbarItems{
                 back: ToolbarButton{
+                    visible: isPhone
                     action: Action{
                         text: "Back"
                         iconSource: Qt.resolvedUrl("../img/back.svg")
@@ -125,6 +123,9 @@ Rectangle{
                     }
                 }
             }
+        }
+
+        ToolbarShadow{
         }
     }
 }

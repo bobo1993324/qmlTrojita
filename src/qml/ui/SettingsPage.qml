@@ -3,6 +3,7 @@ import U1db 1.0 as U1db
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import "../js/MailConfig.js" as MailConfig
+import "../components"
 Rectangle{
     id: settingsPage
     objectName: "settingPage"
@@ -243,6 +244,8 @@ Rectangle{
                     }
                 }
             }
+        }
+        ToolbarShadow{
         }
     }
 }

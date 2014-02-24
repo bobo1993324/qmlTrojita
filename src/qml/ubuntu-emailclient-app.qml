@@ -10,31 +10,54 @@ import "ui"
 
 MainView {
     id: mainView
-    width: units.gu(50)
+    width: units.gu(150)
     height: units.gu(75)
     //This empty page disable default toolbar
+    property bool isPhone: width < units.gu(100)
+    property int leftPanelWidth:units.gu(50)
+    property int seperatorWidth: units.gu(0.5)
+    Component.onCompleted: {
+        if(isPhone){
+            closeAndUnlockToolbars();
+        }else{
+            openAndLockToolbars();
+        }
+    }
+
+    onIsPhoneChanged: {
+        if(isPhone){
+            closeAndUnlockToolbars();
+        }else{
+            openAndLockToolbars();
+        }
+    }
+
+    property string currentPage : "mailbox"
     Page{
         anchors.fill: parent
         MailBoxPage{
             id: mailBoxPage
-            width: parent.width
+            width: isPhone ? parent.width :leftPanelWidth
             height: parent.height
+            x: (currentPage == "mailbox" || (currentPage == "message" && !isPhone)) ? 0 : parent.width
         }
         FoldersPage{
             id: foldersPage
             //hide at start
-            width: parent.width
+            width: isPhone ? parent.width :leftPanelWidth
             height: parent.height
-            x: -parent.width
+            x: currentPage == "folders" ? 0 : -parent.width
             Behavior on x {
                 UbuntuNumberAnimation{}
             }
         }
         MessagePage{
             id: messagePage
-            width: parent.width
+            width: isPhone ? parent.width : parent.width -leftPanelWidth -seperatorWidth
             height: parent.height
-            x: parent.width
+            x: (currentPage == "message" && isPhone )?
+                   0 : (!isPhone && (currentPage == "message" || currentPage == "mailbox" || currentPage == "folders")) ?
+                      leftPanelWidth +seperatorWidth : parent.width
             Behavior on x {
                 UbuntuNumberAnimation{}
             }
@@ -43,48 +66,53 @@ MainView {
             id: settingsPage
             width: parent.width
             height: parent.height
-            x: -parent.width
+            x:  currentPage == "settings" ? 0 : -parent.width
             Behavior on x {
                 UbuntuNumberAnimation{}
             }
         }
+        //implement as a popover if
         ComposePage{
             id: composePage
             width: parent.width
             height: parent.height
-            x: parent.width
+            x: currentPage == "compose" ? 0 : parent.width
             Behavior on x {
                 UbuntuNumberAnimation{}
             }
         }
+        Rectangle{
+            id: separator
+            color: UbuntuColors.coolGrey
+            width:seperatorWidth
+            height: parent.height
+            visible: !isPhone && (currentPage == "folders" || currentPage == "mailbox" || currentPage == "message")
+            x:leftPanelWidth
+        }
     }
     function goToMailboxPage(){
-        closeAllToolbars();
-        foldersPage.x = -mainView.width
-        messagePage.x = mainView.width
-        settingsPage.x = -mainView.width
-        composePage.x = mainView.width
-        mailBoxPage.x = 0
+        currentPage = "mailbox"
+        if(isPhone) closeAllToolbars();
     }
 
     function goToComposePage(){
-        closeAllToolbars();
-        composePage.x = 0;
+        currentPage = "compose"
+        if(isPhone) closeAllToolbars();
     }
 
     function goToFoldersPage(){
-        closeAllToolbars();
-        foldersPage.x = 0;
+        currentPage = "folders"
+        if(isPhone) closeAllToolbars();
     }
 
     function goToSettingsPage(){
-        closeAllToolbars();
-        settingsPage.x = 0;
+        currentPage = "settings"
+        if(isPhone) closeAllToolbars();
     }
 
     function goToMessagePage(){
-        closeAllToolbars();
-        messagePage.x = 0;
+        currentPage = "message"
+        if(isPhone) closeAllToolbars();
     }
     //opened toolbars will grab mouse drag from listview
     function closeAllToolbars(){
@@ -93,6 +121,35 @@ MainView {
         foldersPage.toolbar.close();
         settingsPage.toolbar.close();
         messagePage.toolbar.close();
+    }
+
+    function openAndLockToolbars(){
+        mailBoxPage.toolbar.open();
+        foldersPage.toolbar.open();
+        messagePage.toolbar.open();
+        settingsPage.toolbar.open();
+        composePage.toolbar.open();
+
+        mailBoxPage.toolbar.locked = true;
+        foldersPage.toolbar.locked = true;
+        messagePage.toolbar.locked = true;
+        settingsPage.toolbar.locked = true;
+        composePage.toolbar.locked = true;
+    }
+
+    function closeAndUnlockToolbars(){
+
+        mailBoxPage.toolbar.close();
+        foldersPage.toolbar.close();
+        messagePage.toolbar.close();
+        settingsPage.toolbar.close();
+        composePage.toolbar.close();
+
+        mailBoxPage.toolbar.locked = false;
+        foldersPage.toolbar.locked = false;
+        messagePage.toolbar.locked = false;
+        settingsPage.toolbar.locked = false;
+        composePage.toolbar.locked = false;
     }
 
     //        Tabs{

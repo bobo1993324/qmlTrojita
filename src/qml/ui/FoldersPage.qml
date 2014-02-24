@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
-import QtGraphicalEffects 1.0
+import "../components"
 Rectangle{
     id: foldersPage
     objectName: "mailBoxPage"
@@ -27,6 +27,7 @@ Rectangle{
             right: parent.right
             top: title.bottom
             bottom: parent.bottom
+            bottomMargin: isPhone ? 0 : toolbar.height
         }
         clip: true
         model: TROJITA_MAILBOX
@@ -71,6 +72,8 @@ Rectangle{
                     }
                 }
             }
+        }
+        ToolbarShadow{
         }
     }
 }

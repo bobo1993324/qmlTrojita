@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
+import "../components"
 Rectangle {
     id: composePage
     color: "#ECEDED"
@@ -82,6 +83,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.top: recieversColumn.bottom
         anchors.margins: units.gu(1)
+        anchors.bottomMargin: isPhone ? units.gu(1) : units.gu(1) + toolbar.height
     }
     Panel{
         id: toolbar
@@ -131,8 +133,9 @@ Rectangle {
                         iconSource: Qt.resolvedUrl("../img/add.svg")
                     }
                 }
-
             }
+        }
+        ToolbarShadow{
         }
     }
 }
