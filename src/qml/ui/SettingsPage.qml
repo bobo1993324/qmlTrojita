@@ -10,6 +10,23 @@ Rectangle{
     color: "#ECEDED"
     property alias toolbar: toolbar
     signal settingChanged;
+    property string activeAccount: accountsDocument.contents.accounts[accountsDocument.contents.currentAccountIndex]["imap.auth.user"]
+    function getAccountNames(){
+        var returnVal = [];
+        for ( var i in accountsDocument.contents.accounts){
+            returnVal.push(accountsDocument.contents.accounts[i]["imap.auth.user"])
+        }
+        console.log(returnVal)
+        return returnVal;
+    }
+
+    function getActiveAccountIndex(){
+        return accountsDocument.contents.currentAccountIndex;
+    }
+    function setActiveAccountIndex(index){
+        accountsDocument.setCurrentIndex(index);
+    }
+
     U1db.Database{
         id: accountsDatabase
         path: "accounts.u1db"

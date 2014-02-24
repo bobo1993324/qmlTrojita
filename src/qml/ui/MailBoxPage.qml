@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
+import Ubuntu.Components.Popups 0.1
 import "../components"
 Rectangle{
     id: messagesPage
@@ -123,9 +124,22 @@ Rectangle{
                         }
                     }
                 }
+                ToolbarButton{
+                    id: switchAccountButton
+                    action: Action{
+                        text: "Accounts"
+                        iconSource: Qt.resolvedUrl("../img/switch.svg")
+                        onTriggered: {
+                            PopupUtils.open(switchAccountPopover, switchAccountButton)
+                        }
+                    }
+                }
             }
         }
         ToolbarShadow{
         }
+    }
+    SwitchAccountPopover{
+        id: switchAccountPopover
     }
 }

@@ -14,7 +14,7 @@ Rectangle{
 
     ListItem.Header{
         id: title
-        text: "Folders"
+        text: settingsPage.activeAccount
         anchors{
             left: parent.left
             right: parent.right
