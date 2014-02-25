@@ -70,6 +70,8 @@ void TrojitaMailBoxModel::addChildren(QModelIndex parent){
 
 void TrojitaMailBoxModel::setMailBoxModel(Imap::Mailbox::MailboxModel *mbox){
     m_mbox=mbox;
+    disconnect(this, SLOT(mailBoxDataChanged()));
     connect(mbox, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
             this, SLOT(mailBoxDataChanged()));
+    mailBoxDataChanged();
 }

@@ -9,14 +9,17 @@ Rectangle{
     objectName: "settingPage"
     color: "#ECEDED"
     property alias toolbar: toolbar
+
     signal settingChanged;
+    signal addingAccount(string s);
+    signal setCurrentAccount(int idx);
+
     property string activeAccount: accountsDocument.contents.accounts[accountsDocument.contents.currentAccountIndex]["imap.auth.user"]
     function getAccountNames(){
         var returnVal = [];
         for ( var i in accountsDocument.contents.accounts){
             returnVal.push(accountsDocument.contents.accounts[i]["imap.auth.user"])
         }
-        console.log(returnVal)
         return returnVal;
     }
 
@@ -47,7 +50,7 @@ Rectangle{
             var tmp = contents
             tmp.currentAccountIndex = idx
             contents = tmp
-            updateSettings()
+            settingsPage.setCurrentAccount(idx)
         }
         function removeAccount(idx){
             var tmp = contents
@@ -64,20 +67,39 @@ Rectangle{
                 tmp.currentAccountIndex=0
             }
             contents=tmp;
+            settingsPage.addingAccount(account);
             if(contents.accounts.length === 1){
-                updateSettings()
+                settingsPage.setCurrentAccount(0);
             }
         }
 
-        function updateSettings(){
-            if(contents.currentAccountIndex <0)
-                return;
-            for (var i in contents.accounts[contents.currentAccountIndex]){
-                TROJITA_SETTING.updateSetting(i, contents.accounts[contents.currentAccountIndex][i]);
+//        function updateSettings(){
+//            if(contents.currentAccountIndex <0)
+//                return;
+//            for (var i in contents.accounts[contents.currentAccountIndex]){
+//                TROJITA_SETTING.updateSetting(i, contents.accounts[contents.currentAccountIndex][i]);
+//            }
+//            //flag to automatically load first mailbox
+//            mailBoxPage.loaded=false;
+//            settingsPage.settingChanged();
+//        }
+
+        Component.onCompleted: {
+            addAccountTimer.start()
+        }
+    }
+
+    //need to wait for the connect signal to work
+    Timer {
+        id: addAccountTimer
+        interval: 200
+        running: false
+        repeat: false
+        onTriggered: {
+            for (var i in accountsDocument.contents.accounts){
+                addingAccount(JSON.stringify(accountsDocument.contents.accounts[i]));
             }
-            //flag to automatically load first mailbox
-            mailBoxPage.loaded=false;
-            settingsPage.settingChanged();
+            setCurrentAccount(accountsDocument.contents.currentAccountIndex);
         }
     }
 

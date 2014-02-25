@@ -55,8 +55,6 @@ void TrojitaMessageDetails::setMessage(const QModelIndex &index){
     qDebug() << "sender is " << sender;
     setFrom(sender);
     setDate(index.data(Imap::Mailbox::RoleMessageDate).toDateTime().toString());
-    //clear attachments
-    m_tam->clear();
     // first, let's get a real model
     QModelIndex messageIndex;
     const Imap::Mailbox::Model *constModel = 0;
@@ -284,7 +282,8 @@ void TrojitaMessageDetails::fetchGenericMultipart(QModelIndex partIndex, const I
             findBody = true;
             fetchSimpleContent(anotherPart, constModel);
         }else{
-            m_tam->add(TrojitaAttachment(anotherPart.data(Imap::Mailbox::RolePartFileName).toString()));
+            //TODO how do we deal with attachments
+            //m_tam->add(TrojitaAttachment(anotherPart.data(Imap::Mailbox::RolePartFileName).toString()));
         }
     }
     //TODO report error if cannot findBody

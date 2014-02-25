@@ -8,7 +8,7 @@ include_directories(
 )
 
 
-add_executable(ubuntu-emailclient-app main.cpp ubuntu-emailclient-app.cpp ${QML_SRCS})
+add_executable(ubuntu-emailclient-app main.cpp ubuntu-emailclient-app.cpp mailBackend.cpp ${QML_SRCS})
 
 qt5_use_modules(ubuntu-emailclient-app Widgets Quick)
 

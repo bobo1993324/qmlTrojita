@@ -2,12 +2,13 @@
 EmailApplication::EmailApplication(int& argc, char** argv, QSettings * settings)
     : QApplication(argc, argv),
       m_settings(settings),
-      m_view(new QQuickView())
+      m_view(new QQuickView()),
+      mailCurrentIndex(-1)
 {
-    defaultSetting();
-    setupModels();
+    //    defaultSetting();
+    //    setupModels();
     registerQml();
-    model->reloadMailboxList();
+    //    model->reloadMailboxList();
 }
 int EmailApplication::exec(){
     createView();
@@ -15,46 +16,41 @@ int EmailApplication::exec(){
 }
 void EmailApplication::createView(){
     m_view->setSource(QUrl::fromLocalFile("qml/ubuntu-emailclient-app.qml"));
+
+    //    connect(m_view->rootObject()->findChild<QQuickItem *>("settingPage"),
+    //                     SIGNAL(settingChanged()), this, SLOT(settingUpdated()));
+
     connect(m_view->rootObject()->findChild<QQuickItem *>("settingPage"),
-                     SIGNAL(settingChanged()), this, SLOT(settingUpdated()));
-    //invoke updateSettings in qml object accountsDocument
+            SIGNAL(addingAccount(QString)), this, SLOT(addingAccount(QString)));
+    connect(m_view->rootObject()->findChild<QQuickItem *>("settingPage"),
+            SIGNAL(setCurrentAccount(int)), this, SLOT(setCurrentAccount(int)));
+
     connect(m_view->rootObject()->findChild<QQuickItem *>("mailBoxPage"),
-                     SIGNAL(mailBoxClicked(QString)), this, SLOT(mailBoxClicked(QString)));
+            SIGNAL(mailBoxClicked(QString)), this, SLOT(mailBoxClicked(QString)));
+
     connect(m_view->rootObject()->findChild<QQuickItem *>("messagesPage"),
-                    SIGNAL(messageClicked(int)), this, SLOT(messageClicked(int)));
-//    connect(msgListWidget->tree, SIGNAL(clicked(const QModelIndex &)), this, SLOT(msgListClicked(const QModelIndex &)));
+            SIGNAL(messageClicked(int)), this, SLOT(messageClicked(int)));
+
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     m_view->show();
 }
 
 void EmailApplication::registerQml(){
     //TODO user reconnect Context Models
-    trojitaSetting=new TrojitaSetting(m_settings);
-    trojitaMailBoxModel=new TrojitaMailBoxModel(mboxModel);
-    trojitaMessagesModel = new TrojitaMessagesModel(msgListModel);
-    trojitaAttachmentsModel = new TrojitaAttachmentsModel();
-    trojitaMessageDetails = new TrojitaMessageDetails("", trojitaAttachmentsModel);
-    trojitaSendMail = new TrojitaSendMail(m_settings, model);
+    trojitaSetting=new TrojitaSetting();
+    trojitaMailBoxModel=new TrojitaMailBoxModel();
+    trojitaMessagesModel = new TrojitaMessagesModel();
+    trojitaMessageDetails = new TrojitaMessageDetails();
+    trojitaSendMail = new TrojitaSendMail();
     m_view->rootContext()->setContextProperty("TROJITA_MAILBOX", trojitaMailBoxModel);
     m_view->rootContext()->setContextProperty("TROJITA_SETTING", trojitaSetting);
     m_view->rootContext()->setContextProperty("TROJITA_MESSAGES", trojitaMessagesModel);
     m_view->rootContext()->setContextProperty("TROJITA_MESSAGE_DETAILS", trojitaMessageDetails);
-    m_view->rootContext()->setContextProperty("TROJITA_ATTACHMENTS", trojitaAttachmentsModel);
     m_view->rootContext()->setContextProperty("TROJITA_SEND_MAIL", trojitaSendMail);
 }
 void EmailApplication::defaultSetting(){
     using Common::SettingsNames;
-//    m_settings->setValue(SettingsNames::imapMethodKey, SettingsNames::methodSSL);
-//    m_settings->setValue(SettingsNames::imapHostKey, "imap.gmail.com");
-//    m_settings->setValue(SettingsNames::imapPassKey, "*******");
     m_settings->setValue(SettingsNames::cacheOfflineKey, SettingsNames::cacheOfflineNone);
-//    m_settings->setValue(SettingsNames::msaMethodKey, SettingsNames::methodSMTP);
-//    m_settings->setValue(SettingsNames::smtpHostKey, "smtp.gmail.com");
-//    m_settings->setValue(SettingsNames::smtpPortKey, "587");
-//    m_settings->setValue(SettingsNames::smtpStartTlsKey, "true");
-//    m_settings->setValue(SettingsNames::smtpAuthKey, "true");
-//    m_settings->setValue(SettingsNames::smtpUserKey, "bobo1993324@gmail.com");
-//    m_settings->setValue(SettingsNames::smtpPassKey, "********");
 }
 
 void EmailApplication::settingUpdated(){
@@ -73,16 +69,16 @@ void EmailApplication::reconnectContextModels(){
 void EmailApplication::nukeModels()
 {
     m_networkWatcher->setNetworkOffline();
-    delete prettyMsgListModel;
-    prettyMsgListModel = 0;
-    delete threadingMsgListModel;
-    threadingMsgListModel = 0;
+    //    delete prettyMsgListModel;
+    //    prettyMsgListModel = 0;
+    //    delete threadingMsgListModel;
+    //    threadingMsgListModel = 0;
     delete msgListModel;
     msgListModel = 0;
     delete mboxModel;
     mboxModel = 0;
-    delete prettyMboxModel;
-    prettyMboxModel = 0;
+    //    delete prettyMboxModel;
+    //    prettyMboxModel = 0;
     delete model;
     model = 0;
 }
@@ -114,9 +110,10 @@ void EmailApplication::setupModels(){
 
     QString cacheDir = Common::writablePath(Common::LOCATION_CACHE);
     Imap::Mailbox::AbstractCache *cache = 0;
-//    qDebug()<<"cache directory is " << cacheDir;
+    //    qDebug()<<"cache directory is " << cacheDir;
+    //TODO enable cache in production
     bool shouldUsePersistentCache = m_settings->value(SettingsNames::cacheOfflineKey).toString() != SettingsNames::cacheOfflineNone;
-//    qDebug() << "shouldUsePersistentCache " << shouldUsePersistentCache;
+    //    qDebug() << "shouldUsePersistentCache " << shouldUsePersistentCache;
     if (shouldUsePersistentCache) {
         if (! QDir().mkpath(cacheDir)) {
             //            QMessageBox::critical(this, tr("Cache Error"), tr("Failed to create directory %1").arg(cacheDir));
@@ -163,16 +160,16 @@ void EmailApplication::setupModels(){
     }
     mboxModel = new Imap::Mailbox::MailboxModel(this, model);
     mboxModel->setObjectName(QLatin1String("mboxModel"));
-    prettyMboxModel = new Imap::Mailbox::PrettyMailboxModel(this, mboxModel);
-    prettyMboxModel->setObjectName(QLatin1String("prettyMboxModel"));
+    //    prettyMboxModel = new Imap::Mailbox::PrettyMailboxModel(this, mboxModel);
+    //    prettyMboxModel->setObjectName(QLatin1String("prettyMboxModel"));
     msgListModel = new Imap::Mailbox::MsgListModel(this, model);
     msgListModel->setObjectName(QLatin1String("msgListModel"));
-    threadingMsgListModel = new Imap::Mailbox::ThreadingMsgListModel(this);
-    threadingMsgListModel->setObjectName(QLatin1String("threadingMsgListModel"));
-    threadingMsgListModel->setSourceModel(msgListModel);
-    prettyMsgListModel = new Imap::Mailbox::PrettyMsgListModel(this);
-    prettyMsgListModel->setSourceModel(threadingMsgListModel);
-    prettyMsgListModel->setObjectName(QLatin1String("prettyMsgListModel"));
+    //    threadingMsgListModel = new Imap::Mailbox::ThreadingMsgListModel(this);
+    //    threadingMsgListModel->setObjectName(QLatin1String("threadingMsgListModel"));
+    //    threadingMsgListModel->setSourceModel(msgListModel);
+    //    prettyMsgListModel = new Imap::Mailbox::PrettyMsgListModel(this);
+    //    prettyMsgListModel->setSourceModel(threadingMsgListModel);
+    //    prettyMsgListModel->setObjectName(QLatin1String("prettyMsgListModel"));
     connect (model, SIGNAL(mailBoxModelChanged(QModelIndex, QModelIndex)), mboxModel, SLOT(emitDataChanged()));
     connect(model, SIGNAL(authRequested()), this, SLOT(authenticationRequested()), Qt::QueuedConnection);
     connect(model, SIGNAL(authAttemptFailed(QString)), this, SLOT(authenticationFailed(QString)));
@@ -212,6 +209,18 @@ void EmailApplication::sslErrors(const QList<QSslCertificate> &certificateChain,
     model->setSslPolicy(certificateChain, errors, true);
 }
 
+void EmailApplication::setCurrentAccount(int idx){
+    //reconnect context model
+    qDebug() << "setCurrent to " << idx;
+    model = mailBackendList[idx]->model;
+    mboxModel = mailBackendList[idx]->mboxModel;
+    msgListModel = mailBackendList[idx]->msgListModel;
+    trojitaMailBoxModel->setMailBoxModel(mailBackendList[idx]->mboxModel);
+    trojitaMessagesModel->setMsgListModel(mailBackendList[idx]->msgListModel);
+    trojitaSendMail->setModel(mailBackendList[idx]->model);
+    //    mailBackendList[idx]->model->reloadMailboxList();
+}
+
 void EmailApplication::mailBoxClicked(QString name){
     qDebug() << name << " clicked";
     //find the index of name in mboxModel
@@ -246,7 +255,7 @@ void EmailApplication::msgListClicked(const QModelIndex &index)
         return;
 
     // Be sure to update the toolbar/actions with the state of the current message
-//    updateMessageFlags();
+    //    updateMessageFlags();
 
     // Mark mail as read
     QModelIndexList translatedIndexes;
@@ -258,4 +267,9 @@ void EmailApplication::msgListClicked(const QModelIndex &index)
     QModelIndex translated = Imap::deproxifiedIndex(index);
     model->switchToMailbox(translated.parent().parent());
     trojitaMessageDetails->setMessage(index);
+}
+
+void EmailApplication::addingAccount(QString s){
+    QVariant account = QJsonDocument::fromJson(s.toLatin1()).toVariant();
+    mailBackendList.append(new MailBackend(account, m_settings));
 }

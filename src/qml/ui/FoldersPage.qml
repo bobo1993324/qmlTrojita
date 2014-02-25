@@ -47,6 +47,7 @@ Rectangle{
                 //load first mailbox at start
                 if(!mailBoxPage.loaded && index == 0){
                     mailBoxPage.loaded = true;
+                    console.log("ListView.onAdd")
                     foldersPage.mailBoxClicked(name)
                 }
             }

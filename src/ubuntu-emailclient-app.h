@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QQuickItem>
 #include <QDir>
+#include <QJsonDocument>
 
 #include "plugin/settings.h"
 #include "plugin/mailBox.h"
@@ -29,6 +30,8 @@
 #include "Common/Paths.h"
 #include "Common/MetaTypes.h"
 #include "Streams/SocketFactory.h"
+
+#include "mailBackend.h"
 class EmailApplication : public QApplication
 {
     Q_OBJECT
@@ -40,6 +43,8 @@ public slots:
     void settingUpdated();
     void mailBoxClicked(QString name);
     void messageClicked(int uid);
+
+    void addingAccount(QString s);
     //trojita
     void cacheError(const QString &message);
     void authenticationRequested();
@@ -47,6 +52,7 @@ public slots:
     void slotImapLogged(uint parserId, const Common::LogMessage &message);
     void sslErrors(const QList<QSslCertificate> &certificateChain, const QList<QSslError> &errors);
 
+    void setCurrentAccount(int idx);
 private:
     void createView();
     void registerQml();
@@ -66,11 +72,11 @@ private:
     //trojita
     Imap::Mailbox::Model *model;
     Imap::Mailbox::MailboxModel *mboxModel;
-    Imap::Mailbox::PrettyMailboxModel *prettyMboxModel;
+//    Imap::Mailbox::PrettyMailboxModel *prettyMboxModel;
     Imap::Mailbox::MsgListModel *msgListModel;
     Imap::Mailbox::NetworkWatcher *m_networkWatcher;
-    Imap::Mailbox::ThreadingMsgListModel *threadingMsgListModel;
-    Imap::Mailbox::PrettyMsgListModel *prettyMsgListModel;
+//    Imap::Mailbox::ThreadingMsgListModel *threadingMsgListModel;
+//    Imap::Mailbox::PrettyMsgListModel *prettyMsgListModel;
 
     //qml
     TrojitaSetting * trojitaSetting ;
@@ -79,4 +85,8 @@ private:
     TrojitaMessageDetails * trojitaMessageDetails ;
     TrojitaAttachmentsModel * trojitaAttachmentsModel ;
     TrojitaSendMail * trojitaSendMail ;
+
+    //this array
+    QList<MailBackend *> mailBackendList;
+    int mailCurrentIndex;
 };

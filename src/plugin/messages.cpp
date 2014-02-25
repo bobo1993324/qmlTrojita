@@ -29,8 +29,11 @@ TrojitaMessagesModel::TrojitaMessagesModel(Imap::Mailbox::MsgListModel *msgList)
 
 void TrojitaMessagesModel::setMsgListModel(Imap::Mailbox::MsgListModel *msgListModel){
     m_msgListModel = msgListModel;
+    disconnect(this, SLOT(msgModelDataChanged(QModelIndex,QModelIndex)));
+    disconnect(this, SLOT(msgModelMailBoxChanged(QModelIndex)));
     connect(m_msgListModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(msgModelDataChanged(QModelIndex,QModelIndex)));
     connect(m_msgListModel, SIGNAL(mailboxChanged(QModelIndex)), this, SLOT(msgModelMailBoxChanged(QModelIndex)));
+    reloadMessages();
 }
 QHash<int, QByteArray> TrojitaMessagesModel::roleNames() const{
     QHash<int, QByteArray> roles;
@@ -46,9 +49,9 @@ int TrojitaMessagesModel::rowCount(const QModelIndex & parent) const{
     return m_msg_list.count();
 }
 QVariant TrojitaMessagesModel::data(const QModelIndex &index, int role) const {
+//    qDebug() << "subject is " << m_msg_list[index.row()].subject();
     if (index.row() < 0 || index.row() > m_msg_list.count())
         return QVariant();
-
     const TrojitaMessage &tmb = m_msg_list[index.row()];
 //    qDebug() << " data " << index.row() << (role==NameRole) << tmb.name();
     if (role == SubjectRole)
@@ -77,6 +80,7 @@ void TrojitaMessagesModel::msgModelDataChanged(QModelIndex a,QModelIndex b){
 }
 
 void TrojitaMessagesModel::msgModelMailBoxChanged(QModelIndex q){
+    qDebug() << "TrojitaMessagesModel::msgModelMailBoxChanged" ;
     reloadMessages();
 }
 
@@ -84,7 +88,7 @@ void TrojitaMessagesModel::reloadMessages(){
     beginRemoveRows(QModelIndex(), 0, rowCount()-1);
     m_msg_list.clear();
     endRemoveRows();
-//    qDebug() << "rowCount is " << m_msgListModel->rowCount();
+    qDebug() << "rowCount is " << m_msgListModel->rowCount();
     for(int i=0;i<m_msgListModel->rowCount();i++){
         bool isDeleted=m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageIsMarkedDeleted).toBool();
         if(isDeleted)
@@ -110,6 +114,7 @@ void TrojitaMessagesModel::reloadMessages(){
         }
         TrojitaMessage tmb(subject, uid, sender, unread, qdt, isStared);
         addTrojitaMessage(tmb);
+//        qDebug() << "add subject " << subject;
     }
     emit dataChanged(this->index(0), this->index(m_msg_list.count()-1));
 }

@@ -38,7 +38,7 @@ public:
         TimeRole,
         StarRole
     };
-
+    TrojitaMessagesModel(){};
     TrojitaMessagesModel(Imap::Mailbox::MsgListModel * m_msgList);
     QHash<int, QByteArray> roleNames() const;
     int rowCount(const QModelIndex & parent = QModelIndex()) const;

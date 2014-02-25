@@ -28,7 +28,7 @@ public:
         UnreadCountRole,
         LevelRole
     };
-
+    TrojitaMailBoxModel(){}
     TrojitaMailBoxModel(Imap::Mailbox::MailboxModel * mbox);
     void setMailBoxModel(Imap::Mailbox::MailboxModel * mbox);
     QHash<int, QByteArray> roleNames() const;
