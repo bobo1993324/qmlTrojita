@@ -10,6 +10,7 @@
 #include "Imap/Model/ItemRoles.h"
 #include "Imap/Model/Utils.h"
 #include "Imap/Encoders.h"
+#include "Imap/Network/MsgPartNetAccessManager.h"
 #include "Common/Paths.h"
 #include "Composer/PlainTextFormatter.h"
 #include "attachments.h"
@@ -48,6 +49,7 @@ private:
     void partFactoryCreate(const QModelIndex &partIndex, int recursionDepth);
     void markupPlainText();
     void fetchSimpleContent(QModelIndex anotherPart, const Imap::Mailbox::Model * constModel);
+    void fetchGenericMultipart(QModelIndex anotherPart, const Imap::Mailbox::Model * constModel);
     QColor tintColor(const QColor &color, const QColor &tintColor);
     QModelIndex m_partIndex;
     QModelIndex m_messageIndex;
