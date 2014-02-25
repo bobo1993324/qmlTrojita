@@ -46,7 +46,7 @@ void EmailApplication::defaultSetting(){
     using Common::SettingsNames;
 //    m_settings->setValue(SettingsNames::imapMethodKey, SettingsNames::methodSSL);
 //    m_settings->setValue(SettingsNames::imapHostKey, "imap.gmail.com");
-//    m_settings->setValue(SettingsNames::imapPassKey, "z936563s");
+//    m_settings->setValue(SettingsNames::imapPassKey, "*******");
     m_settings->setValue(SettingsNames::cacheOfflineKey, SettingsNames::cacheOfflineNone);
 //    m_settings->setValue(SettingsNames::msaMethodKey, SettingsNames::methodSMTP);
 //    m_settings->setValue(SettingsNames::smtpHostKey, "smtp.gmail.com");
@@ -54,7 +54,7 @@ void EmailApplication::defaultSetting(){
 //    m_settings->setValue(SettingsNames::smtpStartTlsKey, "true");
 //    m_settings->setValue(SettingsNames::smtpAuthKey, "true");
 //    m_settings->setValue(SettingsNames::smtpUserKey, "bobo1993324@gmail.com");
-//    m_settings->setValue(SettingsNames::smtpPassKey, "z936563s");
+//    m_settings->setValue(SettingsNames::smtpPassKey, "********");
 }
 
 void EmailApplication::settingUpdated(){
