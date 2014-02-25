@@ -60,6 +60,6 @@ private:
     void reloadMessages();
     QList<TrojitaMessage> m_msg_list;
     Imap::Mailbox::MsgListModel * m_msgListModel;
-    QString m_mailBoxName="mailBox";
+    QString m_mailBoxName;
 };
 

@@ -73,10 +73,10 @@ private:
     Imap::Mailbox::PrettyMsgListModel *prettyMsgListModel;
 
     //qml
-    TrojitaSetting * trojitaSetting = 0;
-    TrojitaMailBoxModel * trojitaMailBoxModel = 0;
-    TrojitaMessagesModel * trojitaMessagesModel = 0;
-    TrojitaMessageDetails * trojitaMessageDetails = 0;
-    TrojitaAttachmentsModel * trojitaAttachmentsModel = 0;
-    TrojitaSendMail * trojitaSendMail = 0;
+    TrojitaSetting * trojitaSetting ;
+    TrojitaMailBoxModel * trojitaMailBoxModel ;
+    TrojitaMessagesModel * trojitaMessagesModel ;
+    TrojitaMessageDetails * trojitaMessageDetails ;
+    TrojitaAttachmentsModel * trojitaAttachmentsModel ;
+    TrojitaSendMail * trojitaSendMail ;
 };
