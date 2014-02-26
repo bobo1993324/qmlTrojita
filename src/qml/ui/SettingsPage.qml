@@ -99,7 +99,8 @@ Rectangle{
             for (var i in accountsDocument.contents.accounts){
                 addingAccount(accountsDocument.contents.accounts[i]);
             }
-            setCurrentAccount(accountsDocument.contents.currentAccountIndex);
+            if(accountsDocument.contents.currentAccountIndex >=0)
+                setCurrentAccount(accountsDocument.contents.currentAccountIndex);
         }
     }
 
