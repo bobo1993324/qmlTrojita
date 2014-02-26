@@ -8,8 +8,10 @@ Rectangle{
     objectName: "messagesPage"
     //    title: TROJITA_MESSAGES.mailBoxName
     color: "#ECEDED"
-    property alias toolbar: toolbar
+
     signal messageClicked(int UUID)
+
+    property alias toolbar: toolbar
     property bool loaded : false;
 
     Column{
@@ -132,6 +134,15 @@ Rectangle{
                         onTriggered: {
                             PopupUtils.open(switchAccountPopover, switchAccountButton)
                         }
+                    }
+                    Rectangle{
+                        visible: TROJITA_ALERT.hasAlert
+                        color: "red"
+                        x: parent.width * 2 / 3
+                        y: parent.height / 4
+                        width: units.gu(1)
+                        height: width
+                        radius: units.gu(0.5)
                     }
                 }
             }

@@ -170,7 +170,7 @@ void TrojitaMessageDetails::partFactoryCreate(const QModelIndex &partIndex, int 
     // Now we know for sure that it's not supposed to be wrapped in an AttachmentView, cool.
     if (mimeType.startsWith(QLatin1String("multipart/"))) {
         // it's a compound part
-        qDebug() << "it's a compound part";
+//        qDebug() << "it's a compound part";
         // First loop iteration is used to find out what MIME type to show
         if (mimeType == QLatin1String("multipart/alternative")) {
             //use plain text
@@ -278,7 +278,7 @@ void TrojitaMessageDetails::fetchGenericMultipart(QModelIndex partIndex, const I
             findBody = true;
             //TODO add depth to count
             partFactoryCreate(anotherPart, 0);
-        }else if(mimeType2 == "text/plain"){
+        }else if(mimeType2 == "text/plain" || mimeType2 == "text/html"){
             findBody = true;
             fetchSimpleContent(anotherPart, constModel);
         }else{

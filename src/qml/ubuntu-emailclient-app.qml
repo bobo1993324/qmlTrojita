@@ -10,12 +10,19 @@ import "ui"
 
 MainView {
     id: mainView
+    objectName: "mainView"
     width: units.gu(150)
     height: units.gu(75)
     //This empty page disable default toolbar
     property bool isPhone: width < units.gu(100)
     property int leftPanelWidth:units.gu(50)
     property int seperatorWidth: units.gu(0.5)
+
+    signal unReadCountUpdated(string account, int newUnreadCount);
+    onUnReadCountUpdated: {
+        console.log(account)
+    }
+
     Component.onCompleted: {
         if(isPhone){
             closeAndUnlockToolbars();

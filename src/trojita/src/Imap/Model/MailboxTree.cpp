@@ -907,6 +907,7 @@ int TreeItemMsgList::unreadMessageCount(Model *const model)
     // See totalMessageCount()
     if (!numbersFetched())
         fetchNumbers(model);
+
     return m_unreadMessageCount;
 }
 

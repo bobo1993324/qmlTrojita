@@ -39,7 +39,7 @@ namespace Mailbox
 OpenConnectionTask::OpenConnectionTask(Model *model) :
     ImapTask(model)
 {
-    qDebug()<< "OpenConnectionTask::init";
+//    qDebug()<< "OpenConnectionTask::init";
     // Offline mode shall be checked by the caller who decides to create the connection
     Q_ASSERT(model->networkPolicy() != NETWORK_OFFLINE);
     parser = new Parser(model, model->m_socketFactory->create(), Common::ConnectionId::next());
@@ -113,7 +113,7 @@ CONN_STATE_POSTAUTH_PRECAPS: checks result of the capability command
 */
 bool OpenConnectionTask::handleStateHelper(const Imap::Responses::State *const resp)
 {
-    qDebug()<<"OpenConnectionTask::handleStateHelper";
+//    qDebug()<<"OpenConnectionTask::handleStateHelper";
     if (_dead) {
         _failed("Asked to die");
         return true;
@@ -488,7 +488,7 @@ void OpenConnectionTask::sslConnectionPolicyDecided(bool ok)
 
 bool OpenConnectionTask::handleSocketEncryptedResponse(const Responses::SocketEncryptedResponse *const resp)
 {
-    qDebug()<<"OpenConnectionTask::handleSocketEncryptedResponse";
+//    qDebug()<<"OpenConnectionTask::handleSocketEncryptedResponse";
     switch (model->accessParser(parser).connState) {
     case CONN_STATE_SSL_HANDSHAKE:
         model->changeConnectionState(parser, CONN_STATE_SSL_VERIFYING);

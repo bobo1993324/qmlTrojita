@@ -15,12 +15,24 @@ Component {
             Repeater{
                 model: settingsPage.getAccountNames()
                 delegate: ListItem.Standard{
-                    text: index == settingsPage.getActiveAccountIndex() ? "<b>" + modelData + "</b>" : modelData
+                    text: index === settingsPage.getActiveAccountIndex() ? "<b>" + modelData + "</b>" : modelData
                     onClicked: {
                         //reload inbox
                         mailBoxPage.loaded = false;
                         settingsPage.setActiveAccountIndex(index);
                         PopupUtils.close(popover)
+                    }
+                    Rectangle{
+                        visible: TROJITA_ALERT.getAlertAccount(modelData)
+                        color: "red"
+                        anchors{
+                            verticalCenter: parent.verticalCenter
+                            right: parent.right
+                            rightMargin: width
+                        }
+                        width: units.gu(2)
+                        height: width
+                        radius: width / 2
                     }
                 }
             }

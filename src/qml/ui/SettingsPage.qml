@@ -11,7 +11,7 @@ Rectangle{
     property alias toolbar: toolbar
 
     signal settingChanged;
-    signal addingAccount(string s);
+    signal addingAccount(var s);
     signal setCurrentAccount(int idx);
 
     property string activeAccount: accountsDocument.contents.accounts[accountsDocument.contents.currentAccountIndex]["imap.auth.user"]
@@ -97,7 +97,7 @@ Rectangle{
         repeat: false
         onTriggered: {
             for (var i in accountsDocument.contents.accounts){
-                addingAccount(JSON.stringify(accountsDocument.contents.accounts[i]));
+                addingAccount(accountsDocument.contents.accounts[i]);
             }
             setCurrentAccount(accountsDocument.contents.currentAccountIndex);
         }

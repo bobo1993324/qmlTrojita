@@ -21,7 +21,7 @@ void EmailApplication::createView(){
     //                     SIGNAL(settingChanged()), this, SLOT(settingUpdated()));
 
     connect(m_view->rootObject()->findChild<QQuickItem *>("settingPage"),
-            SIGNAL(addingAccount(QString)), this, SLOT(addingAccount(QString)));
+            SIGNAL(addingAccount(QVariant)), this, SLOT(addingAccount(QVariant)));
     connect(m_view->rootObject()->findChild<QQuickItem *>("settingPage"),
             SIGNAL(setCurrentAccount(int)), this, SLOT(setCurrentAccount(int)));
 
@@ -42,11 +42,13 @@ void EmailApplication::registerQml(){
     trojitaMessagesModel = new TrojitaMessagesModel();
     trojitaMessageDetails = new TrojitaMessageDetails();
     trojitaSendMail = new TrojitaSendMail();
+    trojitaAlert = new TrojitaAlert();
     m_view->rootContext()->setContextProperty("TROJITA_MAILBOX", trojitaMailBoxModel);
     m_view->rootContext()->setContextProperty("TROJITA_SETTING", trojitaSetting);
     m_view->rootContext()->setContextProperty("TROJITA_MESSAGES", trojitaMessagesModel);
     m_view->rootContext()->setContextProperty("TROJITA_MESSAGE_DETAILS", trojitaMessageDetails);
     m_view->rootContext()->setContextProperty("TROJITA_SEND_MAIL", trojitaSendMail);
+    m_view->rootContext()->setContextProperty("TROJITA_ALERT", trojitaAlert);
 }
 void EmailApplication::defaultSetting(){
     using Common::SettingsNames;
@@ -218,7 +220,6 @@ void EmailApplication::setCurrentAccount(int idx){
     trojitaMailBoxModel->setMailBoxModel(mailBackendList[idx]->mboxModel);
     trojitaMessagesModel->setMsgListModel(mailBackendList[idx]->msgListModel);
     trojitaSendMail->setModel(mailBackendList[idx]->model);
-    //    mailBackendList[idx]->model->reloadMailboxList();
 }
 
 void EmailApplication::mailBoxClicked(QString name){
@@ -269,7 +270,8 @@ void EmailApplication::msgListClicked(const QModelIndex &index)
     trojitaMessageDetails->setMessage(index);
 }
 
-void EmailApplication::addingAccount(QString s){
-    QVariant account = QJsonDocument::fromJson(s.toLatin1()).toVariant();
-    mailBackendList.append(new MailBackend(account, m_settings));
+void EmailApplication::addingAccount(QVariant account){
+    MailBackend * newMailAccount = new MailBackend(account, m_settings);
+    mailBackendList.append(newMailAccount);
+    connect(newMailAccount, SIGNAL(updateUnreadCount(QString,int)), trojitaAlert, SLOT(slotSetAlert(QString, int)));
 }

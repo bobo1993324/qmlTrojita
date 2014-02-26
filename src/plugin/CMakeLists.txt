@@ -4,7 +4,7 @@ add_library(
     mailBox.cpp
     messages.cpp
     messageDetails.cpp
-    attachments.cpp
+    alert.cpp
     sendmail.cpp
 )
 qt5_use_modules(email-plugin Core Quick)

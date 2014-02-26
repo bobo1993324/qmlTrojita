@@ -75,12 +75,12 @@ void TrojitaMessagesModel::addTrojitaMessage(TrojitaMessage tm){
 }
 
 void TrojitaMessagesModel::msgModelDataChanged(QModelIndex a,QModelIndex b){
-    qDebug() << "TrojitaMessagesModel::msgModelDataChanged" ;
+//    qDebug() << "TrojitaMessagesModel::msgModelDataChanged" ;
     reloadMessages();
 }
 
 void TrojitaMessagesModel::msgModelMailBoxChanged(QModelIndex q){
-    qDebug() << "TrojitaMessagesModel::msgModelMailBoxChanged" ;
+//    qDebug() << "TrojitaMessagesModel::msgModelMailBoxChanged" ;
     reloadMessages();
 }
 
@@ -88,7 +88,7 @@ void TrojitaMessagesModel::reloadMessages(){
     beginRemoveRows(QModelIndex(), 0, rowCount()-1);
     m_msg_list.clear();
     endRemoveRows();
-    qDebug() << "rowCount is " << m_msgListModel->rowCount();
+//    qDebug() << "rowCount is " << m_msgListModel->rowCount();
     for(int i=0;i<m_msgListModel->rowCount();i++){
         bool isDeleted=m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageIsMarkedDeleted).toBool();
         if(isDeleted)

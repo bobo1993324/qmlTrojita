@@ -14,6 +14,7 @@
 #include "plugin/messageDetails.h"
 #include "plugin/attachments.h"
 #include "plugin/sendmail.h"
+#include "plugin/alert.h"
 
 #include "Imap/Model/Model.h"
 #include "Imap/Model/MemoryCache.h"
@@ -44,7 +45,8 @@ public slots:
     void mailBoxClicked(QString name);
     void messageClicked(int uid);
 
-    void addingAccount(QString s);
+    void addingAccount(QVariant q);
+    void setCurrentAccount(int idx);
     //trojita
     void cacheError(const QString &message);
     void authenticationRequested();
@@ -52,7 +54,6 @@ public slots:
     void slotImapLogged(uint parserId, const Common::LogMessage &message);
     void sslErrors(const QList<QSslCertificate> &certificateChain, const QList<QSslError> &errors);
 
-    void setCurrentAccount(int idx);
 private:
     void createView();
     void registerQml();
@@ -85,7 +86,7 @@ private:
     TrojitaMessageDetails * trojitaMessageDetails ;
     TrojitaAttachmentsModel * trojitaAttachmentsModel ;
     TrojitaSendMail * trojitaSendMail ;
-
+    TrojitaAlert * trojitaAlert;
     //this array
     QList<MailBackend *> mailBackendList;
     int mailCurrentIndex;
