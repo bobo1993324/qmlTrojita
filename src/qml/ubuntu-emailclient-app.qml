@@ -11,8 +11,9 @@ import "ui"
 MainView {
     id: mainView
     objectName: "mainView"
-    width: units.gu(150)
+    width: units.gu(50)
     height: units.gu(75)
+    applicationName: "com.bobo-324.qmltrojita"
     //This empty page disable default toolbar
     property bool isPhone: width < units.gu(100)
     property int leftPanelWidth:units.gu(50)

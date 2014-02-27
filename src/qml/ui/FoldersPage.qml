@@ -39,13 +39,14 @@ Rectangle{
             }
 
             onClicked: {
-                console.log("clicked")
-                foldersPage.mailBoxClicked(name)
-                mainView.goToMailboxPage();
+                if (!toolbar.animating){
+                    foldersPage.mailBoxClicked(name)
+                    mainView.goToMailboxPage();
+                }
             }
             ListView.onAdd: {
                 //load first mailbox at start
-                if(!mailBoxPage.loaded && index == 0){
+                if (!mailBoxPage.loaded && index == 0) {
                     mailBoxPage.loaded = true;
                     foldersPage.mailBoxClicked(name)
                 }

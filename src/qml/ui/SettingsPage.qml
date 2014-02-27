@@ -15,6 +15,7 @@ Rectangle{
     signal setCurrentAccount(int idx);
 
     property string activeAccount: accountsDocument.contents.accounts[accountsDocument.contents.currentAccountIndex]["imap.auth.user"]
+
     function getAccountNames(){
         var returnVal = [];
         for ( var i in accountsDocument.contents.accounts){

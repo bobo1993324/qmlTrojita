@@ -51,13 +51,49 @@ Rectangle{
             }
         }
         ListItem.Standard{
+            id: toLIS
+            text: "To"
+            visible: messagePage.detailExpanded;
+            control:
+                Label{
+                text:TROJITA_MESSAGE_DETAILS.to
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
+        ListItem.Standard{
+            id: ccLIS
+            text: "CC"
+            visible: messagePage.detailExpanded && TROJITA_MESSAGE_DETAILS.ccCount !== 0;
+            control:Flickable{
+                clip: true
+                width: ccRow.width < ccLIS.width * 0.8 ? ccRow.width : ccLIS.width * 0.8
+                height: ccLIS.height
+                contentWidth: ccRow.width
+                contentHeight: parent.height
+                Row{
+                    id: ccRow
+                    height: ccLIS.height
+                    spacing: units.gu(1)
+
+
+                    Repeater{
+                        model: TROJITA_MESSAGE_DETAILS.cc
+                        delegate: Label{
+                            text: modelData + ","
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+                }
+            }
+        }
+
+        ListItem.Standard{
             visible: messagePage.detailExpanded
             text: TROJITA_MESSAGE_DETAILS.date
         }
-
         Rectangle{
             width: parent.width
-            height: parent.height - fromLIS.height * (messagePage.detailExpanded? 3:1)
+            height: parent.height - fromLIS.height * (messagePage.detailExpanded? 4:1)
                             - (isPhone ? 0 : toolbar.height)
             UbuntuWebView{
                 width: parent.width

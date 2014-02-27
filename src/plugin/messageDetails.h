@@ -5,6 +5,7 @@
 #include <QFontInfo>
 #include <QFile>
 #include <QFileInfo>
+#include <QQmlListProperty>
 #include "Imap/Model/Model.h"
 #include "Imap/Model/MailboxTree.h"
 #include "Imap/Model/ItemRoles.h"
@@ -23,6 +24,9 @@ class TrojitaMessageDetails : public QObject{
     Q_PROPERTY(QString subject READ subject NOTIFY subjectChanged)
     Q_PROPERTY(QString from READ from WRITE setFrom NOTIFY fromChanged)
     Q_PROPERTY(QString date READ date WRITE setDate NOTIFY dateChanged)
+    Q_PROPERTY(QString to READ to WRITE setTo NOTIFY toChanged)
+    Q_PROPERTY(QStringList cc READ cc NOTIFY ccChanged)
+    Q_PROPERTY(int ccCount READ ccCount NOTIFY ccChanged)
 public:
     TrojitaMessageDetails(QString content = "", TrojitaAttachmentsModel * tam = 0);
 
@@ -37,12 +41,20 @@ public:
     void setFrom(QString from);
     QString date();
     void setDate(QString date);
+    QString to();
+    void setTo(QString to);
+    QStringList cc();
+    void setCc(QStringList cc);
+    int ccCount();
+
     void setMessage(const QModelIndex &index);
 signals:
     void contentChanged();
     void subjectChanged();
     void fromChanged();
     void dateChanged();
+    void toChanged();
+    void ccChanged();
 public slots:
     void simplePartFetched();
 private:
@@ -50,6 +62,9 @@ private:
     void markupPlainText();
     void fetchSimpleContent(QModelIndex anotherPart, const Imap::Mailbox::Model * constModel);
     void fetchGenericMultipart(QModelIndex anotherPart, const Imap::Mailbox::Model * constModel);
+
+    QString getFirstMailFromList(QVariantList qvl);
+    QStringList getMailsFromList(QVariantList qvl);
     QColor tintColor(const QColor &color, const QColor &tintColor);
     QModelIndex m_partIndex;
     QModelIndex m_messageIndex;
@@ -57,6 +72,9 @@ private:
     QString m_subject;
     QString m_from;
     QString m_date;
+    QString m_to;
+    QStringList m_cc;
+
     Imap::Mailbox::Model *model;
     TrojitaAttachmentsModel * m_tam;
 };

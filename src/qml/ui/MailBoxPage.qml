@@ -38,8 +38,10 @@ Rectangle{
                     MouseArea{
                         anchors.fill: parent
                         onClicked: {
-                            mainView.goToMessagePage();
-                            messagesPage.messageClicked(uid);
+                            if(!toolbar.animating){
+                                mainView.goToMessagePage();
+                                messagesPage.messageClicked(uid);
+                            }
                         }
                     }
                     Column {
@@ -143,6 +145,10 @@ Rectangle{
                         width: units.gu(1)
                         height: width
                         radius: units.gu(0.5)
+                        Connections{
+                            target: TROJITA_ALERT
+                            onHasAlertChanged: if(TROJITA_ALERT.hasAlert) toolbar.open()
+                        }
                     }
                 }
             }
