@@ -14,12 +14,12 @@ public:
     Q_INVOKABLE int sendMail(QString to, QString subject, QString content);
 
     TrojitaSendMail(){}
-    TrojitaSendMail(QSettings * settings, Imap::Mailbox::Model * model);
     void setModel(Imap::Mailbox::Model * model);
+    void setSettings(QHash<QString, QVariant> * settings);
 public slots:
     void sent();
 private:
-    QSettings * m_settings;
+    QHash<QString, QVariant> * m_settings;
     Imap::Mailbox::Model * m_model;
     Composer::Submission * m_submission;
     bool buildMessageData(QString to, QString subject = "", QString content = "");

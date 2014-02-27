@@ -7,6 +7,13 @@ Rectangle {
     id: composePage
     color: "#ECEDED"
     property alias toolbar: toolbar
+    property alias subject: subjectTextField.text
+    property alias content: contextTextArea.text
+
+    function setTo(s){
+        receiverModel.get(0).value = s;
+    }
+
     ListModel{
         id: receiverModel
         ListElement{

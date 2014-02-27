@@ -41,31 +41,17 @@ public:
     int exec();
 public slots:
     //qml
-    void settingUpdated();
     void mailBoxClicked(QString name);
     void messageClicked(int uid);
 
     void addingAccount(QVariant q);
     void setCurrentAccount(int idx);
-    //trojita
-    void cacheError(const QString &message);
-    void authenticationRequested();
-    void authenticationFailed(const QString &message);
-    void slotImapLogged(uint parserId, const Common::LogMessage &message);
-    void sslErrors(const QList<QSslCertificate> &certificateChain, const QList<QSslError> &errors);
 
 private:
     void createView();
     void registerQml();
 
-    void defaultSetting();
-    void reconnectContextModels();
-
     void msgListClicked(const QModelIndex &index);
-
-    //trojita
-    void nukeModels();
-    void setupModels();
 
     QSettings * m_settings;
     QQuickView *m_view;

@@ -152,10 +152,17 @@ Rectangle{
                 }
                 ToolbarButton{
                     //TODO implement reply
-                    visible: false
                     action: Action{
                         text: "Reply"
-                        iconSource: Qt.resolvedUrl("../img/compose.svg")
+                        iconSource: Qt.resolvedUrl("../img/back.svg")
+                        onTriggered:{
+                            if(TROJITA_MESSAGE_DETAILS.ccCount == 0){
+                                composePage.setTo(TROJITA_MESSAGE_DETAILS.from)
+                                composePage.subject = "Re: "+TROJITA_MESSAGE_DETAILS.subject
+                                composePage.content = TROJITA_MESSAGE_DETAILS.generateReplyMessage();
+                            }
+                            mainView.goToComposePage()
+                        }
                     }
                 }
             }

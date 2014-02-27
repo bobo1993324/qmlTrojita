@@ -5,7 +5,7 @@
 #include <QFontInfo>
 #include <QFile>
 #include <QFileInfo>
-#include <QQmlListProperty>
+#include <QTextDocument>
 #include "Imap/Model/Model.h"
 #include "Imap/Model/MailboxTree.h"
 #include "Imap/Model/ItemRoles.h"
@@ -32,6 +32,7 @@ public:
 
     Q_INVOKABLE void deleteMessage();
     Q_INVOKABLE void markUnreadMessage();
+    Q_INVOKABLE QString generateReplyMessage();
 
     QString content();
     void setContent(QString content);

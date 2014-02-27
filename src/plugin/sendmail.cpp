@@ -1,19 +1,9 @@
 #include "sendmail.h"
-TrojitaSendMail::TrojitaSendMail(QSettings *settings, Imap::Mailbox::Model * model)
-    :m_settings(settings), m_model(model){
-
-}
 int TrojitaSendMail::sendMail(QString to, QString subject, QString content){
     qDebug() << "sendMail to " << to <<" " << content;
     using namespace Common;
     QString method = m_settings->value(SettingsNames::msaMethodKey).toString();
     MSA::MSAFactory *msaFactory = 0;
-    qDebug() << m_settings->value(SettingsNames::smtpHostKey);
-    qDebug() << m_settings->value(SettingsNames::smtpPortKey);
-    qDebug() << m_settings->value(SettingsNames::smtpStartTlsKey);
-    qDebug() << m_settings->value(SettingsNames::smtpUserKey);
-    qDebug() << m_settings->value(SettingsNames::smtpPassKey);
-    qDebug() << method;
     if (method == SettingsNames::methodSMTP || method == SettingsNames::methodSSMTP) {
         msaFactory = new MSA::SMTPFactory(m_settings->value(SettingsNames::smtpHostKey).toString(),
                                           m_settings->value(SettingsNames::smtpPortKey).toInt(),
@@ -59,7 +49,8 @@ bool TrojitaSendMail::buildMessageData(QString to, QString subject, QString cont
     //    QString errorMessage;
     Imap::Message::MailAddress addr;
     bool ok = Imap::Message::MailAddress::fromPrettyString(addr, to);
-    recipients<<qMakePair(Composer::ADDRESS_TO, addr);
+    Q_ASSERT(ok);
+    recipients << qMakePair(Composer::ADDRESS_TO, addr);
     //    if (!parseRecipients(recipients, errorMessage)) {
     //        gotError(tr("Cannot parse recipients:\n%1").arg(errorMessage));
     //        return false;
@@ -111,4 +102,8 @@ bool TrojitaSendMail::buildMessageData(QString to, QString subject, QString cont
 
 void TrojitaSendMail::setModel(Imap::Mailbox::Model *model){
     m_model=model;
+}
+
+void TrojitaSendMail::setSettings(QHash<QString, QVariant> * settings){
+    m_settings = settings;
 }
