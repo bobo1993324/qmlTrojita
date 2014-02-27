@@ -33,6 +33,7 @@ void TrojitaMessagesModel::setMsgListModel(Imap::Mailbox::MsgListModel *msgListM
     disconnect(this, SLOT(msgModelMailBoxChanged(QModelIndex)));
     connect(m_msgListModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(msgModelDataChanged(QModelIndex,QModelIndex)));
     connect(m_msgListModel, SIGNAL(mailboxChanged(QModelIndex)), this, SLOT(msgModelMailBoxChanged(QModelIndex)));
+    connect(m_msgListModel, SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(reloadMessages()));
     reloadMessages();
 }
 QHash<int, QByteArray> TrojitaMessagesModel::roleNames() const{
@@ -84,11 +85,15 @@ void TrojitaMessagesModel::msgModelMailBoxChanged(QModelIndex q){
     reloadMessages();
 }
 
+void TrojitaMessagesModel::msgModelRowInserted(QModelIndex, int, int){
+    reloadMessages();
+}
+
 void TrojitaMessagesModel::reloadMessages(){
     beginRemoveRows(QModelIndex(), 0, rowCount()-1);
     m_msg_list.clear();
     endRemoveRows();
-//    qDebug() << "rowCount is " << m_msgListModel->rowCount();
+    qDebug() << "rowCount is " << m_msgListModel->rowCount();
     for(int i=0;i<m_msgListModel->rowCount();i++){
         bool isDeleted=m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageIsMarkedDeleted).toBool();
         if(isDeleted)

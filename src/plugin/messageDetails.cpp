@@ -181,7 +181,6 @@ void TrojitaMessageDetails::partFactoryCreate(const QModelIndex &partIndex, int 
     // Now we know for sure that it's not supposed to be wrapped in an AttachmentView, cool.
     if (mimeType.startsWith(QLatin1String("multipart/"))) {
         // it's a compound part
-        //        qDebug() << "it's a compound part";
         // First loop iteration is used to find out what MIME type to show
         if (mimeType == QLatin1String("multipart/alternative")) {
             //use plain text
@@ -190,65 +189,82 @@ void TrojitaMessageDetails::partFactoryCreate(const QModelIndex &partIndex, int 
                 Q_ASSERT(anotherPart.isValid());
                 QString mimeType2 = anotherPart.data(Imap::Mailbox::RolePartMimeType).toString();
                 qDebug() << "subtype " << mimeType2;
-                if(mimeType2 == "text/html"){
+                //TODO for wide screen, show html
+                if(mimeType2 == "text/plain"){
                     fetchSimpleContent(anotherPart, constModel);
                 }
             }
         } else if (mimeType == QLatin1String("multipart/signed")) {
             //            return new MultipartSignedWidget(0, this, partIndex, recursionDepth, loadingMode);
         } else if (mimeType == QLatin1String("multipart/related")) {
-            // The purpose of this section is to find a text/html e-mail, along with its associated body parts, and hide
-            // everything else than the HTML widget.
-
-            // At this point, it might be interesting to somehow respect the user's preference about using text/plain
-            // instead of text/html. However, things are a bit complicated; the widget used at this point really wants
-            // to either show just a single part or alternatively all of them in a sequence.
-            // Furthermore, if someone sends a text/plain and a text/html together inside a multipart/related, they're
-            // just wrong.
-
-            // Let's see if we know what the root part is
-            QModelIndex mainPartIndex;
-            QVariant mainPartCID = partIndex.data(RolePartMultipartRelatedMainCid);
-            if (mainPartCID.isValid()) {
-                const Imap::Mailbox::Model *constModel = 0;
-                Imap::Mailbox::TreeItemPart *part = dynamic_cast<Imap::Mailbox::TreeItemPart *>(Imap::Mailbox::Model::realTreeItem(partIndex, &constModel));
-                Imap::Mailbox::Model *model = const_cast<Imap::Mailbox::Model *>(constModel);
-                Imap::Mailbox::TreeItemPart *mainPartPtr = Imap::Network::MsgPartNetAccessManager::cidToPart(mainPartCID.toByteArray(), model, part);
-                if (mainPartPtr) {
-                    mainPartIndex = mainPartPtr->toIndex(model);
+            //contains html with sent images
+            for (int i = 0; i < partIndex.model()->rowCount(partIndex); ++i) {
+                QModelIndex anotherPart = partIndex.child(i, 0);
+                Q_ASSERT(anotherPart.isValid()); // guaranteed by the MVC
+                QString mimeType2 = anotherPart.data(Imap::Mailbox::RolePartMimeType).toString();
+                qDebug() << "subtype " << mimeType2;
+                if(mimeType2 == "multipart/alternative"){
+                    partFactoryCreate(anotherPart, 0);
+                }else if(mimeType2 == "text/plain" || mimeType2 == "text/html"){
+                    fetchSimpleContent(anotherPart, constModel);
+                }else{
+                    //TODO should be image, add to webbackend
+                    //m_tam->add(TrojitaAttachment(anotherPart.data(Imap::Mailbox::RolePartFileName).toString()));
                 }
             }
 
-            if (!mainPartIndex.isValid()) {
-                // The Content-Type-based start parameter was not terribly useful. Let's find the HTML part manually.
-                QModelIndex candidate = partIndex.child(0, 0);
-                while (candidate.isValid()) {
-                    if (candidate.data(RolePartMimeType).toString() == QLatin1String("text/html")) {
-                        mainPartIndex = candidate;
-                        break;
-                    }
-                    candidate = candidate.sibling(candidate.row() + 1, 0);
-                }
-            }
+//            // The purpose of this section is to find a text/html e-mail, along with its associated body parts, and hide
+//            // everything else than the HTML widget.
 
-            if (mainPartIndex.isValid()) {
-                if (mainPartIndex.data(RolePartMimeType).toString() == QLatin1String("text/html")) {
-                    partFactoryCreate(mainPartIndex, recursionDepth + 1);
-                    //                    return PartWidgetFactory::create(mainPartIndex, recursionDepth+1, loadingMode);
-                } else {
-                    // Sorry, but anything else than text/html is by definition suspicious here. Better than picking some random
-                    // choice, let's just show everything.
-                    fetchGenericMultipart(partIndex, constModel);
-                    //                    return new GenericMultipartWidget(0, this, partIndex, recursionDepth, loadingMode);
-                }
-            } else {
-                // The RFC2387's wording is clear that in absence of an explicit START argument, the first part is the starting one.
-                // On the other hand, I've seen real-world messages whose first part is some utter garbage (an image sent as
-                // application/octet-stream, for example) and some *other* part is an HTML text. In that case (and if we somehow
-                // failed to pick the HTML part by a heuristic), it's better to show everything.
-                fetchGenericMultipart(partIndex, constModel);
-                //                return new GenericMultipartWidget(0, this, partIndex, recursionDepth, loadingMode);
-            }
+//            // At this point, it might be interesting to somehow respect the user's preference about using text/plain
+//            // instead of text/html. However, things are a bit complicated; the widget used at this point really wants
+//            // to either show just a single part or alternatively all of them in a sequence.
+//            // Furthermore, if someone sends a text/plain and a text/html together inside a multipart/related, they're
+//            // just wrong.
+
+//            // Let's see if we know what the root part is
+//            QModelIndex mainPartIndex;
+//            QVariant mainPartCID = partIndex.data(RolePartMultipartRelatedMainCid);
+//            if (mainPartCID.isValid()) {
+//                const Imap::Mailbox::Model *constModel = 0;
+//                Imap::Mailbox::TreeItemPart *part = dynamic_cast<Imap::Mailbox::TreeItemPart *>(Imap::Mailbox::Model::realTreeItem(partIndex, &constModel));
+//                Imap::Mailbox::Model *model = const_cast<Imap::Mailbox::Model *>(constModel);
+//                Imap::Mailbox::TreeItemPart *mainPartPtr = Imap::Network::MsgPartNetAccessManager::cidToPart(mainPartCID.toByteArray(), model, part);
+//                if (mainPartPtr) {
+//                    mainPartIndex = mainPartPtr->toIndex(model);
+//                }
+//            }
+
+//            if (!mainPartIndex.isValid()) {
+//                // The Content-Type-based start parameter was not terribly useful. Let's find the HTML part manually.
+//                QModelIndex candidate = partIndex.child(0, 0);
+//                while (candidate.isValid()) {
+//                    if (candidate.data(RolePartMimeType).toString() == QLatin1String("text/html")) {
+//                        mainPartIndex = candidate;
+//                        break;
+//                    }
+//                    candidate = candidate.sibling(candidate.row() + 1, 0);
+//                }
+//            }
+
+//            if (mainPartIndex.isValid()) {
+//                if (mainPartIndex.data(RolePartMimeType).toString() == QLatin1String("text/html")) {
+//                    partFactoryCreate(mainPartIndex, recursionDepth + 1);
+//                    //                    return PartWidgetFactory::create(mainPartIndex, recursionDepth+1, loadingMode);
+//                } else {
+//                    // Sorry, but anything else than text/html is by definition suspicious here. Better than picking some random
+//                    // choice, let's just show everything.
+//                    fetchGenericMultipart(partIndex, constModel);
+//                    //                    return new GenericMultipartWidget(0, this, partIndex, recursionDepth, loadingMode);
+//                }
+//            } else {
+//                // The RFC2387's wording is clear that in absence of an explicit START argument, the first part is the starting one.
+//                // On the other hand, I've seen real-world messages whose first part is some utter garbage (an image sent as
+//                // application/octet-stream, for example) and some *other* part is an HTML text. In that case (and if we somehow
+//                // failed to pick the HTML part by a heuristic), it's better to show everything.
+//                fetchGenericMultipart(partIndex, constModel);
+//                //                return new GenericMultipartWidget(0, this, partIndex, recursionDepth, loadingMode);
+//            }
         } else {
             //            return new GenericMultipartWidget(0, this, partIndex, recursionDepth, loadingMode);
             //dig only one level

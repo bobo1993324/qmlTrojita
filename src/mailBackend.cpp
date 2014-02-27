@@ -56,13 +56,16 @@ void MailBackend::setupModels(){
         factory.reset(new Streams::FakeSocketFactory(Imap::CONN_STATE_LOGOUT));
     }
 
-    QString cacheDir = Common::writablePath(Common::LOCATION_CACHE);
+//    QString cacheDir = Common::writablePath(Common::LOCATION_CACHE);
+    //save to local directory because of confinement
+    QString cacheDir = QString("./.cache") + m_settings->value(SettingsNames::imapUserKey).toString();
     Imap::Mailbox::AbstractCache *cache = 0;
+
     //TODO enable cache in production
-    //    bool shouldUsePersistentCache = m_settings->value(SettingsNames::cacheOfflineKey).toString() != SettingsNames::cacheOfflineNone;
-    bool shouldUsePersistentCache = false;
+    (*m_settings)[SettingsNames::cacheOfflineKey] = SettingsNames::cacheOfflineAll;
+    bool shouldUsePersistentCache = m_settings->value(SettingsNames::cacheOfflineKey).toString() != SettingsNames::cacheOfflineNone;
     if (shouldUsePersistentCache) {
-        qDebug() << "cache dir is " <<  cacheDir;
+//        qDebug() << "cache dir is " <<  cacheDir;
         if (! QDir().mkpath(cacheDir)) {
             //            QMessageBox::critical(this, tr("Cache Error"), tr("Failed to create directory %1").arg(cacheDir));
             qDebug() << "Cache Error: Failed to create directory " << cacheDir;
@@ -77,7 +80,7 @@ void MailBackend::setupModels(){
     if (! shouldUsePersistentCache) {
         cache = new Imap::Mailbox::MemoryCache(this);
     } else {
-        cache = new Imap::Mailbox::CombinedCache(this, QLatin1String("trojita-imap-cache"), cacheDir);
+        cache = new Imap::Mailbox::CombinedCache(this,QLatin1String("trojita-imap-cache"), cacheDir);
         connect(cache, SIGNAL(error(QString)), this, SLOT(cacheError(QString)));
         if (! static_cast<Imap::Mailbox::CombinedCache *>(cache)->open()) {
             // Error message was already shown by the cacheError() slot
@@ -137,7 +140,7 @@ void MailBackend::sslErrors(const QList<QSslCertificate> &certificateChain, cons
     model->setSslPolicy(certificateChain, errors, true);
 }
 void MailBackend::slotImapLogged(uint parserId, const Common::LogMessage &message){
-//    qDebug() << "From parser " << parserId << ": " << message.message;
+    qDebug() << "From parser " << parserId << ": " << message.message;
 }
 void MailBackend::slotNewMessageRecieved(){
     QModelIndex mailbox = model->index(1, 0, QModelIndex());
@@ -150,4 +153,12 @@ void MailBackend::slotNewMessageRecieved(){
                     mailbox.data(Imap::Mailbox::RoleUnreadMessageCount).toInt());
 
     }
+}
+void MailBackend::cacheError(QString message){
+    qDebug() << tr("IMAP Cache Error") <<
+                          tr("The caching subsystem managing a cache of the data already "
+                             "downloaded from the IMAP server is having troubles. "
+                             "All caching will be disabled.\n\n%1").arg(message);
+    if (model)
+        model->setCache(new Imap::Mailbox::MemoryCache(model));
 }

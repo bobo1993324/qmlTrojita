@@ -37,12 +37,14 @@ public:
 signals:
     void emitDataChanged();
     void updateUnreadCount(QString accountName, int unReadCount);
+
 public slots:
     void authenticationRequested();
     void authenticationFailed(const QString &message);
     void sslErrors(const QList<QSslCertificate> &certificateChain, const QList<QSslError> &errors);
     void slotImapLogged(uint parserId, const Common::LogMessage &message);
     void slotNewMessageRecieved();
+    void cacheError(QString);
 private:
     void setupModels();
     void nukeModels();
