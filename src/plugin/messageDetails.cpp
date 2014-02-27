@@ -191,7 +191,7 @@ void TrojitaMessageDetails::partFactoryCreate(const QModelIndex &partIndex, int 
                 qDebug() << "subtype " << mimeType2;
                 //TODO for wide screen, show html
                 if(mimeType2 == "text/plain"){
-                    fetchSimpleContent(anotherPart, constModel);
+                    partFactoryCreate(anotherPart, recursionDepth + 1);
                 }
             }
         } else if (mimeType == QLatin1String("multipart/signed")) {
@@ -204,9 +204,9 @@ void TrojitaMessageDetails::partFactoryCreate(const QModelIndex &partIndex, int 
                 QString mimeType2 = anotherPart.data(Imap::Mailbox::RolePartMimeType).toString();
                 qDebug() << "subtype " << mimeType2;
                 if(mimeType2 == "multipart/alternative"){
-                    partFactoryCreate(anotherPart, 0);
+                    partFactoryCreate(anotherPart, recursionDepth + 1);
                 }else if(mimeType2 == "text/plain" || mimeType2 == "text/html"){
-                    fetchSimpleContent(anotherPart, constModel);
+                    partFactoryCreate(anotherPart, recursionDepth + 1);
                 }else{
                     //TODO should be image, add to webbackend
                     //m_tam->add(TrojitaAttachment(anotherPart.data(Imap::Mailbox::RolePartFileName).toString()));
@@ -289,31 +289,26 @@ void TrojitaMessageDetails::partFactoryCreate(const QModelIndex &partIndex, int 
     //    return lbl;
 }
 void TrojitaMessageDetails::fetchGenericMultipart(QModelIndex partIndex, const Imap::Mailbox::Model * constModel){
-    bool findBody = false;
     for (int i = 0; i < partIndex.model()->rowCount(partIndex); ++i) {
         QModelIndex anotherPart = partIndex.child(i, 0);
         Q_ASSERT(anotherPart.isValid()); // guaranteed by the MVC
         QString mimeType2 = anotherPart.data(Imap::Mailbox::RolePartMimeType).toString();
         qDebug() << "subtype " << mimeType2;
         if(mimeType2 == "multipart/related"){
-            findBody = true;
             //TODO add depth to count
             //TODO image src can be "cid:image002.gif" which is in other fields
             partFactoryCreate(anotherPart, 0);
         }
         else if(mimeType2 == "multipart/alternative"){
-            findBody = true;
             //TODO add depth to count
             partFactoryCreate(anotherPart, 0);
         }else if(mimeType2 == "text/plain" || mimeType2 == "text/html"){
-            findBody = true;
-            fetchSimpleContent(anotherPart, constModel);
+            partFactoryCreate(anotherPart, 0);
         }else{
             //TODO how do we deal with attachments
             //m_tam->add(TrojitaAttachment(anotherPart.data(Imap::Mailbox::RolePartFileName).toString()));
         }
     }
-    //TODO report error if cannot findBody
 }
 
 QString TrojitaMessageDetails::getFirstMailFromList(QVariantList qvl){
