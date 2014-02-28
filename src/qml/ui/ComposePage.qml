@@ -16,6 +16,9 @@ Rectangle {
     HintPopover{
         id: hintPopover
     }
+    SendStatusDialog{
+        id: sendStatusDialog
+    }
 
     Column{
         id: recieversColumn
@@ -146,8 +149,9 @@ Rectangle {
                         onTriggered: {
                             //TODO show send mail progress
                             //TODO transfer receiverModel to backend one reciever at a time before send
+                            PopupUtils.open(sendStatusDialog)
                             TROJITA_SEND_MAIL.sendMail(toTextField.text, subjectTextField.text, contextTextArea.text, ccTextField.text, bccTextField.text);
-                             mainView.goToMailboxPage();
+                            mainView.goToMailboxPage();
                         }
                     }
                 }

@@ -319,6 +319,7 @@ QString TrojitaMessageDetails::getFirstMailFromList(QVariantList qvl){
         else
             return oneSender[2].toString() + "@" + oneSender[3].toString();
     }
+    return "";
 }
 
 QStringList TrojitaMessageDetails::getMailsFromList(QVariantList qvl){

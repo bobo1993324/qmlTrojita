@@ -1,6 +1,7 @@
 #include "sendmail.h"
 int TrojitaSendMail::sendMail(QString to, QString subject, QString content, QString cc, QString bcc){
     qDebug() << "sendMail to " << to <<" " << content;
+    setStatus("sending");
     using namespace Common;
     QString method = m_settings->value(SettingsNames::msaMethodKey).toString();
     MSA::MSAFactory *msaFactory = 0;
@@ -15,6 +16,9 @@ int TrojitaSendMail::sendMail(QString to, QString subject, QString content, QStr
                                           m_settings->value(SettingsNames::smtpPassKey).toString());
         m_submission = new Composer::Submission(this, m_model, msaFactory);
         connect(m_submission, SIGNAL(succeeded()), this, SLOT(sent()));
+        connect(m_submission, SIGNAL(failed(QString)), this, SLOT(gotError(QString)));
+        connect(m_submission, SIGNAL(passwordRequested(QString,QString)), this, SLOT(passwordRequested(QString,QString)), Qt::QueuedConnection);
+
         if (!buildMessageData(to, subject, content, cc, bcc))
             return 0;
         m_submission->send();
@@ -40,7 +44,11 @@ int TrojitaSendMail::sendMail(QString to, QString subject, QString content, QStr
 }
 
 void TrojitaSendMail::sent(){
-    qDebug() << "message sent";
+    setStatus("sent");
+}
+
+void TrojitaSendMail::gotError(QString message){
+    setErrorMsg(message);
 }
 
 bool TrojitaSendMail::buildMessageData(QString to, QString subject, QString content, QString cc, QString bcc)
@@ -48,6 +56,7 @@ bool TrojitaSendMail::buildMessageData(QString to, QString subject, QString cont
     QList<QPair<Composer::RecipientKind,Imap::Message::MailAddress> > recipients;
 
     QStringList tos = to.split(",");
+    //parse to
     Q_FOREACH(QString to2, tos){
         Imap::Message::MailAddress addr;
         bool ok = Imap::Message::MailAddress::fromPrettyString(addr, to2);
@@ -55,6 +64,7 @@ bool TrojitaSendMail::buildMessageData(QString to, QString subject, QString cont
         qDebug() << "to" << to2;
         recipients << qMakePair(Composer::ADDRESS_TO, addr);
     }
+    //parse cc
     QStringList ccs = cc.split(",");
     Q_FOREACH(QString cc2, cc){
         Imap::Message::MailAddress addr;
@@ -63,6 +73,7 @@ bool TrojitaSendMail::buildMessageData(QString to, QString subject, QString cont
         Q_ASSERT(ok);
         recipients << qMakePair(Composer::ADDRESS_CC, addr);
     }
+    //parse bcc
     QStringList bccs = bcc.split(",");
     Q_FOREACH(QString bcc2, bcc){
         Imap::Message::MailAddress addr;
@@ -127,4 +138,26 @@ void TrojitaSendMail::setModel(Imap::Mailbox::Model *model){
 
 void TrojitaSendMail::setSettings(QHash<QString, QVariant> * settings){
     m_settings = settings;
+}
+
+QString TrojitaSendMail::status(){
+    return m_status;
+}
+void TrojitaSendMail::setStatus(QString s){
+    m_status = s;
+    emit statusChanged();
+}
+
+QString TrojitaSendMail::errorMsg(){
+    return m_errorMsg;
+}
+void TrojitaSendMail::setErrorMsg(QString s){
+    setStatus("error");
+    m_errorMsg = s;
+    emit errorMsgChanged();
+}
+
+void TrojitaSendMail::passwordRequested(QString user, QString host){
+    //todo implement password resquest
+    qDebug() << "TrojitaSendMail::passwordRequested";
 }
