@@ -147,11 +147,20 @@ Rectangle {
                         text: "Send"
                         iconSource: Qt.resolvedUrl("../img/email.svg")
                         onTriggered: {
-                            //TODO show send mail progress
-                            //TODO transfer receiverModel to backend one reciever at a time before send
-                            PopupUtils.open(sendStatusDialog)
-                            TROJITA_SEND_MAIL.sendMail(toTextField.text, subjectTextField.text, contextTextArea.text, ccTextField.text, bccTextField.text);
-                            mainView.goToMailboxPage();
+                            //check  the validilty of emailAddresses
+                            if (toTextField.text === ""){
+                                mainView.hintText = "To is blank";
+                                PopupUtils.open(hintPopover);
+                            } else if (TROJITA_SEND_MAIL.isAddrCorrect(toTextField.text)
+                                    && (ccTextField.text === "" || TROJITA_SEND_MAIL.isAddrCorrect(ccTextField.text))
+                                    && (bccTextField.text === "" || TROJITA_SEND_MAIL.isAddrCorrect(bccTextField.text))){
+                                PopupUtils.open(sendStatusDialog)
+                                TROJITA_SEND_MAIL.sendMail(toTextField.text, subjectTextField.text, contextTextArea.text, ccTextField.text, bccTextField.text);
+                                mainView.goToMailboxPage();
+                            } else {
+                                mainView.hintText = TROJITA_SEND_MAIL.errorMsg;
+                                PopupUtils.open(hintPopover);
+                            }
                         }
                     }
                 }

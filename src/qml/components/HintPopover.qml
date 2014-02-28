@@ -6,8 +6,9 @@ import Ubuntu.Components.Popups 0.1
 Component {
     Popover {
         id: popover
+        contentWidth: text.width
         Text{
-            anchors.centerIn: parent
+            id: text
             text: mainView.hintText
         }
     }

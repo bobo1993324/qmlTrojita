@@ -43,6 +43,20 @@ int TrojitaSendMail::sendMail(QString to, QString subject, QString content, QStr
     }
 }
 
+bool TrojitaSendMail::isAddrCorrect(QString addrs){
+    QStringList tos = addrs.split(",");
+    //parse to
+    Q_FOREACH(QString to2, tos){
+        Imap::Message::MailAddress addr;
+        bool ok = Imap::Message::MailAddress::fromPrettyString(addr, to2);
+        if(!ok){
+            setErrorMsg(to2 + "is not a valid email address");
+            return false;
+        }
+    }
+    return true;
+}
+
 void TrojitaSendMail::sent(){
     setStatus("sent");
 }

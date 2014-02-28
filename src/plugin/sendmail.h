@@ -14,6 +14,7 @@ class TrojitaSendMail: public QObject{
     Q_PROPERTY(QString errorMsg READ errorMsg NOTIFY errorMsgChanged)
 public:
     Q_INVOKABLE int sendMail(QString to, QString subject, QString content, QString cc, QString bcc);
+    Q_INVOKABLE bool isAddrCorrect(QString addrs);
 
     TrojitaSendMail(){}
     void setModel(Imap::Mailbox::Model * model);
@@ -23,6 +24,7 @@ public:
     void setStatus(QString);
     QString errorMsg();
     void setErrorMsg(QString);
+
 public slots:
     void sent();
     void gotError(QString);
