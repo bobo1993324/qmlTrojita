@@ -66,6 +66,17 @@ Rectangle{
                                 height: parent.height
                                 width: height
                                 anchors.right: parent.right
+                                MouseArea{
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        if(!toolbar.animating){
+                                            favouriteImage.source = !star? Qt.resolvedUrl("../img/favorite-selected.svg")
+                                            : Qt.resolvedUrl("../img/favorite-unselected.svg")
+                                            console.log("star clicked");
+                                            TROJITA_MESSAGES.setStar(uid, !star)
+                                        }
+                                    }
+                                }
                             }
                         }
 

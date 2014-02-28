@@ -2,8 +2,9 @@
 #include <QAbstractListModel>
 #include <QDebug>
 #include <QDate>
-
+#include "Imap/Model/MailboxTree.h"
 #include "Imap/Model/MsgListModel.h"
+#include "Imap/Model/Utils.h"
 class TrojitaMessage
 {
 public:
@@ -17,6 +18,8 @@ public:
     bool unread() const;
     QString time() const;
     bool isStared() const;
+
+    
 private:
     QString m_subject;
     uint m_uid;
@@ -49,6 +52,7 @@ public:
 
     QString getMailBoxName();
     void setMailBoxName(QString);
+    Q_INVOKABLE void setStar(int uid, bool b);
 signals:
     void mailBoxNameChanged();
 public slots:

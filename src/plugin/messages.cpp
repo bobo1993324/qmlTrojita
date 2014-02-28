@@ -1,4 +1,5 @@
 #include "messages.h"
+
 QString TrojitaMessage::subject() const{
     return m_subject;
 }
@@ -132,3 +133,23 @@ void TrojitaMessagesModel::setMailBoxName(QString mbn){
     m_mailBoxName = mbn;
     mailBoxNameChanged();
 }
+
+void TrojitaMessagesModel::setStar(int uid, bool b){
+    QModelIndex index;
+    for(int i=0;i<m_msgListModel->rowCount();i++){
+        uint inner_uid = m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageUid).toUInt();
+        if(uid == inner_uid)
+            index = m_msgListModel->index(i,0);
+    }
+    Q_ASSERT(index.isValid());
+    qDebug() << "Qindex is " << index;
+
+    const Imap::Mailbox::Model *constModel = 0;
+    Imap::Mailbox::TreeItemMessage *part = dynamic_cast<Imap::Mailbox::TreeItemMessage *>(Imap::Mailbox::Model::realTreeItem(index, &constModel));
+    Imap::Mailbox::Model * model = const_cast<Imap::Mailbox::Model *>(constModel);
+
+    QModelIndexList translatedIndexes;
+    translatedIndexes << Imap::deproxifiedIndex(index);
+    
+        model->setMessageFlags(translatedIndexes, "\\Flagged", b?Imap::Mailbox::FLAG_ADD : Imap::Mailbox::FLAG_REMOVE);
+} 
