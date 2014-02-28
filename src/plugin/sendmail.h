@@ -11,7 +11,7 @@
 class TrojitaSendMail: public QObject{
     Q_OBJECT
 public:
-    Q_INVOKABLE int sendMail(QString to, QString subject, QString content);
+    Q_INVOKABLE int sendMail(QString to, QString subject, QString content, QString cc, QString bcc);
 
     TrojitaSendMail(){}
     void setModel(Imap::Mailbox::Model * model);
@@ -22,5 +22,5 @@ private:
     QHash<QString, QVariant> * m_settings;
     Imap::Mailbox::Model * m_model;
     Composer::Submission * m_submission;
-    bool buildMessageData(QString to, QString subject = "", QString content = "");
+    bool buildMessageData(QString to, QString subject, QString content, QString cc, QString bcc);
 };

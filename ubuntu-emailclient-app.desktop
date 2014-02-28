@@ -4,6 +4,6 @@ Version=1.0
 Type=Application
 Terminal=false
 Exec=./ubuntu-emailclient-app
-Icon=./emailclient64.png
+Icon=./logo.png
 Name=Email Client
 X-Ubuntu-Touch=true

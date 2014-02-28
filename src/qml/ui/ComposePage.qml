@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
+import Ubuntu.Components.Popups 0.1
 import "../components"
 Rectangle {
     id: composePage
@@ -9,17 +10,11 @@ Rectangle {
     property alias toolbar: toolbar
     property alias subject: subjectTextField.text
     property alias content: contextTextArea.text
+    property alias to: toTextField.text
+    property bool showCcBcc: false
 
-    function setTo(s){
-        receiverModel.get(0).value = s;
-    }
-
-    ListModel{
-        id: receiverModel
-        ListElement{
-            recieverType: "TO"
-            value: ""
-        }
+    HintPopover{
+        id: hintPopover
     }
 
     Column{
@@ -28,39 +23,72 @@ Rectangle {
         ListItem.Header{
             text: "Compose"
         }
-
-        Repeater{
-            model: receiverModel
-            delegate: ListItem.Base{
-                Row{
-                    width: parent.width
-                    spacing: units.gu(2)
+        ListItem.Base{
+            Row{
+                width: parent.width
+                spacing: units.gu(2)
+                anchors.verticalCenter: parent.verticalCenter
+                Label{
                     anchors.verticalCenter: parent.verticalCenter
-                    Label{
-                        id: typeLabel
-                        width: subjectLabel.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: recieverType
-                    }
-                    TextField{
-                        width: parent.width - typeLabel.width - removeRecieverButton.width
-                               - ((index == 0) ? parent.spacing : parent.spacing * 2)
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: value
-                        onTextChanged: {
-                            receiverModel.get(index).value = text;
+                    text: "To"
+                    width: subjectLabel.width
+                }
+                TextField{
+                    id: toTextField
+                    width: parent.width - subjectLabel.width - parent.spacing * 2 - toHelpImage.width
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Image {
+                    id: toHelpImage
+                    source: Qt.resolvedUrl("../img/help.svg")
+                    height: parent.height * 2 / 3
+                    width: height
+                    anchors.verticalCenter: parent.verticalCenter
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked:{
+                            mainView.hintText = "To add multiple accounts, \nseparate with ','"
+                            PopupUtils.open(hintPopover, toHelpImage)
                         }
                     }
-                    Image{
-                        id: removeRecieverButton
-                        height: index != 0 ? parent.height/2 : 0
-                        width: height
-                        anchors.verticalCenter: parent.verticalCenter
-                        source: Qt.resolvedUrl("../img/close.svg")
-                        MouseArea{
-                            anchors.fill: parent
-                        }
-                    }
+                }
+            }
+        }
+        ListItem.Base{
+            id: cclib
+            visible: showCcBcc
+            Row{
+                width: parent.width
+                spacing: units.gu(2)
+                anchors.verticalCenter: parent.verticalCenter
+                Label{
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "CC"
+                    width: subjectLabel.width
+                }
+                TextField{
+                    id: ccTextField
+                    width: parent.width - subjectLabel.width - parent.spacing
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+        }
+        ListItem.Base{
+            id: bcclib
+            visible: showCcBcc
+            Row{
+                width: parent.width
+                spacing: units.gu(2)
+                anchors.verticalCenter: parent.verticalCenter
+                Label{
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "BCC"
+                    width: subjectLabel.width
+                }
+                TextField{
+                    id: bccTextField
+                    width: parent.width - subjectLabel.width - parent.spacing
+                    anchors.verticalCenter: parent.verticalCenter
                 }
             }
         }
@@ -118,7 +146,7 @@ Rectangle {
                         onTriggered: {
                             //TODO show send mail progress
                             //TODO transfer receiverModel to backend one reciever at a time before send
-                            TROJITA_SEND_MAIL.sendMail(receiverModel.get(0).value, subjectTextField.text, contextTextArea.text);
+                            TROJITA_SEND_MAIL.sendMail(toTextField.text, subjectTextField.text, contextTextArea.text, ccTextField.text, bccTextField.text);
                              mainView.goToMailboxPage();
                         }
                     }
@@ -133,11 +161,13 @@ Rectangle {
                     }
                 }
                 ToolbarButton{
-                    //TODO sendmail to multiple recievers
-                    visible: false;
                     action: Action{
-                        text: "Add reciever"
+                        text: "Add CC/BCC"
+                        visible: !showCcBcc
                         iconSource: Qt.resolvedUrl("../img/add.svg")
+                        onTriggered:{
+                            showCcBcc = true;
+                        }
                     }
                 }
             }

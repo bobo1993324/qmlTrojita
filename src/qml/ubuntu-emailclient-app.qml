@@ -11,13 +11,15 @@ import "ui"
 MainView {
     id: mainView
     objectName: "mainView"
-    width: units.gu(50)
+    width: units.gu(160)
     height: units.gu(75)
     applicationName: "com.bobo-324.qmltrojita"
     //This empty page disable default toolbar
     property bool isPhone: width < units.gu(100)
     property int leftPanelWidth:units.gu(50)
     property int seperatorWidth: units.gu(0.5)
+
+    property string hintText: ""
 
     signal unReadCountUpdated(string account, int newUnreadCount);
     onUnReadCountUpdated: {
