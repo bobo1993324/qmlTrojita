@@ -24,7 +24,8 @@ class TrojitaMessageDetails : public QObject{
     Q_PROPERTY(QString subject READ subject NOTIFY subjectChanged)
     Q_PROPERTY(QString from READ from WRITE setFrom NOTIFY fromChanged)
     Q_PROPERTY(QString date READ date WRITE setDate NOTIFY dateChanged)
-    Q_PROPERTY(QString to READ to WRITE setTo NOTIFY toChanged)
+    Q_PROPERTY(QStringList to READ to NOTIFY toChanged)
+    Q_PROPERTY(int toCount READ toCount NOTIFY toChanged)
     Q_PROPERTY(QStringList cc READ cc NOTIFY ccChanged)
     Q_PROPERTY(int ccCount READ ccCount NOTIFY ccChanged)
     Q_PROPERTY(QStringList bcc READ bcc  NOTIFY bccChanged)
@@ -44,8 +45,9 @@ public:
     void setFrom(QString from);
     QString date();
     void setDate(QString date);
-    QString to();
-    void setTo(QString to);
+    QStringList to();
+    void setTo(QStringList to);
+    int toCount();
     QStringList cc();
     void setCc(QStringList cc);
     int ccCount();
@@ -79,7 +81,7 @@ private:
     QString m_subject;
     QString m_from;
     QString m_date;
-    QString m_to;
+    QStringList m_to;
     QStringList m_cc;
     QStringList m_bcc;
     Imap::Mailbox::Model *model;

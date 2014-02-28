@@ -54,11 +54,27 @@ Rectangle{
         ListItem.Standard{
             id: toLIS
             text: "To"
-            visible: messagePage.detailExpanded;
-            control:
-                Label{
-                text:TROJITA_MESSAGE_DETAILS.to
-                anchors.verticalCenter: parent.verticalCenter
+            visible: messagePage.detailExpanded && TROJITA_MESSAGE_DETAILS.toCount !== 0;
+            control:Flickable{
+                clip: true
+                width: toRow.width < toLIS.width * 0.8 ? toRow.width : toLIS.width * 0.8
+                height: toLIS.height
+                contentWidth: toRow.width
+                contentHeight: parent.height
+                Row{
+                    id: toRow
+                    height: toLIS.height
+                    spacing: units.gu(1)
+
+
+                    Repeater{
+                        model: TROJITA_MESSAGE_DETAILS.to
+                        delegate: Label{
+                            text: modelData + (index < TROJITA_MESSAGE_DETAILS.toCount - 1 ? "," : "")
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+                }
             }
         }
         ListItem.Standard{

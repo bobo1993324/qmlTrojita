@@ -34,13 +34,17 @@ void TrojitaMessageDetails::setDate(QString date){
     m_date = date;
     emit dateChanged();
 }
-QString TrojitaMessageDetails::to(){
+QStringList TrojitaMessageDetails::to(){
     return m_to;
 }
-void TrojitaMessageDetails::setTo(QString to){
+void TrojitaMessageDetails::setTo(QStringList to){
     m_to = to;
     emit toChanged();
 }
+int TrojitaMessageDetails::toCount(){
+    return m_to.count();
+}
+
 QStringList TrojitaMessageDetails::cc(){
     return m_cc;
 }
@@ -74,7 +78,7 @@ void TrojitaMessageDetails::setMessage(const QModelIndex &index){
 
     setFrom(getFirstMailFromList(index.data(Imap::Mailbox::RoleMessageSender).toList()));
     setDate(index.data(Imap::Mailbox::RoleMessageDate).toDateTime().toString());
-    setTo(getFirstMailFromList(index.data(Imap::Mailbox::RoleMessageTo).toList()));
+    setTo(getMailsFromList(index.data(Imap::Mailbox::RoleMessageTo).toList()));
     setCc(getMailsFromList(index.data(Imap::Mailbox::RoleMessageCc).toList()));
     setBcc(getMailsFromList(index.data(Imap::Mailbox::RoleMessageBcc).toList()));
 
