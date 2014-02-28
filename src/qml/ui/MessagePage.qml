@@ -16,7 +16,8 @@ Rectangle{
         id: markPopover
     }
     Column{
-        anchors.fill: parent
+        id: infoColumn
+        width: parent.width
         ListItem.Standard{
             id: subjectLIS
             text: "Subject"
@@ -88,22 +89,54 @@ Rectangle{
         }
 
         ListItem.Standard{
+            id: bccLIS
+            text: "BCC"
+            visible: messagePage.detailExpanded && TROJITA_MESSAGE_DETAILS.bccCount !== 0;
+            control:Flickable{
+                clip: true
+                width: bccRow.width < bccLIS.width * 0.8 ? bccRow.width : bccLIS.width * 0.8
+                height: bccLIS.height
+                contentWidth: bccRow.width
+                contentHeight: parent.height
+                Row{
+                    id: bccRow
+                    height: bccLIS.height
+                    spacing: units.gu(1)
+
+
+                    Repeater{
+                        model: TROJITA_MESSAGE_DETAILS.bcc
+                        delegate: Label{
+                            text: modelData + ","
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+                }
+            }
+        }
+
+        ListItem.Standard{
             visible: messagePage.detailExpanded
             text: TROJITA_MESSAGE_DETAILS.date
         }
-        Rectangle{
+    }
+
+    Rectangle{
+        anchors{
+            top: infoColumn.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+            bottomMargin: isPhone ? 0 : toolbar.height
+        }
+        UbuntuWebView{
             width: parent.width
-            height: parent.height - fromLIS.height * (messagePage.detailExpanded? 4:1)
-                            - (isPhone ? 0 : toolbar.height)
-            UbuntuWebView{
-                width: parent.width
-                height: parent.height
-                id: messageWebview
-                Connections{
-                    target: TROJITA_MESSAGE_DETAILS
-                    onContentChanged: {
-                        messageWebview.loadHtml(TROJITA_MESSAGE_DETAILS.content)
-                    }
+            height: parent.height
+            id: messageWebview
+            Connections{
+                target: TROJITA_MESSAGE_DETAILS
+                onContentChanged: {
+                    messageWebview.loadHtml(TROJITA_MESSAGE_DETAILS.content)
                 }
             }
         }

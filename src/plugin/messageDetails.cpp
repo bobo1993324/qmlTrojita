@@ -53,6 +53,17 @@ int TrojitaMessageDetails::ccCount(){
     return m_cc.count();
 }
 
+QStringList TrojitaMessageDetails::bcc(){
+    return m_bcc;
+}
+void TrojitaMessageDetails::setBcc(QStringList bcc){
+    m_bcc = bcc;
+    emit bccChanged();
+}
+int TrojitaMessageDetails::bccCount(){
+    return m_bcc.count();
+}
+
 void TrojitaMessageDetails::setMessage(const QModelIndex &index){
 
     m_messageIndex = index;
@@ -65,6 +76,7 @@ void TrojitaMessageDetails::setMessage(const QModelIndex &index){
     setDate(index.data(Imap::Mailbox::RoleMessageDate).toDateTime().toString());
     setTo(getFirstMailFromList(index.data(Imap::Mailbox::RoleMessageTo).toList()));
     setCc(getMailsFromList(index.data(Imap::Mailbox::RoleMessageCc).toList()));
+    setBcc(getMailsFromList(index.data(Imap::Mailbox::RoleMessageBcc).toList()));
 
     // first, let's get a real model
     QModelIndex messageIndex;

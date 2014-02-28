@@ -27,6 +27,8 @@ class TrojitaMessageDetails : public QObject{
     Q_PROPERTY(QString to READ to WRITE setTo NOTIFY toChanged)
     Q_PROPERTY(QStringList cc READ cc NOTIFY ccChanged)
     Q_PROPERTY(int ccCount READ ccCount NOTIFY ccChanged)
+    Q_PROPERTY(QStringList bcc READ bcc  NOTIFY bccChanged)
+    Q_PROPERTY(int bccCount READ bccCount NOTIFY bccChanged)
 public:
     TrojitaMessageDetails(QString content = "", TrojitaAttachmentsModel * tam = 0);
 
@@ -47,6 +49,9 @@ public:
     QStringList cc();
     void setCc(QStringList cc);
     int ccCount();
+    QStringList bcc();
+    void setBcc(QStringList cc);
+    int bccCount();
 
     void setMessage(const QModelIndex &index);
 signals:
@@ -56,6 +61,7 @@ signals:
     void dateChanged();
     void toChanged();
     void ccChanged();
+    void bccChanged();
 public slots:
     void simplePartFetched();
 private:
@@ -75,7 +81,7 @@ private:
     QString m_date;
     QString m_to;
     QStringList m_cc;
-
+    QStringList m_bcc;
     Imap::Mailbox::Model *model;
     TrojitaAttachmentsModel * m_tam;
 };
