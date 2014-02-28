@@ -116,6 +116,7 @@ void MailBackend::setupModels(){
 
     connect (model, SIGNAL(mailBoxModelChanged(QModelIndex, QModelIndex)), mboxModel, SLOT(emitDataChanged()));
     connect(model, SIGNAL(authRequested()), this, SLOT(authenticationRequested()), Qt::QueuedConnection);
+    connect(model, SIGNAL(connectionError(const QString &)), this, SLOT(connectionError(const QString &)));
     connect(model, SIGNAL(authAttemptFailed(QString)), this, SLOT(authenticationFailed(QString)));
     connect(model, SIGNAL(needsSslDecision(QList<QSslCertificate>,QList<QSslError>)),
             this, SLOT(sslErrors(QList<QSslCertificate>,QList<QSslError>)), Qt::QueuedConnection);
@@ -132,7 +133,9 @@ void MailBackend::authenticationRequested()
 }
 void MailBackend::authenticationFailed(const QString &message)
 {
-    qDebug() << "Login Failed: " << message;
+//    qDebug() << "Login Failed: " << message;
+    emit loginError(message, m_settings->value(Common::SettingsNames::imapUserKey).toString());
+
 }
 void MailBackend::sslErrors(const QList<QSslCertificate> &certificateChain, const QList<QSslError> &errors)
 {
@@ -161,4 +164,8 @@ void MailBackend::cacheError(QString message){
                              "All caching will be disabled.\n\n%1").arg(message);
     if (model)
         model->setCache(new Imap::Mailbox::MemoryCache(model));
+}
+void MailBackend::connectionError(QString message){
+    if(message.indexOf("Too many commands before") < 0)
+        emit loginError(message, m_settings->value(Common::SettingsNames::imapUserKey).toString());
 }

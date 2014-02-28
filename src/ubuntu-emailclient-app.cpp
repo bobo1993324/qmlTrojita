@@ -115,4 +115,5 @@ void EmailApplication::addingAccount(QVariant account){
     MailBackend * newMailAccount = new MailBackend(account, m_settings);
     mailBackendList.append(newMailAccount);
     connect(newMailAccount, SIGNAL(updateUnreadCount(QString,int)), trojitaAlert, SLOT(slotSetAlert(QString, int)));
+    connect(newMailAccount, SIGNAL(loginError(QString, QString)), trojitaAlert, SLOT(slotAuthenticateFailed(QString, QString)));
 }

@@ -37,7 +37,7 @@ public:
 signals:
     void emitDataChanged();
     void updateUnreadCount(QString accountName, int unReadCount);
-
+    void loginError(const QString &message, QString account);
 public slots:
     void authenticationRequested();
     void authenticationFailed(const QString &message);
@@ -45,6 +45,7 @@ public slots:
     void slotImapLogged(uint parserId, const Common::LogMessage &message);
     void slotNewMessageRecieved();
     void cacheError(QString);
+    void connectionError(QString);
 private:
     void setupModels();
     void nukeModels();
