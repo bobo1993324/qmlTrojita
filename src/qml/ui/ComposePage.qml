@@ -11,6 +11,8 @@ Rectangle {
     property alias subject: subjectTextField.text
     property alias content: contextTextArea.text
     property alias to: toTextField.text
+    property alias cc: ccTextField.text
+    property alias bcc: bccTextField.text
     property bool showCcBcc: false
 
     HintPopover{
@@ -148,7 +150,7 @@ Rectangle {
                         iconSource: Qt.resolvedUrl("../img/email.svg")
                         onTriggered: {
                             //check  the validilty of emailAddresses
-                            if (toTextField.text === ""){
+                            if (toTextField.text == ""){
                                 mainView.hintText = "To is blank";
                                 PopupUtils.open(hintPopover);
                             } else if (TROJITA_SEND_MAIL.isAddrCorrect(toTextField.text)

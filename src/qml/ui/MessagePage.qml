@@ -15,6 +15,9 @@ Rectangle{
     MarkPopover{
         id: markPopover
     }
+    ReplyPopover{
+        id: replyPopover
+    }
     Column{
         id: infoColumn
         width: parent.width
@@ -201,16 +204,16 @@ Rectangle{
                 }
                 ToolbarButton{
                     //TODO implement reply
+                    id: replyButton
                     action: Action{
                         text: "Reply"
                         iconSource: Qt.resolvedUrl("../img/back.svg")
                         onTriggered:{
-                            if(TROJITA_MESSAGE_DETAILS.ccCount == 0){
-                                composePage.setTo(TROJITA_MESSAGE_DETAILS.from)
-                                composePage.subject = "Re: "+TROJITA_MESSAGE_DETAILS.subject
-                                composePage.content = TROJITA_MESSAGE_DETAILS.generateReplyMessage();
+                            if(TROJITA_MESSAGE_DETAILS.toCount == 1 && TROJITA_MESSAGE_DETAILS.ccCount == 0 && TROJITA_MESSAGE_DETAILS.bccCount == 0){
+                                replyPrivately();
+                            } else {
+                                PopupUtils.open(replyPopover, replyButton);
                             }
-                            mainView.goToComposePage()
                         }
                     }
                 }
@@ -219,6 +222,13 @@ Rectangle{
 
         ToolbarShadow{
         }
+    }
+
+    function replyPrivately(){
+        composePage.to = TROJITA_MESSAGE_DETAILS.from
+        composePage.subject = "Re: "+TROJITA_MESSAGE_DETAILS.subject
+        composePage.content = TROJITA_MESSAGE_DETAILS.generateReplyMessage();
+        mainView.goToComposePage()
     }
 }
 
