@@ -9,6 +9,7 @@ Rectangle{
     objectName: "settingPage"
     color: "#ECEDED"
     property alias toolbar: toolbar
+    property int editingIndex
 
     signal settingChanged;
     signal addingAccount(var s);
@@ -53,6 +54,31 @@ Rectangle{
             contents = tmp
             settingsPage.setCurrentAccount(idx)
         }
+        function configAccountIndex(idx){
+            editingIndex = idx
+            settingsPage.state="CONFIG_MAILBOX"
+            if (idx !== -1) {
+            usernameTextField.text = accountsDocument.contents.accounts[idx]["imap.auth.user"]
+            configPassWordTextField.text = accountsDocument.contents.accounts[idx]["imap.auth.pass"]
+
+            imapServerTextField.text = accountsDocument.contents.accounts[idx]["imap.host"]
+            imapPortTextField.text = accountsDocument.contents.accounts[idx]["imap.port"]
+
+            encryptionLI.selectedIndex = 0;
+
+            smtpServerTextField.text = accountsDocument.contents.accounts[idx]["msa.smtp.host"]
+            smtpPortTextField.text = accountsDocument.contents.accounts[idx]["msa.smtp.port"]
+
+            smtpMethodLI.selectedIndex = 0;
+            }
+            else {
+                usernameTextField.text = emailTextField.text
+                configPassWordTextField.text = passwordTextField.text
+            }
+
+
+        }
+
         function removeAccount(idx){
             var tmp = contents
             if(contents.currentAccountIndex>=idx){
@@ -125,6 +151,11 @@ Rectangle{
                 target: addButtons
                 visible: false;
             }
+            PropertyChanges{
+                target: configColumn
+                visible: false;
+            }
+
         },
         State{
             name: "ADDING_ACCOUNT"
@@ -144,11 +175,28 @@ Rectangle{
                 target: addButtons
                 visible: true;
             }
+            PropertyChanges{
+                target: configColumn
+                visible: false;
+            }
+        },
+        State{
+            name: "CONFIG_MAILBOX"
+            PropertyChanges {
+                target: accountColumn
+                visible: false
+            }
+            PropertyChanges{
+                target: configColumn
+                visible: true;
+            }
+
         }
+
     ]
     Column{
+        id: accountColumn
         width: parent.width
-        height: parent.height
         ListItem.Header{
             text: "Current account"
         }
@@ -156,14 +204,28 @@ Rectangle{
             id: currentAccount
             visible: accountsDocument.contents.currentAccountIndex != -1
             text: visible ? accountsDocument.contents.accounts[accountsDocument.contents.currentAccountIndex]["imap.auth.user"] : ""
-            control:Image{
-                height: currentAccount.height/2
-                width: height
-                anchors.verticalCenter: parent.verticalCenter
-                source: Qt.resolvedUrl("../img/close.svg")
-                MouseArea{
-                    anchors.fill: parent
-                    onClicked: accountsDocument.removeAccount(accountsDocument.contents.currentAccountIndex)
+            control:Row{
+                height: currentAccount.height
+                spacing: units.gu(2)
+                Image{
+                    height: parent.height/2
+                    width: height
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: Qt.resolvedUrl("../img/settings.svg")
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: accountsDocument.configAccountIndex(accountsDocument.contents.currentAccountIndex)
+                    }
+                }
+                Image{
+                    height: currentAccount.height/2
+                    width: height
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: Qt.resolvedUrl("../img/close.svg")
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: accountsDocument.removeAccount(accountsDocument.contents.currentAccountIndex)
+                    }
                 }
             }
         }
@@ -186,6 +248,16 @@ Rectangle{
                         MouseArea{
                             anchors.fill: parent
                             onClicked: accountsDocument.setCurrentIndex(index)
+                        }
+                    }
+                    Image{
+                        height: parent.height/2
+                        width: height
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: Qt.resolvedUrl("../img/settings.svg")
+                        MouseArea{
+                            anchors.fill: parent
+                            onClicked: accountsDocument.configAccountIndex(index)
                         }
                     }
                     Image{
@@ -232,6 +304,7 @@ Rectangle{
                 height: currentAccount.height
                 spacing: units.gu(2)
                 Button{
+                    id: addAccountButton
                     text: "Add"
                     onClicked:{
                         settingFetchingIndicator.running = true;
@@ -244,17 +317,29 @@ Rectangle{
                                         settingFetchingIndicator.running = false;
                                         accountsDocument.addAccount(account);
                                         settingsPage.state="NORMAL"
-
-
                                     },
                                     //TODO show error and provide manual configuration options
-                                    function(){console.log("fetch failed")}
+                                    function(){
+                                        console.log("fetch failed")
+                                        settingFetchingIndicator.running = false
+                                        addAccountConfig.visible = true
+                                        addAccountButton.visible = false
+
+                                    }
                                     );
                     }
                 }
                 Button{
                     text: "Cancel"
-                    onClicked: settingsPage.state="NORMAL"
+                    onClicked: {
+                            settingFetchingIndicator.running = false
+                            addAccountConfig.visible = false
+                            addAccountButton.visible = true
+                        emailTextField.text = ""
+                        passwordTextField.text = ""
+
+                        settingsPage.state="NORMAL"
+                    }
                 }
                 ActivityIndicator{
                     id: settingFetchingIndicator
@@ -262,9 +347,160 @@ Rectangle{
                     visible: running
                     anchors.verticalCenter: parent.verticalCenter
                 }
+                Button{
+                    id: addAccountConfig
+//                    height: parent.height/2
+//                    width: height
+//                    anchors.verticalCenter: parent.verticalCenter
+//                    source: Qt.resolvedUrl("../img/settings.svg")
+                    text: "Manual Configuration"
+                    onClicked: {
+
+                        accountsDocument.configAccountIndex(-1)
+                    }
+                    visible: false
+                }
+            }
+        }
+
+    }
+    Column {
+        id: configColumn
+        width: parent.width
+        ListItem.Header{
+            text: "Config Account"
+        }
+        ListItem.Standard{
+            //TODO check email address is valid
+            id: usernameLI
+            text: "Username"
+            control: TextField{
+                id: usernameTextField
+            }
+        }
+        ListItem.Standard{
+            //TODO check email address is valid
+            id: configPasswordLI
+            text: "Password"
+            control: TextField{
+                id: configPassWordTextField
+                text: passwordTextField.text
+                echoMode: TextInput.Password
+            }
+        }
+        ListItem.Header{
+            text: "IMAP"
+        }
+        ListItem.ValueSelector {
+            id: encryptionLI
+            text: "Encryption"
+            values: ["Force encryption (TLS)", "Use encryption (STARTTLS)", "No encrytion"]
+        }
+        ListItem.Standard{
+            //TODO check email address is valid
+            id: imapServerLI
+            text: "Server"
+            control: TextField{
+                id: imapServerTextField
+            }
+        }
+        ListItem.Standard{
+            //TODO check email address is valid
+            id: imapPortLI
+            text: "Port"
+            control: TextField{
+                id: imapPortTextField
+            }
+        }
+
+        ListItem.Header{
+            text: "SMTP"
+        }
+        ListItem.ValueSelector {
+            id: smtpMethodLI
+            text: "Encryption"
+            values: ["SMTP", "Secure SMTP"]
+            onSelectedIndexChanged: {
+                if (selectedIndex == 1) {
+                    performSTARTTLSCheckBox.checked = true
+                    performSTARTTLSCheckBox.enabled = false
+                }
+                else {
+                    performSTARTTLSCheckBox.checked = false
+                    performSTARTTLSCheckBox.enabled = true
+                }
+            }
+        }
+        ListItem.Standard{
+            //TODO check email address is valid
+            id: smtpServerLI
+            text: "Server"
+            control: TextField{
+                id: smtpServerTextField
+            }
+        }
+        ListItem.Standard{
+            //TODO check email address is valid
+            id: smtpPortLI
+            text: "Port"
+            control: TextField{
+                id: smtpPortTextField
+            }
+        }
+        ListItem.Standard{
+            //TODO check email address is valid
+            id: performSTARTTLSLI
+            text: "Perform STARTTLS"
+            control: CheckBox{
+                id: performSTARTTLSCheckBox
+            }
+        }
+        ListItem.SingleControl{
+            id: configAddButtons
+            control:Row{
+                height: currentAccount.height
+                spacing: units.gu(2)
+                Button{
+                    text: "Save"
+                    onClicked:{
+                        if (editingIndex !== -1)
+                            accountsDocument.removeAccount(editingIndex)
+                        var account = {
+                            "imap.auth.user" : usernameTextField.text,
+                            "imap.auth.pass" : configPassWordTextField.text,
+                            "imap.host": imapServerTextField.text,
+                            "imap.port" : imapPortTextField.text,
+                            "imap.method": encryptionLI.selectedIndex == 0? "SSL" : "TCP",
+                            "msa.method": smtpMethodLI.selectedIndex == 0 ? "SMTP" : "SSMTP",   // use SMTP by default
+                            "msa.smtp.host": smtpServerTextField.text,
+                            "msa.smtp.port": smtpPortTextField.text,
+                            "msa.smtp.starttls": performSTARTTLSCheckBox.checked,
+                            "msa.smtp.auth": "true",    //default to be true
+                            "msa.smtp.auth.user": usernameTextField.text,
+                            "msa.smtp.auth.pass": configPassWordTextField.text
+                        }
+
+                        accountsDocument.addAccount(account);
+                        settingsPage.state="NORMAL"
+                    }
+                }
+                Button{
+                    text: "Cancel"
+                    onClicked: {
+
+                        settingsPage.state="NORMAL"
+                        emailTextField.text = ""
+                        passwordTextField.text = ""
+                        settingFetchingIndicator.running = false
+                        addAccountConfig.visible = false
+                        addAccountButton.visible = true
+                    }
+
+                }
             }
         }
     }
+
     Panel{
         id: toolbar
         anchors.bottom: parent.bottom
