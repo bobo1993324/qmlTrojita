@@ -11,8 +11,8 @@ Rectangle{
     property alias toolbar: toolbar
     property int editingIndex
 
-    signal settingChanged;
     signal addingAccount(var s);
+    signal removingAccount(int idx);
     signal setCurrentAccount(int idx);
 
     property string activeAccount: accountsDocument.contents.accounts[accountsDocument.contents.currentAccountIndex]["imap.auth.user"]
@@ -64,15 +64,13 @@ Rectangle{
                 imapServerTextField.text = accountsDocument.contents.accounts[idx]["imap.host"]
                 imapPortTextField.text = accountsDocument.contents.accounts[idx]["imap.port"]
 
-                if (accountsDocument.contents.accounts[idx]["imap.method"] === "TCP"){
-                    encryptionLI.selectedIndex = 2;
-                } else if (accountsDocument.contents.accounts[idx]["imap.starttls"]){
+                if (accountsDocument.contents.accounts[idx]["imap.method"] === "SSL"){
                     encryptionLI.selectedIndex = 0;
-                } else {
+                } else if (accountsDocument.contents.accounts[idx]["imap.starttls"]){
                     encryptionLI.selectedIndex = 1;
+                } else {
+                    encryptionLI.selectedIndex = 2;
                 }
-
-
 
                 smtpServerTextField.text = accountsDocument.contents.accounts[idx]["msa.smtp.host"]
                 smtpPortTextField.text = accountsDocument.contents.accounts[idx]["msa.smtp.port"]
@@ -94,16 +92,18 @@ Rectangle{
             }
             tmp.accounts.splice(idx, 1);
             contents=tmp;
+            settingsPage.removingAccount(idx);
         }
         function addAccount(account){
             var tmp = contents
             tmp.accounts.push(account);
             if(contents.accounts.length ===0){
-                tmp.currentAccountIndex=0
+                tmp.currentAccountIndex = 0
             }
             contents=tmp;
             settingsPage.addingAccount(account);
             if(contents.accounts.length === 1){
+                mailBoxPage.loaded = false;
                 settingsPage.setCurrentAccount(0);
             }
         }
@@ -314,13 +314,10 @@ Rectangle{
                                         emailTextField.text,
                                         passwordTextField.text,
                                         function(account){
-                                            //                                        console.log(JSON.stringify(account));
-                                            //                                        return;
                                             settingFetchingIndicator.running = false;
                                             accountsDocument.addAccount(account);
                                             settingsPage.state="NORMAL"
                                         },
-                                        //TODO show error and provide manual configuration options
                                         function(){
                                             console.log("fetch failed")
                                             settingFetchingIndicator.running = false
@@ -478,7 +475,7 @@ Rectangle{
                                                                                                                                 "msa.smtp.auth.user": usernameTextField.text,
                                                                                                                                 "msa.smtp.auth.pass": configPassWordTextField.text
                             }
-
+//                            console.log(JSON.stringify(account))
                             accountsDocument.addAccount(account);
                             settingsPage.state="NORMAL"
                         }

@@ -45,6 +45,7 @@ public slots:
     void messageClicked(int uid);
 
     void addingAccount(QVariant q);
+    void removingAccount(int idx);
     void setCurrentAccount(int idx);
 
 private:

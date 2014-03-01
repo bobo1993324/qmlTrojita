@@ -25,6 +25,9 @@ void EmailApplication::createView(){
     connect(m_view->rootObject()->findChild<QQuickItem *>("settingPage"),
             SIGNAL(setCurrentAccount(int)), this, SLOT(setCurrentAccount(int)));
 
+    connect(m_view->rootObject()->findChild<QQuickItem *>("settingPage"),
+            SIGNAL(removingAccount(int)), this, SLOT(removingAccount(int)));
+
     connect(m_view->rootObject()->findChild<QQuickItem *>("mailBoxPage"),
             SIGNAL(mailBoxClicked(QString)), this, SLOT(mailBoxClicked(QString)));
 
@@ -114,4 +117,8 @@ void EmailApplication::addingAccount(QVariant account){
     mailBackendList.append(newMailAccount);
     connect(newMailAccount, SIGNAL(updateUnreadCount(QString,int)), trojitaAlert, SLOT(slotSetAlert(QString, int)));
     connect(newMailAccount, SIGNAL(loginError(QString, QString)), trojitaAlert, SLOT(slotAuthenticateFailed(QString, QString)));
+}
+
+void EmailApplication::removingAccount(int idx){
+    mailBackendList.removeAt(idx);
 }

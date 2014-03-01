@@ -64,6 +64,7 @@ void MailBackend::setupModels(){
     //TODO enable cache in production
     (*m_settings)[SettingsNames::cacheOfflineKey] = SettingsNames::cacheOfflineAll;
     bool shouldUsePersistentCache = m_settings->value(SettingsNames::cacheOfflineKey).toString() != SettingsNames::cacheOfflineNone;
+//    bool shouldUsePersistentCache = false;
     if (shouldUsePersistentCache) {
 //        qDebug() << "cache dir is " <<  cacheDir;
         if (! QDir().mkpath(cacheDir)) {
