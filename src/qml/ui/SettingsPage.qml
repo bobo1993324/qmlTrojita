@@ -52,6 +52,7 @@ Rectangle{
             var tmp = contents
             tmp.currentAccountIndex = idx
             contents = tmp
+            mailBoxPage.loaded = false;
             settingsPage.setCurrentAccount(idx)
         }
         function configAccountIndex(idx){
@@ -103,7 +104,6 @@ Rectangle{
             contents=tmp;
             settingsPage.addingAccount(account);
             if(contents.accounts.length === 1){
-                mailBoxPage.loaded = false;
                 settingsPage.setCurrentAccount(0);
             }
         }

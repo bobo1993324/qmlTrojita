@@ -18,7 +18,6 @@ Component {
                     text: index === settingsPage.getActiveAccountIndex() ? "<b>" + modelData + "</b>" : modelData
                     onClicked: {
                         //reload inbox
-                        mailBoxPage.loaded = false;
                         settingsPage.setActiveAccountIndex(index);
                         PopupUtils.close(popover)
                     }
