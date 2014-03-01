@@ -99,11 +99,11 @@ function adaptConfiguration(settings, account, password){
         "imap.host": settings.imap.host,
         "imap.port" : settings.imap.port,
         "imap.method": settings.imap.socketType,
-        "msa.method": settings.smtp.socketType == "SSL" ? "SSMTP" : "SMTP",   // use SMTP by default
+        "msa.method": settings.smtp.socketType === "SSL" ? "SSMTP" : "SMTP",   // use SMTP by default
         "msa.smtp.host": settings.smtp.host,
         "msa.smtp.port": settings.smtp.port,
-        "msa.smtp.starttls": "true", // default to be true, might relate to setting.smtp.socketType
-        "msa.smtp.auth": "true",    //default to be true
+        "msa.smtp.starttls": true, // default to be true, might relate to setting.smtp.socketType
+        "msa.smtp.auth": true,    //default to be true
         "msa.smtp.auth.user": account,
         "msa.smtp.auth.pass": password
     }

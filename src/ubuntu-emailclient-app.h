@@ -66,7 +66,6 @@ private:
 //    Imap::Mailbox::PrettyMsgListModel *prettyMsgListModel;
 
     //qml
-    TrojitaSetting * trojitaSetting ;
     TrojitaMailBoxModel * trojitaMailBoxModel ;
     TrojitaMessagesModel * trojitaMessagesModel ;
     TrojitaMessageDetails * trojitaMessageDetails ;

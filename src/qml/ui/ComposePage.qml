@@ -21,7 +21,12 @@ Rectangle {
     SendStatusDialog{
         id: sendStatusDialog
     }
-
+    //dummy mouseAreato disable click when toolbar is shown and not locked
+    MouseArea{
+        anchors.fill: parent
+        onClicked: {}
+        enabled: toolbar.opened && !toolbar.locked
+    }
     Column{
         id: recieversColumn
         width: parent.width

@@ -37,14 +37,12 @@ void EmailApplication::createView(){
 
 void EmailApplication::registerQml(){
     //TODO user reconnect Context Models
-    trojitaSetting=new TrojitaSetting();
     trojitaMailBoxModel=new TrojitaMailBoxModel();
     trojitaMessagesModel = new TrojitaMessagesModel();
     trojitaMessageDetails = new TrojitaMessageDetails();
     trojitaSendMail = new TrojitaSendMail();
     trojitaAlert = new TrojitaAlert();
     m_view->rootContext()->setContextProperty("TROJITA_MAILBOX", trojitaMailBoxModel);
-    m_view->rootContext()->setContextProperty("TROJITA_SETTING", trojitaSetting);
     m_view->rootContext()->setContextProperty("TROJITA_MESSAGES", trojitaMessagesModel);
     m_view->rootContext()->setContextProperty("TROJITA_MESSAGE_DETAILS", trojitaMessageDetails);
     m_view->rootContext()->setContextProperty("TROJITA_SEND_MAIL", trojitaSendMail);
