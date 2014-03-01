@@ -30,6 +30,9 @@ MainView {
     MessageDialog{
         id: messageDialog
     }
+    FirstUseDialog{
+        id: firstUseDialog
+    }
 
     Connections{
         target: TROJITA_ALERT
@@ -49,6 +52,11 @@ MainView {
             closeAndUnlockToolbars();
         }else{
             openAndLockToolbars();
+        }
+
+        //with no account setup, open a Dialog that guides user to settings
+        if(!settingsPage.activeAccount || settingsPage.activeAccount == ""){
+            PopupUtils.open(firstUseDialog);
         }
     }
 

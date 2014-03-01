@@ -1,15 +1,15 @@
 {
     "architecture": "all",
-    "description": "description of ubuntu-emailclienet-app",
+    "description": "a mail client",
     "framework": "ubuntu-sdk-13.10",
     "hooks": {
-        "ubuntu-emailclienet-app": {
-            "apparmor": "ubuntu-emailclienet-app.json",
-            "desktop": "ubuntu-emailclienet-app.desktop"
+        "ubuntu-emailclient-app": {
+            "apparmor": "ubuntu-emailclient-app.json",
+            "desktop": "ubuntu-emailclient-app.desktop"
         }
     },
-    "maintainer": "",
-    "name": "com.ubuntu.developer.username.ubuntu-emailclienet-app",
-    "title": "ubuntu-emailclienet-app",
+    "maintainer": "Boren Zhang <bobo1993324@gmail.com>",
+    "name": "com.bobo-324.qmltrojita",
+    "title": "qmlTrojita",
     "version": "0.1"
 }
