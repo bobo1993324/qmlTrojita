@@ -53,6 +53,7 @@ Rectangle{
             tmp.currentAccountIndex = idx
             contents = tmp
             mailBoxPage.loaded = false;
+            TROJITA_MESSAGES.displayCount = 0;
             settingsPage.setCurrentAccount(idx)
         }
         function configAccountIndex(idx){
@@ -104,7 +105,7 @@ Rectangle{
             contents=tmp;
             settingsPage.addingAccount(account);
             if(contents.accounts.length === 1){
-                settingsPage.setCurrentAccount(0);
+                setCurrentIndex(0);
             }
         }
 

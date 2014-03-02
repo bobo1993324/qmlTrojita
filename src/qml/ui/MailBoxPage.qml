@@ -22,11 +22,36 @@ Rectangle{
         }
 
         ListView{
+            id: messagesView
             width: parent.width
             //toolbar.height is locked and opened in desktop mode
-            height: parent.height - title.height - (isPhone ? 0 : toolbar.height)
+            height: parent.height - title.height - (isPhone ? 0 : toolbar.height) - (mailLoading.running ? mailLoading.height : 0)
             model: TROJITA_MESSAGES
             clip: true
+            property var lastYTime: 0//remove vibartion
+            onAtYEndChanged: {
+                var time = new Date()
+                if(time.getTime() - lastYTime > 1000){
+                    loadMore();
+                }
+            }
+            function loadMore(){
+                if(messagesView.atYEnd && TROJITA_MESSAGES.messageCount >= TROJITA_MESSAGES.displayCount){
+                    messagesView.lastYTime = new Date().getTime()
+                    mailLoading.running = true
+                    TROJITA_MESSAGES.displayCount += 20
+                    yAtEndTimer.start()
+                }
+            }
+
+            Timer{
+                id: yAtEndTimer
+                onTriggered: {
+                    messagesView.loadMore()
+                }
+
+            }
+
             delegate: ListItem.Base{
                 Rectangle {
                     id: listItemItem
@@ -34,6 +59,9 @@ Rectangle{
                     anchors.fill: parent
                     color: "transparent"
 
+                    Component.onCompleted: {
+                        mailLoading.running = false;
+                    }
 
                     MouseArea{
                         anchors.fill: parent
@@ -71,7 +99,7 @@ Rectangle{
                                     onClicked: {
                                         if(!toolbar.animating){
                                             favouriteImage.source = !star? Qt.resolvedUrl("../img/favorite-selected.svg")
-                                            : Qt.resolvedUrl("../img/favorite-unselected.svg")
+                                                                         : Qt.resolvedUrl("../img/favorite-unselected.svg")
                                             console.log("star clicked");
                                             TROJITA_MESSAGES.setStar(uid, !star)
                                         }
@@ -99,6 +127,12 @@ Rectangle{
                 }
 
             }
+        }
+        ActivityIndicator{
+            id: mailLoading
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: running
+            running: false
         }
     }
     Panel{

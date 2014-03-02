@@ -94,8 +94,13 @@ void TrojitaMessagesModel::reloadMessages(){
     beginRemoveRows(QModelIndex(), 0, rowCount()-1);
     m_msg_list.clear();
     endRemoveRows();
+    //this will happen at first load, when atYEndChanged is triggered at start
+    if(!m_msgListModel)
+        return;
 //    qDebug() << "rowCount is " << m_msgListModel->rowCount();
-    for(int i=0;i<m_msgListModel->rowCount();i++){
+    //show the bottom first because it is the most recent
+    int rowCount =  m_msgListModel->rowCount();
+    for(int i = rowCount - 1; i  >= 0 && i >= rowCount - m_displayCount; i--){
         bool isDeleted=m_msgListModel->data(m_msgListModel->index(i,0), Imap::Mailbox::RoleMessageIsMarkedDeleted).toBool();
         if(isDeleted)
             continue;
@@ -132,6 +137,20 @@ QString TrojitaMessagesModel::getMailBoxName(){
 void TrojitaMessagesModel::setMailBoxName(QString mbn){
     m_mailBoxName = mbn;
     mailBoxNameChanged();
+}
+
+int TrojitaMessagesModel::displayCount(){
+    return m_displayCount;
+}
+
+void TrojitaMessagesModel::setDisplayCount(int count){
+    qDebug() << "setDisplayCount to " << count;
+    m_displayCount = count;
+    reloadMessages();
+}
+
+int TrojitaMessagesModel::messageCount(){
+    return m_msg_list.count();
 }
 
 void TrojitaMessagesModel::setStar(int uid, bool b){

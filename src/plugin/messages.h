@@ -32,6 +32,8 @@ private:
 class TrojitaMessagesModel : public QAbstractListModel{
     Q_OBJECT
     Q_PROPERTY(QString mailBoxName READ getMailBoxName WRITE setMailBoxName NOTIFY mailBoxNameChanged)
+    Q_PROPERTY(int displayCount READ displayCount WRITE setDisplayCount NOTIFY displayCountChanged)
+    Q_PROPERTY(int messageCount READ messageCount)
 public:
     enum TrojitaMessagesModelRoles {
         SubjectRole = Qt::UserRole + 1,
@@ -52,9 +54,13 @@ public:
 
     QString getMailBoxName();
     void setMailBoxName(QString);
+    int displayCount();
+    void setDisplayCount(int count);
+    int messageCount();
     Q_INVOKABLE void setStar(int uid, bool b);
 signals:
     void mailBoxNameChanged();
+    void displayCountChanged();
 public slots:
     void msgModelDataChanged(QModelIndex,QModelIndex);
     void msgModelMailBoxChanged(QModelIndex);
@@ -67,5 +73,6 @@ private:
     QList<TrojitaMessage> m_msg_list;
     Imap::Mailbox::MsgListModel * m_msgListModel;
     QString m_mailBoxName;
+    int m_displayCount = 0;
 };
 

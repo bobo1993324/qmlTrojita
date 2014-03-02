@@ -144,7 +144,7 @@ void MailBackend::sslErrors(const QList<QSslCertificate> &certificateChain, cons
     model->setSslPolicy(certificateChain, errors, true);
 }
 void MailBackend::slotImapLogged(uint parserId, const Common::LogMessage &message){
-    qDebug() << "From parser " << parserId << ": " << message.message;
+//    qDebug() << "From parser " << parserId << ": " << message.message;
 }
 void MailBackend::slotNewMessageRecieved(){
     QModelIndex mailbox = model->index(1, 0, QModelIndex());
