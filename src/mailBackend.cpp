@@ -1,4 +1,8 @@
 #include "mailBackend.h"
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 MailBackend::MailBackend(QVariant account, QSettings * default_settings){
     m_settings = new QHash<QString, QVariant>();
     QStringList keys = default_settings->allKeys();
@@ -56,9 +60,13 @@ void MailBackend::setupModels(){
         factory.reset(new Streams::FakeSocketFactory(Imap::CONN_STATE_LOGOUT));
     }
 
+	//Get home directory of the current user
+	struct passwd *pw = getpwuid(getuid());
+	const char *homedir = pw->pw_dir;
+
 //    QString cacheDir = Common::writablePath(Common::LOCATION_CACHE);
     //save to local directory because of confinement
-    QString cacheDir = QString("./.cache") + m_settings->value(SettingsNames::imapUserKey).toString();
+    QString cacheDir = QString(homedir) + QString("/.local/share/com.bobo-324.qmltrojita/.cache");
     Imap::Mailbox::AbstractCache *cache = 0;
 
     //TODO enable cache in production
