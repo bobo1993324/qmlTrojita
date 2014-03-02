@@ -23,9 +23,8 @@ bool TrojitaMessage::isStared() const{
     return m_isStared;
 }
 
-TrojitaMessagesModel::TrojitaMessagesModel(Imap::Mailbox::MsgListModel *msgList)
-{
-    setMsgListModel(msgList);
+TrojitaMessagesModel::TrojitaMessagesModel() : m_displayCount(20) {
+
 }
 
 void TrojitaMessagesModel::setMsgListModel(Imap::Mailbox::MsgListModel *msgListModel){
