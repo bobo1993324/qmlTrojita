@@ -66,7 +66,7 @@ void MailBackend::setupModels(){
 
 //    QString cacheDir = Common::writablePath(Common::LOCATION_CACHE);
     //save to local directory because of confinement
-    QString cacheDir = QString(homedir) + QString("/.local/share/com.bobo-324.qmltrojita/.cache");
+    QString cacheDir = QString(homedir) + QString("/.local/share/com.bobo-324.qmltrojita/.cache") + m_settings->value(SettingsNames::imapUserKey).toString();
     Imap::Mailbox::AbstractCache *cache = 0;
 
     //TODO enable cache in production
