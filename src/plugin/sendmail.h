@@ -13,6 +13,9 @@ class TrojitaSendMail: public QObject{
     Q_PROPERTY(QString status READ status NOTIFY statusChanged)
     Q_PROPERTY(QString errorMsg READ errorMsg NOTIFY errorMsgChanged)
 public:
+    Q_INVOKABLE void prepare();
+    Q_INVOKABLE bool addAttach(QString);
+    Q_INVOKABLE void removeAttachAtIdx(int idx);
     Q_INVOKABLE int sendMail(QString to, QString subject, QString content, QString cc, QString bcc);
     Q_INVOKABLE bool isAddrCorrect(QString addrs);
 

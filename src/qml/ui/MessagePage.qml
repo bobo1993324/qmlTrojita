@@ -232,9 +232,11 @@ Rectangle{
     }
 
     function replyPrivately(){
+        composePage.reset()
         composePage.to = TROJITA_MESSAGE_DETAILS.from
         composePage.subject = "Re: "+TROJITA_MESSAGE_DETAILS.subject
         composePage.content = TROJITA_MESSAGE_DETAILS.generateReplyMessage();
+        TROJITA_SEND_MAIL.prepare();
         mainView.goToComposePage()
     }
 }

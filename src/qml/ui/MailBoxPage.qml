@@ -25,7 +25,7 @@ Rectangle{
             id: messagesView
             width: parent.width
             //toolbar.height is locked and opened in desktop mode
-            height: parent.height - title.height - (isPhone ? 0 : toolbar.height) - (mailLoading.running ? mailLoading.height : 0)
+            height: parent.height - title.height - (isPhone ? 0 : toolbar.height)
             model: TROJITA_MESSAGES
             clip: true
             property var lastYTime: 0//remove vibartion
@@ -38,7 +38,6 @@ Rectangle{
             function loadMore(){
                 if(messagesView.atYEnd && TROJITA_MESSAGES.messageCount >= TROJITA_MESSAGES.displayCount){
                     messagesView.lastYTime = new Date().getTime()
-                    mailLoading.running = true
                     TROJITA_MESSAGES.displayCount += 20
                     yAtEndTimer.start()
                 }
@@ -58,11 +57,6 @@ Rectangle{
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.fill: parent
                     color: "transparent"
-
-                    Component.onCompleted: {
-                        mailLoading.running = false;
-                    }
-
                     MouseArea{
                         anchors.fill: parent
                         onClicked: {
@@ -128,12 +122,6 @@ Rectangle{
 
             }
         }
-        ActivityIndicator{
-            id: mailLoading
-            anchors.horizontalCenter: parent.horizontalCenter
-            visible: running
-            running: false
-        }
     }
     Panel{
         id: toolbar
@@ -169,6 +157,8 @@ Rectangle{
                         text: "Compose"
                         iconSource: Qt.resolvedUrl("../img/compose.svg")
                         onTriggered: {
+                            composePage.reset()
+                            TROJITA_SEND_MAIL.prepare();
                             mainView.goToComposePage();
                         }
                     }

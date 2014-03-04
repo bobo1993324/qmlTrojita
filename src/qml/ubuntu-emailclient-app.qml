@@ -13,7 +13,7 @@ import "components"
 MainView {
     id: mainView
     objectName: "mainView"
-    width: units.gu(160)
+    width: units.gu(50)
     height: units.gu(75)
     applicationName: "com.bobo-324.qmltrojita"
     //This empty page disable default toolbar

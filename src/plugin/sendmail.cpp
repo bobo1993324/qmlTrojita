@@ -1,7 +1,5 @@
 #include "sendmail.h"
-int TrojitaSendMail::sendMail(QString to, QString subject, QString content, QString cc, QString bcc){
-    qDebug() << "sendMail to " << to <<" " << content;
-    setStatus("sending");
+void TrojitaSendMail::prepare(){
     using namespace Common;
     QString method = m_settings->value(SettingsNames::msaMethodKey).toString();
     MSA::MSAFactory *msaFactory = 0;
@@ -18,11 +16,6 @@ int TrojitaSendMail::sendMail(QString to, QString subject, QString content, QStr
         connect(m_submission, SIGNAL(succeeded()), this, SLOT(sent()));
         connect(m_submission, SIGNAL(failed(QString)), this, SLOT(gotError(QString)));
         connect(m_submission, SIGNAL(passwordRequested(QString,QString)), this, SLOT(passwordRequested(QString,QString)), Qt::QueuedConnection);
-
-        if (!buildMessageData(to, subject, content, cc, bcc))
-            return 0;
-        m_submission->send();
-
     } else if (method == SettingsNames::methodSENDMAIL) {
         //        QStringList args = m_settings->value(SettingsNames::sendmailKey, SettingsNames::sendmailDefaultCmd).toString().split(QLatin1Char(' '));
         //        if (args.isEmpty()) {
@@ -41,6 +34,28 @@ int TrojitaSendMail::sendMail(QString to, QString subject, QString content, QStr
         //        QMessageBox::critical(this, tr("Error"), tr("Please configure e-mail delivery method in application settings."));
         //        return 0;
     }
+}
+
+bool TrojitaSendMail::addAttach(QString file){
+    if(file.indexOf("file://") != -1){
+        file.remove(0, 7);
+    }
+    return m_submission->composer()->addFileAttachment(file);
+}
+
+void TrojitaSendMail::removeAttachAtIdx(int idx){
+    m_submission->composer()->removeAttachment(m_submission->composer()->index(idx));
+}
+
+int TrojitaSendMail::sendMail(QString to, QString subject, QString content, QString cc, QString bcc){
+    qDebug() << "sendMail to " << to <<" " << content;
+    setStatus("sending");
+
+    if (!buildMessageData(to, subject, content, cc, bcc))
+        return 0;
+    m_submission->send();
+
+
 }
 
 bool TrojitaSendMail::isAddrCorrect(QString addrs){

@@ -3,6 +3,8 @@ import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Popups 0.1
+import Ubuntu.Content 0.1
+
 import "../components"
 Rectangle {
     id: composePage
@@ -14,6 +16,18 @@ Rectangle {
     property alias cc: ccTextField.text
     property alias bcc: bccTextField.text
     property bool showCcBcc: false
+    property var attachments: []
+
+    function reset(){
+        subject = ""
+        content = ""
+        to = ""
+        cc = ""
+        bcc = ""
+        showCcBcc = false;
+        attachments = [];
+        attachmentLV.model = [];
+    }
 
     HintPopover{
         id: hintPopover
@@ -30,6 +44,8 @@ Rectangle {
     Column{
         id: recieversColumn
         width: parent.width
+        anchors.bottomMargin: isPhone ? 0 : toolbar.height
+
         ListItem.Header{
             text: "Compose"
         }
@@ -120,16 +136,62 @@ Rectangle {
             }
         }
     }
+
     TextArea{
         //TODO live richtext editing
         id: contextTextArea
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
         anchors.top: recieversColumn.bottom
         anchors.margins: units.gu(1)
-        anchors.bottomMargin: isPhone ? units.gu(1) : units.gu(1) + toolbar.height
+        height: composePage.height - recieversColumn.height - (isPhone ? 0 : toolbar.height) - units.gu(1) * 2 - attachColumn.height
     }
+    Column{
+        id: attachColumn
+        width: parent.width
+        height: 0
+        anchors{
+            top: contextTextArea.bottom
+        }
+
+        ListItem.Header{
+            id: attachHeader
+            text:"Attachments"
+        }
+
+        ListView {
+            id: attachmentLV
+            height: cclib.height * 3
+            width: parent.width
+            model: composePage.attachments
+            onModelChanged: {
+                if(model.length > 0)
+                    attachColumn.height = attachHeader.height + attachmentLV.height
+                else{
+                    attachColumn.height = 0
+                }
+            }
+
+            delegate: ListItem.Standard{
+                text: modelData
+                control: Image{
+                    source: Qt.resolvedUrl("../img/close.svg")
+                    height: cclib.height / 2
+                    width: height
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: {
+                            TROJITA_SEND_MAIL.removeAttachAtIdx(index);
+                            composePage.attachments.splice(index, 1);
+                            attachmentLV.model = composePage.attachments;
+                        }
+                    }
+                }
+            }
+            clip: true
+        }
+    }
+
     Panel{
         id: toolbar
         anchors.bottom: parent.bottom
@@ -159,8 +221,8 @@ Rectangle {
                                 mainView.hintText = "To is blank";
                                 PopupUtils.open(hintPopover);
                             } else if (TROJITA_SEND_MAIL.isAddrCorrect(toTextField.text)
-                                    && (ccTextField.text === "" || TROJITA_SEND_MAIL.isAddrCorrect(ccTextField.text))
-                                    && (bccTextField.text === "" || TROJITA_SEND_MAIL.isAddrCorrect(bccTextField.text))){
+                                       && (ccTextField.text === "" || TROJITA_SEND_MAIL.isAddrCorrect(ccTextField.text))
+                                       && (bccTextField.text === "" || TROJITA_SEND_MAIL.isAddrCorrect(bccTextField.text))){
                                 PopupUtils.open(sendStatusDialog)
                                 TROJITA_SEND_MAIL.sendMail(toTextField.text, subjectTextField.text, contextTextArea.text, ccTextField.text, bccTextField.text);
                                 mainView.goToMailboxPage();
@@ -173,11 +235,16 @@ Rectangle {
                 }
 
                 ToolbarButton{
-                    //TODO attachFiles
-                    visible: false;
                     action: Action{
                         text: "Attach"
                         iconSource: Qt.resolvedUrl("../img/add.svg")
+                        onTriggered:{
+                            //TODO import other file type
+                            toolbar.close();
+                            activeTransfer = ContentHub.importContent(ContentType.Pictures);
+                            activeTransfer.selectionType =ContentTransfer.Multiple;
+                            activeTransfer.start();
+                        }
                     }
                 }
                 ToolbarButton{
@@ -193,6 +260,33 @@ Rectangle {
             }
         }
         ToolbarShadow{
+        }
+    }
+
+    //content hub implementation
+    ContentImportHint {
+        id: importHint
+        anchors.fill: parent
+        activeTransfer: composePage.activeTransfer
+    }
+    property list<ContentItem> importItems
+    property var activeTransfer
+    Connections {
+        target: composePage.activeTransfer
+        onStateChanged: {
+            if (composePage.activeTransfer.state === ContentTransfer.Charged){
+                importItems = composePage.activeTransfer.items;
+                console.log(importItems.length)
+                for(var i in importItems){
+                    console.log("attach file" + importItems[i].url);
+                    if(TROJITA_SEND_MAIL.addAttach(importItems[i].url)){
+                        composePage.attachments.push(importItems[i].url.toString().replace(/^.*[\\\/]/, ''));
+                        attachmentLV.model = composePage.attachments;
+                    }else{
+                        console.log("add failed")
+                    }
+                }
+            }
         }
     }
 }
