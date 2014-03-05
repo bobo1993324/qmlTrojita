@@ -3,6 +3,7 @@ import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Components.Extras.Browser 0.1
 import Ubuntu.Components.Popups 0.1
+import QtWebKit 3.0
 import "../components"
 Rectangle{
     id: messagePage
@@ -156,13 +157,27 @@ Rectangle{
             bottomMargin: isPhone ? 0 : toolbar.height
         }
         UbuntuWebView{
-            width: parent.width
-            height: parent.height
+            anchors.fill: parent
             id: messageWebview
             Connections{
                 target: TROJITA_MESSAGE_DETAILS
                 onContentChanged: {
                     messageWebview.loadHtml(TROJITA_MESSAGE_DETAILS.content)
+
+                }
+            }
+            onNavigationRequested: {
+                console.log(request.url + " clicked")
+                if(request.url != "about:blank"){
+                    request.action = WebView.IgnoreRequest;
+                    if(request.url.toString().indexOf("mailto:") > -1){
+                        composePage.reset();
+                        composePage.to = request.url.toString().substring(7, request.url.toString().length);
+                        TROJITA_SEND_MAIL.prepare();
+                        mainView.goToComposePage();
+                    }else{
+                        Qt.openUrlExternally(request.url)
+                    }
                 }
             }
         }
@@ -210,7 +225,6 @@ Rectangle{
                     }
                 }
                 ToolbarButton{
-                    //TODO implement reply
                     id: replyButton
                     action: Action{
                         text: "Reply"
@@ -221,6 +235,18 @@ Rectangle{
                             } else {
                                 PopupUtils.open(replyPopover, replyButton);
                             }
+                        }
+                    }
+                }
+                ToolbarButton{
+                    //TODO implement forward
+                    id: forwardButton
+                    visible: false
+                    action: Action{
+                        text: "Forward"
+                        iconSource: Qt.resolvedUrl("../img/go-next.svg")
+                        onTriggered:{
+                            console.log("forwarding")
                         }
                     }
                 }
