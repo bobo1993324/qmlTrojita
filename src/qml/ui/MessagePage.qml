@@ -10,6 +10,7 @@ Rectangle{
     property bool detailExpanded:false
     color: "#ECEDED"
     property alias toolbar: toolbar
+
     DeletePopover{
         id: deletePopover
     }
@@ -19,6 +20,10 @@ Rectangle{
     ReplyPopover{
         id: replyPopover
     }
+    MailAddressPopover{
+        id: mailAddressPopover
+    }
+
     //dummy mouseAreato disable click when toolbar is shown and not locked
     MouseArea{
         anchors.fill: parent
@@ -56,16 +61,16 @@ Rectangle{
             id: fromLIS
             text: "From"
             visible: messagePage.detailExpanded;
-            control:
-                Label{
-                text:TROJITA_MESSAGE_DETAILS.from
+            control: MailAddressBox{
+                name: TROJITA_MESSAGE_DETAILS.from.name
+                address: TROJITA_MESSAGE_DETAILS.from.address
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
         ListItem.Standard{
             id: toLIS
             text: "To"
-            visible: messagePage.detailExpanded && TROJITA_MESSAGE_DETAILS.toCount !== 0;
+            visible: messagePage.detailExpanded && TROJITA_MESSAGE_DETAILS.to.length !== 0;
             control:Flickable{
                 clip: true
                 width: toRow.width < toLIS.width * 0.8 ? toRow.width : toLIS.width * 0.8
@@ -77,11 +82,14 @@ Rectangle{
                     height: toLIS.height
                     spacing: units.gu(1)
 
-
                     Repeater{
+                        id: toRepeater
                         model: TROJITA_MESSAGE_DETAILS.to
-                        delegate: Label{
-                            text: modelData + (index < TROJITA_MESSAGE_DETAILS.toCount - 1 ? "," : "")
+
+
+                        delegate: MailAddressBox{
+                            name: modelData.name
+                            address: modelData.address
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -91,7 +99,7 @@ Rectangle{
         ListItem.Standard{
             id: ccLIS
             text: "CC"
-            visible: messagePage.detailExpanded && TROJITA_MESSAGE_DETAILS.ccCount !== 0;
+            visible: messagePage.detailExpanded && TROJITA_MESSAGE_DETAILS.cc.length !== 0;
             control:Flickable{
                 clip: true
                 width: ccRow.width < ccLIS.width * 0.8 ? ccRow.width : ccLIS.width * 0.8
@@ -106,8 +114,9 @@ Rectangle{
 
                     Repeater{
                         model: TROJITA_MESSAGE_DETAILS.cc
-                        delegate: Label{
-                            text: modelData + ","
+                        delegate: MailAddressBox{
+                            name: modelData.name
+                            address: modelData.address
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -118,7 +127,7 @@ Rectangle{
         ListItem.Standard{
             id: bccLIS
             text: "BCC"
-            visible: messagePage.detailExpanded && TROJITA_MESSAGE_DETAILS.bccCount !== 0;
+            visible: messagePage.detailExpanded && TROJITA_MESSAGE_DETAILS.bcc.length !== 0;
             control:Flickable{
                 clip: true
                 width: bccRow.width < bccLIS.width * 0.8 ? bccRow.width : bccLIS.width * 0.8
@@ -133,8 +142,9 @@ Rectangle{
 
                     Repeater{
                         model: TROJITA_MESSAGE_DETAILS.bcc
-                        delegate: Label{
-                            text: modelData + ","
+                        delegate: MailAddressBox{
+                            name: modelData.name
+                            address: modelData.address
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -230,7 +240,7 @@ Rectangle{
                         text: "Reply"
                         iconSource: Qt.resolvedUrl("../img/back.svg")
                         onTriggered:{
-                            if(TROJITA_MESSAGE_DETAILS.toCount == 1 && TROJITA_MESSAGE_DETAILS.ccCount == 0 && TROJITA_MESSAGE_DETAILS.bccCount == 0){
+                            if(TROJITA_MESSAGE_DETAILS.to.length == 1 && TROJITA_MESSAGE_DETAILS.cc.length == 0 && TROJITA_MESSAGE_DETAILS.bcc.length == 0){
                                 replyPrivately();
                             } else {
                                 PopupUtils.open(replyPopover, replyButton);

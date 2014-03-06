@@ -15,6 +15,7 @@
 #include "plugin/attachments.h"
 #include "plugin/sendmail.h"
 #include "plugin/alert.h"
+#include "plugin/mailAddress.h"
 
 #include "Imap/Model/Model.h"
 #include "Imap/Model/MemoryCache.h"

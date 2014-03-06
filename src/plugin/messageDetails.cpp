@@ -1,6 +1,6 @@
 #include "messageDetails.h"
 TrojitaMessageDetails::TrojitaMessageDetails(QString content, TrojitaAttachmentsModel * tam)
-    : m_content(content), m_tam(tam)
+    : m_content(content), m_tam(tam), m_from(0)
 {
 }
 
@@ -20,11 +20,14 @@ void TrojitaMessageDetails::setSubject(QString subject){
     m_subject = subject;
     emit subjectChanged();
 }
-QString TrojitaMessageDetails::from(){
+MailAddress* TrojitaMessageDetails::from(){
     return m_from;
 }
-void TrojitaMessageDetails::setFrom(QString from){
-    m_from = from;
+void TrojitaMessageDetails::setFrom(QVariantList qvl){
+    if(m_from) m_from->deleteLater();
+    QVariantList oneSender = qvl.front().toList();
+    m_from = new MailAddress(oneSender[0].toString(),
+                        oneSender[2].toString() + "@" + oneSender[3].toString());
     emit fromChanged();
 }
 QString TrojitaMessageDetails::date(){
@@ -34,38 +37,60 @@ void TrojitaMessageDetails::setDate(QString date){
     m_date = date;
     emit dateChanged();
 }
-QStringList TrojitaMessageDetails::to(){
-    return m_to;
+QQmlListProperty<MailAddress> TrojitaMessageDetails::to(){
+    return QQmlListProperty<MailAddress>(this, m_to);
 }
-void TrojitaMessageDetails::setTo(QStringList to){
-    m_to = to;
+void TrojitaMessageDetails::setTo(QVariantList qvl){
+    while(!m_to.empty()){
+        m_to.back()->deleteLater();
+        m_to.pop_back();
+    }
+    while(!qvl.empty()){
+        QVariantList oneSender = qvl.front().toList();
+        MailAddress * tmp = new MailAddress(oneSender[0].toString(),
+                                            oneSender[2].toString() + "@" + oneSender[3].toString());
+        m_to.append(tmp);
+        qvl.pop_front();
+    }
+//    qDebug() << m_to;
     emit toChanged();
 }
-int TrojitaMessageDetails::toCount(){
-    return m_to.count();
+
+QQmlListProperty<MailAddress> TrojitaMessageDetails::cc(){
+    return QQmlListProperty<MailAddress>(this, m_cc);
 }
 
-QStringList TrojitaMessageDetails::cc(){
-    return m_cc;
-}
-
-void TrojitaMessageDetails::setCc(QStringList cc){
-    m_cc = cc;
+void TrojitaMessageDetails::setCc(QVariantList qvl){
+    while(!m_cc.empty()){
+        m_cc.back()->deleteLater();
+        m_cc.pop_back();
+    }
+    while(!qvl.empty()){
+        QVariantList oneSender = qvl.front().toList();
+        MailAddress * tmp = new MailAddress(oneSender[0].toString(),
+                                            oneSender[2].toString() + "@" + oneSender[3].toString());
+        m_cc.append(tmp);
+        qvl.pop_front();
+    }
     emit ccChanged();
 }
-int TrojitaMessageDetails::ccCount(){
-    return m_cc.count();
-}
 
-QStringList TrojitaMessageDetails::bcc(){
-    return m_bcc;
+QQmlListProperty<MailAddress> TrojitaMessageDetails::bcc(){
+    return QQmlListProperty<MailAddress>(this, m_bcc);
 }
-void TrojitaMessageDetails::setBcc(QStringList bcc){
-    m_bcc = bcc;
+void TrojitaMessageDetails::setBcc(QVariantList qvl){
+    while(!m_bcc.empty()){
+        m_bcc.back()->deleteLater();
+        m_bcc.pop_back();
+    }
+    while(!qvl.empty()){
+        QVariantList oneSender = qvl.front().toList();
+        MailAddress * tmp = new MailAddress(oneSender[0].toString(),
+                                            oneSender[2].toString() + "@" + oneSender[3].toString());
+        m_bcc.append(tmp);
+        qvl.pop_front();
+    }
     emit bccChanged();
-}
-int TrojitaMessageDetails::bccCount(){
-    return m_bcc.count();
 }
 
 void TrojitaMessageDetails::setMessage(const QModelIndex &index){
@@ -76,11 +101,11 @@ void TrojitaMessageDetails::setMessage(const QModelIndex &index){
 
     setSubject(index.data(Imap::Mailbox::RoleMessageSubject).toString());
 
-    setFrom(getFirstMailFromList(index.data(Imap::Mailbox::RoleMessageSender).toList()));
+    setFrom(index.data(Imap::Mailbox::RoleMessageSender).toList());
     setDate(index.data(Imap::Mailbox::RoleMessageDate).toDateTime().toString());
-    setTo(getMailsFromList(index.data(Imap::Mailbox::RoleMessageTo).toList()));
-    setCc(getMailsFromList(index.data(Imap::Mailbox::RoleMessageCc).toList()));
-    setBcc(getMailsFromList(index.data(Imap::Mailbox::RoleMessageBcc).toList()));
+    setTo(index.data(Imap::Mailbox::RoleMessageTo).toList());
+    setCc(index.data(Imap::Mailbox::RoleMessageCc).toList());
+    setBcc(index.data(Imap::Mailbox::RoleMessageBcc).toList());
 
     // first, let's get a real model
     QModelIndex messageIndex;
@@ -325,30 +350,6 @@ void TrojitaMessageDetails::fetchGenericMultipart(QModelIndex partIndex, const I
             //m_tam->add(TrojitaAttachment(anotherPart.data(Imap::Mailbox::RolePartFileName).toString()));
         }
     }
-}
-
-QString TrojitaMessageDetails::getFirstMailFromList(QVariantList qvl){
-    if(!qvl.empty()){
-        QVariantList oneSender = qvl[0].toList();
-        if(oneSender[0].toString()!="")
-            return oneSender[0].toString()+" <"+oneSender[2].toString() + "@" + oneSender[3].toString()+">";
-        else
-            return oneSender[2].toString() + "@" + oneSender[3].toString();
-    }
-    return "";
-}
-
-QStringList TrojitaMessageDetails::getMailsFromList(QVariantList qvl){
-    QStringList returnVal;
-    while(!qvl.empty()){
-        QVariantList oneSender = qvl.front().toList();
-        if(oneSender[0].toString()!="")
-            returnVal.push_back(QString(oneSender[0].toString() + " <"+oneSender[2].toString() + "@" + oneSender[3].toString() + ">"));
-        else
-            returnVal.push_back(QString(oneSender[2].toString() + "@" + oneSender[3].toString()));
-        qvl.pop_front();
-    }
-    return returnVal;
 }
 
 void TrojitaMessageDetails::simplePartFetched(){

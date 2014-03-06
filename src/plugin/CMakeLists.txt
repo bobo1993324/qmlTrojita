@@ -6,5 +6,6 @@ add_library(
     messageDetails.cpp
     alert.cpp
     sendmail.cpp
+    mailAddress.cpp
 )
 qt5_use_modules(email-plugin Core Quick)

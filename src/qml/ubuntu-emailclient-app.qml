@@ -27,11 +27,22 @@ MainView {
     property string hintText
     property bool messageDialogOpened: false
 
+    property string mAPAddress // content passed to MailAddressPopover
+    property string mAPName
+
     MessageDialog{
         id: messageDialog
     }
     FirstUseDialog{
         id: firstUseDialog
+    }
+
+    SelectContactSheet{
+        id: selectContactSheet
+    }
+
+    Style{
+        id: style
     }
 
     Connections{
