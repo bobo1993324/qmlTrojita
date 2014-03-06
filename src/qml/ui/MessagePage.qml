@@ -5,6 +5,7 @@ import Ubuntu.Components.Extras.Browser 0.1
 import Ubuntu.Components.Popups 0.1
 import QtWebKit 3.0
 import "../components"
+import QmlTrojita 0.1
 Rectangle{
     id: messagePage
     property bool detailExpanded:false
@@ -163,8 +164,8 @@ Rectangle{
             top: infoColumn.bottom
             left: parent.left
             right: parent.right
-            bottom: parent.bottom
-            bottomMargin: isPhone ? 0 : toolbar.height
+            bottom: attachmentColumn.visible ? attachmentColumn.top : parent.bottom
+            bottomMargin: 0
         }
         UbuntuWebView{
             anchors.fill: parent
@@ -193,6 +194,71 @@ Rectangle{
         }
     }
 
+    Column{
+        id: attachmentColumn
+        height: attachmentLIS.height
+        width: parent.width
+        anchors.bottom: attachmentFlow.visible ? attachmentFlow.top : parent.bottom
+        anchors.bottomMargin: isPhone ? 0 : (attachmentFlow.visible ? 0 : toolbar.height)
+        visible: attachmentRepeater.count > 0
+        ListItem.Standard{
+            id: attachmentLIS
+
+            text: "Attachment(s): "
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {attachmentFlow.visible = !attachmentFlow.visible}
+            }
+            control: Row{
+                height: fromLIS.height
+                spacing: units.gu(2)
+                Image{
+                    source: Qt.resolvedUrl("../img/dropdown-menu.svg")
+                    height: fromLIS.height*0.3
+                    width: height
+                    anchors.verticalCenter: parent.verticalCenter
+                    rotation: messagePage.detailExpanded? 180: 0
+                    MouseArea{
+                        anchors.fill: parent
+                    }
+                }
+            }
+        }
+    }
+
+    Flow{
+        id: attachmentFlow
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: isPhone ? 0 : toolbar.height
+        width: parent.width
+        spacing: 6
+        anchors.margins: 4
+        visible: false
+        Repeater{
+            id: attachmentRepeater
+            model:TROJITA_MESSAGE_DETAILS.attachments
+            delegate: Rectangle{
+                width: fromLabel1.width + fromLabel2.width + 10
+                height: fromLabel1.height
+                color: "#ECEDED"
+                Label {
+                    id: fromLabel1
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: modelData.filename + ','
+                }
+                Label {
+                    id: fromLabel2
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: modelData.size > 1000000 ? (modelData.size / 1000000 - (modelData.size % 1000000)/1000000 + 'Mb')
+                          : (modelData.size > 1000 ? (modelData.size / 1000 - (modelData.size % 1000)/1000 + 'Kb') :
+                          modelData.size + 'b')
+                }
+            }
+        }
+    }
+
     Panel{
         id: toolbar
         anchors.bottom: parent.bottom
@@ -209,6 +275,7 @@ Rectangle{
                         text: "Back"
                         iconSource: Qt.resolvedUrl("../img/back.svg")
                         onTriggered: {
+                            attachmentFlow.visible = false
                             mainView.goToMailboxPage()
                         }
                     }

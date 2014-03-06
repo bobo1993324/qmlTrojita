@@ -1,9 +1,13 @@
 #include "messageDetails.h"
 TrojitaMessageDetails::TrojitaMessageDetails(QString content, TrojitaAttachmentsModel * tam)
-    : m_content(content), m_tam(tam), m_from(0)
+    : m_content(content)
 {
 }
 
+QQmlListProperty<TrojitaAttachment> TrojitaMessageDetails::attachments()
+{
+    return QQmlListProperty<TrojitaAttachment>(this, m_attachment);
+}
 QString TrojitaMessageDetails::content(){
     return m_content;
 }
@@ -95,6 +99,8 @@ void TrojitaMessageDetails::setBcc(QVariantList qvl){
 
 void TrojitaMessageDetails::setMessage(const QModelIndex &index){
 
+    m_attachment.clear();
+    attachmentChanged();
     m_messageIndex = index;
     //get metas
     //    qDebug() << "TrojitaMessageDetails::setMessage";
@@ -346,6 +352,13 @@ void TrojitaMessageDetails::fetchGenericMultipart(QModelIndex partIndex, const I
         }else if(mimeType2 == "text/plain" || mimeType2 == "text/html"){
             partFactoryCreate(anotherPart, 0);
         }else{
+            qDebug() << anotherPart.data(Imap::Mailbox::RolePartFileName).toString();
+            qDebug() << anotherPart.data(Imap::Mailbox::RolePartOctets).toString();
+            TrojitaAttachment* newAttachment = new TrojitaAttachment(anotherPart.data(Imap::Mailbox::RolePartFileName).toString(),
+                                            anotherPart.data(Imap::Mailbox::RolePartOctets).toInt());
+            //m_attachment.AppendFunction(newAttachment);
+            m_attachment.append(newAttachment);
+            emit attachmentChanged();
             //TODO how do we deal with attachments
             //m_tam->add(TrojitaAttachment(anotherPart.data(Imap::Mailbox::RolePartFileName).toString()));
         }

@@ -26,11 +26,18 @@ class TrojitaMessageDetails : public QObject{
     Q_PROPERTY(QString subject READ subject NOTIFY subjectChanged)
     Q_PROPERTY(MailAddress* from READ from NOTIFY fromChanged)
     Q_PROPERTY(QString date READ date WRITE setDate NOTIFY dateChanged)
+    Q_PROPERTY(QStringList to READ to NOTIFY toChanged)
+    Q_PROPERTY(int toCount READ toCount NOTIFY toChanged)
+    Q_PROPERTY(QStringList cc READ cc NOTIFY ccChanged)
+    Q_PROPERTY(int ccCount READ ccCount NOTIFY ccChanged)
+    Q_PROPERTY(QStringList bcc READ bcc  NOTIFY bccChanged)
+    Q_PROPERTY(int bccCount READ bccCount NOTIFY bccChanged)
+    Q_PROPERTY(QQmlListProperty<TrojitaAttachment> attachments READ attachments NOTIFY attachmentChanged)
     Q_PROPERTY(QQmlListProperty<MailAddress> to READ to NOTIFY toChanged)
     Q_PROPERTY(QQmlListProperty<MailAddress> cc READ cc NOTIFY ccChanged)
     Q_PROPERTY(QQmlListProperty<MailAddress> bcc READ bcc NOTIFY bccChanged)
 public:
-    TrojitaMessageDetails(QString content = "", TrojitaAttachmentsModel * tam = 0);
+    TrojitaMessageDetails(QString content = "");
 
     Q_INVOKABLE void deleteMessage();
     Q_INVOKABLE void markUnreadMessage();
@@ -44,6 +51,20 @@ public:
     void setFrom(QVariantList from);
     QString date();
     void setDate(QString date);
+    QStringList to();
+    void setTo(QStringList to);
+    int toCount();
+    QStringList cc();
+    void setCc(QStringList cc);
+    int ccCount();
+    QStringList bcc();
+    void setBcc(QStringList cc);
+    int bccCount();
+    QQmlListProperty<TrojitaAttachment> attachments();
+    bool attachmentIsEmpty() {
+        qDebug() << "Attachment is empty: " << m_attachment.isEmpty();
+        return m_attachment.isEmpty();
+    }
     QQmlListProperty<MailAddress> to();
     void setTo(QVariantList);
     QQmlListProperty<MailAddress> cc();
@@ -60,6 +81,7 @@ signals:
     void toChanged();
     void ccChanged();
     void bccChanged();
+    void attachmentChanged();
 public slots:
     void simplePartFetched();
 private:
@@ -79,5 +101,6 @@ private:
     QList<MailAddress*> m_cc;
     QList<MailAddress*> m_bcc;
     Imap::Mailbox::Model *model;
-    TrojitaAttachmentsModel * m_tam;
+    //QQmlListProperty<TrojitaAttachment> m_attachment;
+    QList<TrojitaAttachment*> m_attachment;
 };

@@ -45,6 +45,7 @@ void EmailApplication::registerQml(){
     trojitaMessageDetails = new TrojitaMessageDetails();
     trojitaSendMail = new TrojitaSendMail();
     trojitaAlert = new TrojitaAlert();
+    qmlRegisterType<TrojitaAttachment,1>("QmlTrojita", 0, 1, "TrojitaAttachment");
     qmlRegisterType<MailAddress>("QmlTrojita", 0, 1, "MailAddress");
     m_view->rootContext()->setContextProperty("TROJITA_MAILBOX", trojitaMailBoxModel);
     m_view->rootContext()->setContextProperty("TROJITA_MESSAGES", trojitaMessagesModel);
