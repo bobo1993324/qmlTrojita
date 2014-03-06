@@ -19,19 +19,19 @@ Component {
                 text: "Reply to all"
                 onTriggered: {
                     composePage.reset()
-                    composePage.to = TROJITA_MESSAGE_DETAILS.from
+                    composePage.to = TROJITA_MESSAGE_DETAILS.from.address
                     //construct cc
                     var s = "";
                     for (var i in TROJITA_MESSAGE_DETAILS.to){
                         //remove me from list of address
-                        if (TROJITA_MESSAGE_DETAILS.to[i].indexOf(settingsPage.activeAccount) < 0){
-                            s += TROJITA_MESSAGE_DETAILS.to[i] + ", ";
+                        if (TROJITA_MESSAGE_DETAILS.to[i].address.indexOf(settingsPage.activeAccount) < 0){
+                            s += TROJITA_MESSAGE_DETAILS.to[i].address + ", ";
                         }
                     }
                     for (var i in TROJITA_MESSAGE_DETAILS.cc){
                         //remove me from list of address
-                        if (TROJITA_MESSAGE_DETAILS.cc[i].indexOf(settingsPage.activeAccount) < 0){
-                            s += TROJITA_MESSAGE_DETAILS.cc[i] + ", ";
+                        if (TROJITA_MESSAGE_DETAILS.cc[i].address.indexOf(settingsPage.activeAccount) < 0){
+                            s += TROJITA_MESSAGE_DETAILS.cc[i].address + ", ";
                         }
                     }
                     //remove ending ,
@@ -41,8 +41,8 @@ Component {
                     s = "";
                     for (var i in TROJITA_MESSAGE_DETAILS.bcc){
                         //remove me from list of address
-                        if (TROJITA_MESSAGE_DETAILS.bcc[i].indexOf(settingsPage.activeAccount) < 0){
-                            s += TROJITA_MESSAGE_DETAILS.bcc[i] + ", ";
+                        if (TROJITA_MESSAGE_DETAILS.bcc[i].address.indexOf(settingsPage.activeAccount) < 0){
+                            s += TROJITA_MESSAGE_DETAILS.bcc[i].address + ", ";
                         }
                     }
                     //remove ending ,

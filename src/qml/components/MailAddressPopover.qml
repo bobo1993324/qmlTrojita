@@ -33,7 +33,13 @@ Component {
             }
             ListItem.Standard{
                 text: "Write to"
-                //TODO implement
+                onClicked: {
+                    composePage.reset()
+                    composePage.to = mainView.mAPAddress
+                    TROJITA_SEND_MAIL.prepare();
+                    mainView.goToComposePage()
+                    PopupUtils.close(popover)
+                }
             }
         }
     }
