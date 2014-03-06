@@ -1,6 +1,6 @@
 #include "messageDetails.h"
-TrojitaMessageDetails::TrojitaMessageDetails(QString content, TrojitaAttachmentsModel * tam)
-    : m_content(content)
+TrojitaMessageDetails::TrojitaMessageDetails(QString content)
+    : m_content(content), m_from(0)
 {
 }
 
@@ -98,9 +98,11 @@ void TrojitaMessageDetails::setBcc(QVariantList qvl){
 }
 
 void TrojitaMessageDetails::setMessage(const QModelIndex &index){
-
-    m_attachment.clear();
-    attachmentChanged();
+    while(!m_attachment.empty()){
+        m_attachment.back()->deleteLater();
+        m_attachment.pop_back();
+    }
+    emit attachmentChanged();
     m_messageIndex = index;
     //get metas
     //    qDebug() << "TrojitaMessageDetails::setMessage";

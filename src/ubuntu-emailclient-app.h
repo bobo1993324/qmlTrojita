@@ -71,7 +71,6 @@ private:
     TrojitaMailBoxModel * trojitaMailBoxModel ;
     TrojitaMessagesModel * trojitaMessagesModel ;
     TrojitaMessageDetails * trojitaMessageDetails ;
-    TrojitaAttachmentsModel * trojitaAttachmentsModel ;
     TrojitaSendMail * trojitaSendMail ;
     TrojitaAlert * trojitaAlert;
     //this array

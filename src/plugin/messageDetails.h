@@ -26,12 +26,6 @@ class TrojitaMessageDetails : public QObject{
     Q_PROPERTY(QString subject READ subject NOTIFY subjectChanged)
     Q_PROPERTY(MailAddress* from READ from NOTIFY fromChanged)
     Q_PROPERTY(QString date READ date WRITE setDate NOTIFY dateChanged)
-    Q_PROPERTY(QStringList to READ to NOTIFY toChanged)
-    Q_PROPERTY(int toCount READ toCount NOTIFY toChanged)
-    Q_PROPERTY(QStringList cc READ cc NOTIFY ccChanged)
-    Q_PROPERTY(int ccCount READ ccCount NOTIFY ccChanged)
-    Q_PROPERTY(QStringList bcc READ bcc  NOTIFY bccChanged)
-    Q_PROPERTY(int bccCount READ bccCount NOTIFY bccChanged)
     Q_PROPERTY(QQmlListProperty<TrojitaAttachment> attachments READ attachments NOTIFY attachmentChanged)
     Q_PROPERTY(QQmlListProperty<MailAddress> to READ to NOTIFY toChanged)
     Q_PROPERTY(QQmlListProperty<MailAddress> cc READ cc NOTIFY ccChanged)
@@ -51,14 +45,6 @@ public:
     void setFrom(QVariantList from);
     QString date();
     void setDate(QString date);
-    QStringList to();
-    void setTo(QStringList to);
-    int toCount();
-    QStringList cc();
-    void setCc(QStringList cc);
-    int ccCount();
-    QStringList bcc();
-    void setBcc(QStringList cc);
     int bccCount();
     QQmlListProperty<TrojitaAttachment> attachments();
     bool attachmentIsEmpty() {
