@@ -17,17 +17,19 @@ Component {
             ListItem.Standard {
                 //TODO wait for address-book-app interface to catchup
                 text: "Add to a new contact"
+                visible: false
             }
             ListItem.Standard {
                 //TODO wait for address-book-app interface to catchup
                 text: "Add to an existing contact"
+                visible: false
                 onClicked: {
                     PopupUtils.close(popover)
                     PopupUtils.open(selectContactSheet)
                 }
             }
             ListItem.ThinDivider{
-
+                visible: false
             }
             ListItem.Standard{
                 text: "Write to"

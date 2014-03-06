@@ -8,5 +8,6 @@ add_library(
     sendmail.cpp
     attachments.cpp
     mailAddress.cpp
+    network.cpp
 )
 qt5_use_modules(email-plugin Core Quick)

@@ -16,6 +16,7 @@
 #include "plugin/sendmail.h"
 #include "plugin/alert.h"
 #include "plugin/mailAddress.h"
+#include "plugin/network.h"
 
 #include "Imap/Model/Model.h"
 #include "Imap/Model/MemoryCache.h"
@@ -49,6 +50,9 @@ public slots:
     void removingAccount(int idx);
     void setCurrentAccount(int idx);
 
+    void goOnline();
+    void goOffline();
+
 private:
     void createView();
     void registerQml();
@@ -73,6 +77,7 @@ private:
     TrojitaMessageDetails * trojitaMessageDetails ;
     TrojitaSendMail * trojitaSendMail ;
     TrojitaAlert * trojitaAlert;
+    TrojitaNetwork * trojitaNetwork;
     //this array
     QList<MailBackend *> mailBackendList;
     int mailCurrentIndex;

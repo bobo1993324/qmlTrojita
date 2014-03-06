@@ -136,6 +136,7 @@ MainView {
             x:leftPanelWidth
         }
     }
+
     function goToMailboxPage(){
         currentPage = "mailbox"
         if(isPhone) closeAllToolbars();

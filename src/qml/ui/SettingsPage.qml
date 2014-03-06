@@ -52,7 +52,6 @@ Rectangle{
             var tmp = contents
             tmp.currentAccountIndex = idx
             contents = tmp
-            mailBoxPage.loaded = false;
             TROJITA_MESSAGES.displayCount = 20;
             settingsPage.setCurrentAccount(idx)
         }

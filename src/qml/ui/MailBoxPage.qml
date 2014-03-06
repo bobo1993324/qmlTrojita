@@ -6,19 +6,30 @@ import "../components"
 Rectangle{
     id: messagesPage
     objectName: "messagesPage"
-    //    title: TROJITA_MESSAGES.mailBoxName
     color: "#ECEDED"
 
     signal messageClicked(int UUID)
+    signal goOffline()
+    signal goOnline()
 
     property alias toolbar: toolbar
-    property bool loaded : false;
 
     Column{
         anchors.fill: parent
         ListItem.Header{
             id: title
             text: TROJITA_MESSAGES.mailBoxName
+            Image{
+                visible: !TROJITA_NETWORK.isOnline
+                height: parent.height /2
+                width: height
+                source: Qt.resolvedUrl("../img/gnome-netstatus-error.svg")
+                anchors{
+                    verticalCenter: parent.verticalCenter
+                    right: parent.right
+                    rightMargin: units.gu(2)
+                }
+            }
         }
 
         ListView{
@@ -183,6 +194,21 @@ Rectangle{
                         Connections{
                             target: TROJITA_ALERT
                             onHasAlertChanged: if(TROJITA_ALERT.hasAlert) toolbar.open()
+                        }
+                    }
+                }
+
+                ToolbarButton{
+                    id: networkButton
+                    action: Action{
+                        text: TROJITA_NETWORK.isOnline ? "Go offline" : "Go online"
+                        iconSource: !TROJITA_NETWORK.isOnline ? Qt.resolvedUrl("../img/gnome-netstatus-idle.svg") : Qt.resolvedUrl("../img/gnome-netstatus-disconn.svg")
+                        onTriggered: {
+                            if (TROJITA_NETWORK.isOnline){
+                                mailBoxPage.goOffline();
+                            } else {
+                                mailBoxPage.goOnline();
+                            }
                         }
                     }
                 }

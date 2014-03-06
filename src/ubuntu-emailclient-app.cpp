@@ -17,9 +17,6 @@ int EmailApplication::exec(){
 void EmailApplication::createView(){
     m_view->setSource(QUrl::fromLocalFile("qml/ubuntu-emailclient-app.qml"));
 
-    //    connect(m_view->rootObject()->findChild<QQuickItem *>("settingPage"),
-    //                     SIGNAL(settingChanged()), this, SLOT(settingUpdated()));
-
     connect(m_view->rootObject()->findChild<QQuickItem *>("settingPage"),
             SIGNAL(addingAccount(QVariant)), this, SLOT(addingAccount(QVariant)));
     connect(m_view->rootObject()->findChild<QQuickItem *>("settingPage"),
@@ -28,11 +25,15 @@ void EmailApplication::createView(){
     connect(m_view->rootObject()->findChild<QQuickItem *>("settingPage"),
             SIGNAL(removingAccount(int)), this, SLOT(removingAccount(int)));
 
-    connect(m_view->rootObject()->findChild<QQuickItem *>("mailBoxPage"),
+    connect(m_view->rootObject()->findChild<QQuickItem *>("foldersPage"),
             SIGNAL(mailBoxClicked(QString)), this, SLOT(mailBoxClicked(QString)));
 
     connect(m_view->rootObject()->findChild<QQuickItem *>("messagesPage"),
             SIGNAL(messageClicked(int)), this, SLOT(messageClicked(int)));
+    connect(m_view->rootObject()->findChild<QQuickItem *>("messagesPage"),
+            SIGNAL(goOnline()), this, SLOT(goOnline()));
+    connect(m_view->rootObject()->findChild<QQuickItem *>("messagesPage"),
+            SIGNAL(goOffline()), this, SLOT(goOffline()));
 
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     m_view->show();
@@ -45,6 +46,7 @@ void EmailApplication::registerQml(){
     trojitaMessageDetails = new TrojitaMessageDetails();
     trojitaSendMail = new TrojitaSendMail();
     trojitaAlert = new TrojitaAlert();
+    trojitaNetwork = new TrojitaNetwork();
     qmlRegisterType<TrojitaAttachment,1>("QmlTrojita", 0, 1, "TrojitaAttachment");
     qmlRegisterType<MailAddress>("QmlTrojita", 0, 1, "MailAddress");
     m_view->rootContext()->setContextProperty("TROJITA_MAILBOX", trojitaMailBoxModel);
@@ -52,6 +54,7 @@ void EmailApplication::registerQml(){
     m_view->rootContext()->setContextProperty("TROJITA_MESSAGE_DETAILS", trojitaMessageDetails);
     m_view->rootContext()->setContextProperty("TROJITA_SEND_MAIL", trojitaSendMail);
     m_view->rootContext()->setContextProperty("TROJITA_ALERT", trojitaAlert);
+    m_view->rootContext()->setContextProperty("TROJITA_NETWORK", trojitaNetwork);
 }
 
 void EmailApplication::setCurrentAccount(int idx){
@@ -64,6 +67,7 @@ void EmailApplication::setCurrentAccount(int idx){
     trojitaMessagesModel->setMsgListModel(mailBackendList[idx]->msgListModel);
     trojitaSendMail->setModel(mailBackendList[idx]->model);
     trojitaSendMail->setSettings(mailBackendList[idx]->m_settings);
+    trojitaNetwork->setModel(mailBackendList[idx]->model);
 }
 
 void EmailApplication::mailBoxClicked(QString name){
@@ -123,4 +127,16 @@ void EmailApplication::addingAccount(QVariant account){
 
 void EmailApplication::removingAccount(int idx){
     mailBackendList.removeAt(idx);
+}
+
+void EmailApplication::goOnline(){
+    Q_FOREACH(MailBackend * m, mailBackendList){
+        m->m_networkWatcher->setNetworkOnline();
+    }
+}
+
+void EmailApplication::goOffline(){
+    Q_FOREACH(MailBackend * m, mailBackendList){
+        m->m_networkWatcher->setNetworkOffline();
+    }
 }

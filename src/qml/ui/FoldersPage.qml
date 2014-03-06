@@ -4,7 +4,7 @@ import Ubuntu.Components.ListItems 0.1 as ListItem
 import "../components"
 Rectangle{
     id: foldersPage
-    objectName: "mailBoxPage"
+    objectName: "foldersPage"
     //TODO show account name
     color: "#ECEDED"
 
@@ -46,13 +46,13 @@ Rectangle{
             }
             ListView.onAdd: {
                 //load first mailbox at start
-                if (!mailBoxPage.loaded && index == 0) {
-                    mailBoxPage.loaded = true;
-                    foldersPage.mailBoxClicked(name)
+                if (index == 0) {
+                    foldersPage.mailBoxClicked(name);
                 }
             }
         }
     }
+
     Panel{
         id: toolbar
         anchors.bottom: parent.bottom

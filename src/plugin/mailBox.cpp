@@ -22,6 +22,7 @@ void TrojitaMailBoxModel::mailBoxDataChanged(){
     addChildren(QModelIndex());
     emit dataChanged(this->index(0), this->index(m_mbox_list.size()-1));
 }
+
 QHash<int, QByteArray> TrojitaMailBoxModel::roleNames() const{
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
