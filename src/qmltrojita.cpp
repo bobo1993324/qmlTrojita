@@ -1,4 +1,4 @@
-#include "ubuntu-emailclient-app.h"
+#include "qmltrojita.h"
 EmailApplication::EmailApplication(int& argc, char** argv, QSettings * settings)
     : QApplication(argc, argv),
       m_settings(settings),

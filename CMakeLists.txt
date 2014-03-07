@@ -1,4 +1,4 @@
-project(ubuntu-emailclient-app)
+project(qmltrojita)
 cmake_minimum_required(VERSION 2.8.9)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

@@ -1,4 +1,4 @@
-#include "ubuntu-emailclient-app.h"
+#include "qmltrojita.h"
 int main(int argc, char *argv[])
 {
     Common::registerMetaTypes();

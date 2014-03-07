@@ -1,6 +1,6 @@
 {
     "architecture": "all",
-    "description": "a mail client",
+    "description": "description of ubuntu-emailclient-app",
     "framework": "ubuntu-sdk-13.10",
     "hooks": {
         "ubuntu-emailclient-app": {
@@ -8,8 +8,8 @@
             "desktop": "ubuntu-emailclient-app.desktop"
         }
     },
-    "maintainer": "Boren Zhang <bobo1993324@gmail.com>",
-    "name": "com.bobo-324.qmltrojita",
-    "title": "qmlTrojita",
+    "maintainer": "",
+    "name": "com.ubuntu.developer.username.ubuntu-emailclient-app",
+    "title": "ubuntu-emailclient-app",
     "version": "0.1"
 }

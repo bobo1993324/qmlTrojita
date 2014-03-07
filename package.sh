@@ -1,6 +1,6 @@
 #! /bin/bash
 mkdir package
-cp ./logo.png ./ubuntu-emailclient-app.json ./ubuntu-emailclient-app.desktop ./manifest.json build/src/ubuntu-emailclient-app build/src/qml package/ -rf
+cp ./logo.png ./qmltrojita.json ./qmltrojita.desktop ./manifest.json build/src/qmltrojita build/src/qml package/ -rf
 cd package
 click build .
 cp *.click ..
