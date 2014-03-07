@@ -123,7 +123,7 @@ void MailBackend::setupModels(){
     msgListModel = new Imap::Mailbox::MsgListModel(this, model);
     msgListModel->setObjectName(QLatin1String("msgListModel"));
 
-    connect (model, SIGNAL(mailBoxModelChanged(QModelIndex, QModelIndex)), mboxModel, SLOT(emitDataChanged()));
+//    connect (model, SIGNAL(mailBoxModelChanged(QModelIndex, QModelIndex)), mboxModel, SLOT(emitDataChanged()));
     connect(model, SIGNAL(authRequested()), this, SLOT(authenticationRequested()), Qt::QueuedConnection);
     connect(model, SIGNAL(connectionError(const QString &)), this, SLOT(connectionError(const QString &)));
     connect(model, SIGNAL(authAttemptFailed(QString)), this, SLOT(authenticationFailed(QString)));
