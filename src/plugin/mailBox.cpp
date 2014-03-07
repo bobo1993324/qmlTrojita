@@ -23,6 +23,14 @@ void TrojitaMailBoxModel::mailBoxDataChanged(){
     emit dataChanged(this->index(0), this->index(m_mbox_list.size()-1));
 }
 
+void TrojitaMailBoxModel::mailBoxInserted(QModelIndex parent, int first, int last){
+    if(first == 0 && !parent.isValid()){
+        //click first mailbox
+        qDebug() << m_mbox->index(0,0).data(Imap::Mailbox::RoleMailboxName);
+        emit clickMailBox(m_mbox->index(0,0).data(Imap::Mailbox::RoleMailboxName).toString());
+    }
+}
+
 QHash<int, QByteArray> TrojitaMailBoxModel::roleNames() const{
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
@@ -72,6 +80,7 @@ void TrojitaMailBoxModel::addChildren(QModelIndex parent){
 void TrojitaMailBoxModel::setMailBoxModel(Imap::Mailbox::MailboxModel *mbox){
     m_mbox=mbox;
     disconnect(this, SLOT(mailBoxDataChanged()));
+    connect(mbox, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(mailBoxInserted(QModelIndex,int,int)));
     connect(mbox, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
             this, SLOT(mailBoxDataChanged()));
     mailBoxDataChanged();

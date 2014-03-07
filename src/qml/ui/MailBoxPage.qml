@@ -14,6 +14,7 @@ Rectangle{
 
     property alias toolbar: toolbar
 
+
     Column{
         anchors.fill: parent
         ListItem.Header{

@@ -38,8 +38,11 @@ public:
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
 
     void addTrojitaMailBox(TrojitaMailBox tmb);
+signals:
+    void clickMailBox(QString);
 public slots:
     void mailBoxDataChanged();
+    void mailBoxInserted(QModelIndex, int, int);
 
 private:
     void addChildren(QModelIndex parent);

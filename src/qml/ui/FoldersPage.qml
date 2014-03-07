@@ -44,12 +44,6 @@ Rectangle{
                     mainView.goToMailboxPage();
                 }
             }
-            ListView.onAdd: {
-                //load first mailbox at start
-                if (index == 0) {
-                    foldersPage.mailBoxClicked(name);
-                }
-            }
         }
     }
 
