@@ -77,6 +77,7 @@ Rectangle{
                 smtpPortTextField.text = accountsDocument.contents.accounts[idx]["msa.smtp.port"]
 
                 smtpMethodLI.selectedIndex = (accountsDocument.contents.accounts[idx]["msa.method"] === "SMTP" ? 0 : 1);
+                performSTARTTLSCheckBox.checked = accountsDocument.contents.accounts[idx]["msa.smtp.starttls"];
             }
             else {
                 usernameTextField.text = emailTextField.text

@@ -35,7 +35,6 @@ function fetchConfigurationFromUrl(account, password, url, successCallback, fail
 
             var a = doc.responseXML.documentElement;
             var returnVal = parseXML(a);
-
             successCallback(adaptConfiguration(returnVal, account, password));
         }
     }
@@ -73,7 +72,6 @@ function parseXML(xmlDocument){
                     var c = b.childNodes[j];
                     for (var k = 0; k < c.attributes.length; k++){
                         if (c.attributes[k].name == "type" && c.attributes[k].value == "smtp"){
-                            //find <incomingServer type="imap">
                             for (var m = 0; m < c.childNodes.length; m++){
                                 if (c.childNodes[m].nodeName == "hostname"){
                                     returnVal.smtp.host = c.childNodes[m].childNodes[0].nodeValue;
@@ -99,7 +97,9 @@ function adaptConfiguration(settings, account, password){
         "imap.host": settings.imap.host,
         "imap.port" : settings.imap.port,
         "imap.method": settings.imap.socketType,
-        "msa.method": settings.smtp.socketType === "SSL" ? "SSMTP" : "SMTP",   // use SMTP by default
+        "msa.method": (settings.smtp.socketType === "SSL" ? "SSMTP" : "SMTP"),   // use SMTP by default
+        "msa.smtp.starttls": (settings.smtp.socketType === "STARTTLS" || settings.smtp.socketType === "SSL")?
+                                 true : false,
         "msa.smtp.host": settings.smtp.host,
         "msa.smtp.port": settings.smtp.port,
         "msa.smtp.starttls": true, // default to be true, might relate to setting.smtp.socketType
